@@ -1,4 +1,4 @@
-# GrabTheMic - Progressive Web App
+# Next Performer - Progressive Web App
 
 A mobile-first Progressive Web App (PWA) for discovering and managing open mic events. Built with React, Node.js, PostgreSQL, and Docker.
 

@@ -2,7 +2,7 @@
 const appConfig = {
   // App Information
   app: {
-    name: process.env.APP_NAME || 'GrabTheMic',
+    name: process.env.APP_NAME || 'Next Performer',
     version: process.env.APP_VERSION || '1.0.0',
     description: process.env.APP_DESCRIPTION || 'Find Your Voice, Share Your Talent',
     environment: process.env.NODE_ENV || 'development',
@@ -97,12 +97,12 @@ const appConfig = {
     branding: {
       logo: '/assets/logo.png',
       favicon: '/assets/favicon.ico',
-      title: 'GrabTheMic',
+      title: 'Next Performer',
       tagline: 'Find Your Voice, Share Your Talent'
     },
     copy: {
       auth: {
-        welcomeTitle: 'Welcome to GrabTheMic',
+        welcomeTitle: 'Welcome to Next Performer',
         welcomeSubtitle: 'Find your voice, share your talent',
         signInTitle: 'Sign In',
         signUpTitle: 'Create Account',

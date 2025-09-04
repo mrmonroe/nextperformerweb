@@ -4,29 +4,29 @@ services:
   # PostgreSQL Database
   postgres:
     image: postgres:15-alpine
-    container_name: grabthemic_postgres
+    container_name: nextperformer_postgres
     environment:
-      POSTGRES_DB: grabthemic
-      POSTGRES_USER: grabthemic_user
-      POSTGRES_PASSWORD: grabthemic_password
+      POSTGRES_DB: nextperformer
+      POSTGRES_USER: nextperformer_user
+      POSTGRES_PASSWORD: nextperformer_password
     ports:
       - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./database/init:/docker-entrypoint-initdb.d
     networks:
-      - grabthemic_network
+      - nextperformer_network
 
   # Backend API
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: grabthemic_backend
+    container_name: nextperformer_backend
     environment:
       NODE_ENV: development
       PORT: 3001
-      DATABASE_URL: postgresql://grabthemic_user:grabthemic_password@postgres:5432/grabthemic
+      DATABASE_URL: postgresql://nextperformer_user:nextperformer_password@postgres:5432/nextperformer
       JWT_SECRET: your-super-secret-jwt-key-change-in-production
       CORS_ORIGIN: http://localhost:3002
     ports:
@@ -38,14 +38,14 @@ services:
       - ./config:/app/config
       - /app/node_modules
     networks:
-      - grabthemic_network
+      - nextperformer_network
 
   # Frontend
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    container_name: grabthemic_frontend
+    container_name: nextperformer_frontend
     environment:
       REACT_APP_API_URL: http://localhost:3001
       REACT_APP_ENV: development
@@ -57,12 +57,12 @@ services:
       - ./frontend:/app
       - /app/node_modules
     networks:
-      - grabthemic_network
+      - nextperformer_network
 
   # Nginx (for production)
   nginx:
     image: nginx:alpine
-    container_name: grabthemic_nginx
+    container_name: nextperformer_nginx
     ports:
       - "80:80"
       - "443:443"
@@ -73,7 +73,7 @@ services:
       - frontend
       - backend
     networks:
-      - grabthemic_network
+      - nextperformer_network
     profiles:
       - production
 
@@ -81,5 +81,5 @@ volumes:
   postgres_data:
 
 networks:
-  grabthemic_network:
+  nextperformer_network:
     driver: bridge

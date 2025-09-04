@@ -1,5 +1,5 @@
-// Service Worker for GrabTheMic PWA
-const CACHE_NAME = 'grabthemic-v1';
+// Service Worker for Next Performer PWA
+const CACHE_NAME = 'nextperformer-v1';
 const urlsToCache = [
   '/',
   '/static/js/bundle.js',

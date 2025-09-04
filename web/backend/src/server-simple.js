@@ -48,7 +48,7 @@ app.get('/health', (req, res) => {
 app.get('/api/config', (req, res) => {
   res.json({
     app: {
-      name: 'GrabTheMic',
+      name: 'Next Performer',
       version: '1.0.0',
       description: 'Find Your Voice, Share Your Talent',
       environment: process.env.NODE_ENV || 'development',
@@ -107,12 +107,12 @@ app.get('/api/config', (req, res) => {
       branding: {
         logo: '/assets/logo.png',
         favicon: '/assets/favicon.ico',
-        title: 'GrabTheMic',
+        title: 'Next Performer',
         tagline: 'Find Your Voice, Share Your Talent'
       },
       copy: {
         auth: {
-          welcomeTitle: 'Welcome to GrabTheMic',
+          welcomeTitle: 'Welcome to Next Performer',
           welcomeSubtitle: 'Find your voice, share your talent',
           signInTitle: 'Sign In',
           signUpTitle: 'Create Account',
@@ -268,7 +268,7 @@ app.use('*', (req, res) => {
 
 // Start server
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(`🚀 GrabTheMic Backend API running on port ${PORT}`);
+  console.log(`🚀 Next Performer Backend API running on port ${PORT}`);
   console.log(`📊 Health check: http://localhost:${PORT}/health`);
   console.log(`⚙️  Config: http://localhost:${PORT}/api/config`);
 });

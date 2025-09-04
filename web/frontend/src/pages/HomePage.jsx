@@ -42,7 +42,7 @@ export default function HomePage() {
               </div>
               
               <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
-                {config?.content?.branding?.title || 'GrabTheMic'}
+                {config?.content?.branding?.title || 'Next Performer'}
               </h1>
               
               <p className="text-xl md:text-2xl text-gray-600 mb-8 max-w-3xl mx-auto">
@@ -75,7 +75,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Why Choose GrabTheMic?
+              Why Choose Next Performer?
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
               Everything you need to discover, connect, and showcase your talent
@@ -110,7 +110,7 @@ export default function HomePage() {
             Ready to Share Your Voice?
           </h2>
           <p className="text-xl text-primary-100 mb-8 max-w-2xl mx-auto">
-            Join thousands of performers who have found their stage with GrabTheMic
+            Join thousands of performers who have found their stage with Next Performer
           </p>
           <Link
             to="/register"
@@ -129,14 +129,14 @@ export default function HomePage() {
             <div className="flex items-center justify-center mb-4">
               <Mic className="h-8 w-8 text-primary" />
               <span className="ml-2 text-2xl font-bold">
-                {config?.app?.name || 'GrabTheMic'}
+                {config?.app?.name || 'Next Performer'}
               </span>
             </div>
             <p className="text-gray-400 mb-4">
               {config?.app?.description || 'Find Your Voice, Share Your Talent'}
             </p>
             <p className="text-sm text-gray-500">
-              © 2024 GrabTheMic. All rights reserved.
+              © 2024 Next Performer. All rights reserved.
             </p>
           </div>
         </div>

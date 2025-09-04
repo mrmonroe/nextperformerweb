@@ -69,7 +69,7 @@ export default function RegisterPage() {
             {config?.content?.copy?.auth?.signUpTitle || 'Create Account'}
           </h2>
           <p className="mt-2 text-gray-600">
-            Join {config?.app?.name || 'GrabTheMic'} today
+            Join {config?.app?.name || 'Next Performer'} today
           </p>
         </div>
 

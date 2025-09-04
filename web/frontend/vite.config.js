@@ -9,8 +9,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
       manifest: {
-        name: 'GrabTheMic',
-        short_name: 'GrabTheMic',
+        name: 'Next Performer',
+        short_name: 'Next Performer',
         description: 'Find Your Voice, Share Your Talent',
         theme_color: '#6200EE',
         background_color: '#ffffff',

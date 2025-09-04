@@ -31,7 +31,7 @@ class ConfigService {
   getDefaultConfig() {
     return {
       app: {
-        name: 'GrabTheMic',
+        name: 'Next Performer',
         version: '1.0.0',
         description: 'Find Your Voice, Share Your Talent',
         environment: 'development',
@@ -90,12 +90,12 @@ class ConfigService {
         branding: {
           logo: '/assets/logo.png',
           favicon: '/assets/favicon.ico',
-          title: 'GrabTheMic',
+          title: 'Next Performer',
           tagline: 'Find Your Voice, Share Your Talent'
         },
         copy: {
           auth: {
-            welcomeTitle: 'Welcome to GrabTheMic',
+            welcomeTitle: 'Welcome to Next Performer',
             welcomeSubtitle: 'Find your voice, share your talent',
             signInTitle: 'Sign In',
             signUpTitle: 'Create Account',

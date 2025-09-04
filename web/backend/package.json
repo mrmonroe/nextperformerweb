@@ -1,7 +1,7 @@
 {
-  "name": "grabthemic-backend",
+  "name": "nextperformer-backend",
   "version": "1.0.0",
-  "description": "GrabTheMic Backend API",
+  "description": "Next Performer Backend API",
   "main": "src/server-simple.js",
   "scripts": {
     "start": "node src/server-simple.js",
@@ -36,8 +36,8 @@
     "backend",
     "express",
     "postgresql",
-    "grabthemic"
+    "nextperformer"
   ],
-  "author": "GrabTheMic Team",
+  "author": "Next Performer Team",
   "license": "MIT"
 }

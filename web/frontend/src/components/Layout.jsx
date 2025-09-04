@@ -47,7 +47,7 @@ export default function Layout({ children }) {
           <div className="flex items-center space-x-2">
             <Mic className="h-8 w-8 text-primary" />
             <span className="text-xl font-bold text-gray-900">
-              {config?.app?.name || 'GrabTheMic'}
+              {config?.app?.name || 'Next Performer'}
             </span>
           </div>
           <button
@@ -98,7 +98,7 @@ export default function Layout({ children }) {
           <div className="flex items-center h-16 px-4 border-b">
             <Mic className="h-8 w-8 text-primary" />
             <span className="ml-2 text-xl font-bold text-gray-900">
-              {config?.app?.name || 'GrabTheMic'}
+              {config?.app?.name || 'Next Performer'}
             </span>
           </div>
 
@@ -164,7 +164,7 @@ export default function Layout({ children }) {
           <div className="flex items-center space-x-2">
             <Mic className="h-6 w-6 text-primary" />
             <span className="text-lg font-bold text-gray-900">
-              {config?.app?.name || 'GrabTheMic'}
+              {config?.app?.name || 'Next Performer'}
             </span>
           </div>
 

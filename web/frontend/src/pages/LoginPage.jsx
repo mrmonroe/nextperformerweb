@@ -55,7 +55,7 @@ export default function LoginPage() {
             {config?.content?.copy?.auth?.signInTitle || 'Sign In'}
           </h2>
           <p className="mt-2 text-gray-600">
-            Welcome back to {config?.app?.name || 'GrabTheMic'}
+            Welcome back to {config?.app?.name || 'Next Performer'}
           </p>
         </div>
 

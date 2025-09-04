@@ -1,7 +1,7 @@
 {
-  "name": "grabthemic-frontend",
+  "name": "nextperformer-frontend",
   "version": "1.0.0",
-  "description": "GrabTheMic Progressive Web App",
+  "description": "Next Performer Progressive Web App",
   "private": true,
   "dependencies": {
     "react": "^18.2.0",

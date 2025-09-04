@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# GrabTheMic PWA Startup Script
+# Next Performer PWA Startup Script
 
-echo "🚀 Starting GrabTheMic Progressive Web App..."
+echo "🚀 Starting Next Performer Progressive Web App..."
 
 # Check if Docker is running
 if ! docker info > /dev/null 2>&1; then
@@ -42,7 +42,7 @@ echo "🌱 Seeding database..."
 docker-compose exec -T backend npm run seed
 
 echo ""
-echo "🎉 GrabTheMic PWA is now running!"
+echo "🎉 Next Performer PWA is now running!"
 echo ""
 echo "📱 Frontend: http://localhost:3000"
 echo "🔧 Backend API: http://localhost:3001"
