@@ -34,13 +34,39 @@ export default function CreateEventModal({ isOpen, onClose, onEventCreated, edit
 
   const populateFormForEdit = () => {
     if (editingEvent) {
+      // Format date for HTML date input (yyyy-MM-dd)
+      const formatDateForInput = (dateString) => {
+        if (!dateString) return ''
+        const date = new Date(dateString)
+        return date.toISOString().split('T')[0]
+      }
+
+      // Format time for HTML time input (HH:mm)
+      const formatTimeForInput = (timeString) => {
+        if (!timeString) return ''
+        // If it's already in HH:mm format, return as is
+        if (timeString.match(/^\d{2}:\d{2}$/)) {
+          return timeString
+        }
+        // If it's in HH:mm:ss format, remove seconds
+        if (timeString.match(/^\d{2}:\d{2}:\d{2}$/)) {
+          return timeString.substring(0, 5)
+        }
+        // If it's a full datetime, extract time part
+        const date = new Date(timeString)
+        if (!isNaN(date.getTime())) {
+          return date.toTimeString().substring(0, 5)
+        }
+        return timeString
+      }
+
       setFormData({
         title: editingEvent.title || '',
         description: editingEvent.description || '',
         venueId: editingEvent.venue?.id || editingEvent.venue_id || '',
-        eventDate: editingEvent.eventDate || editingEvent.event_date || '',
-        startTime: editingEvent.startTime || editingEvent.start_time || '',
-        endTime: editingEvent.endTime || editingEvent.end_time || '',
+        eventDate: formatDateForInput(editingEvent.eventDate || editingEvent.event_date),
+        startTime: formatTimeForInput(editingEvent.startTime || editingEvent.start_time),
+        endTime: formatTimeForInput(editingEvent.endTime || editingEvent.end_time),
         isSpotlight: editingEvent.isSpotlight || editingEvent.is_spotlight || false,
         maxAttendees: editingEvent.maxAttendees || editingEvent.max_attendees || '',
         imageUrl: editingEvent.imageUrl || editingEvent.image_url || ''
@@ -152,9 +178,17 @@ export default function CreateEventModal({ isOpen, onClose, onEventCreated, edit
 
     setLoading(true)
     try {
+      // Transform data to match backend expectations (snake_case)
       const eventData = {
-        ...formData,
-        maxAttendees: formData.maxAttendees ? parseInt(formData.maxAttendees) : null
+        title: formData.title,
+        description: formData.description,
+        venueId: formData.venueId,
+        eventDate: formData.eventDate,
+        startTime: formData.startTime,
+        endTime: formData.endTime,
+        isSpotlight: formData.isSpotlight,
+        maxAttendees: formData.maxAttendees ? parseInt(formData.maxAttendees) : null,
+        imageUrl: formData.imageUrl
       }
       
       let event

@@ -180,9 +180,31 @@ router.put('/:id', auth, async (req, res) => {
       return res.status(404).json({ message: 'Event not found' })
     }
 
+    const {
+      title,
+      description,
+      venueId,
+      eventDate,
+      startTime,
+      endTime,
+      isSpotlight,
+      maxAttendees,
+      imageUrl
+    } = value
+
     const updatedEvent = await db('events')
       .where('id', req.params.id)
-      .update(value)
+      .update({
+        title,
+        description,
+        venue_id: venueId,
+        event_date: eventDate,
+        start_time: startTime,
+        end_time: endTime,
+        is_spotlight: isSpotlight,
+        max_attendees: maxAttendees,
+        image_url: imageUrl
+      })
       .returning('*')
 
     res.json(updatedEvent[0])
