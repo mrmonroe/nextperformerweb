@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Next Performer - Text Logo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #D9D2C1 0%, #B4C5B5 100%);
+            margin: 0;
+            padding: 50px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-container {
+            text-align: center;
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(70, 92, 110, 0.2);
+        }
+
+        .logo {
+            font-family: 'Libre Baskerville', serif;
+            font-size: 4rem;
+            font-weight: 700;
+            color: #7B2F30;
+            margin: 0;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            letter-spacing: -0.02em;
+        }
+
+        .logo-subtitle {
+            font-family: 'Libre Baskerville', serif;
+            font-size: 1.2rem;
+            font-weight: 400;
+            color: #465C6E;
+            margin: 10px 0 0 0;
+            font-style: italic;
+        }
+
+        .microphone-icon {
+            font-size: 2rem;
+            color: #CC713F;
+            margin-bottom: 20px;
+        }
+
+        .variations {
+            margin-top: 50px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .variation {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 16px rgba(70, 92, 110, 0.1);
+        }
+
+        .variation h3 {
+            font-family: 'Libre Baskerville', serif;
+            color: #465C6E;
+            margin: 0 0 20px 0;
+        }
+
+        .logo-variant {
+            font-family: 'Libre Baskerville', serif;
+            font-weight: 700;
+            color: #7B2F30;
+            margin: 0;
+        }
+
+        .variant-1 { font-size: 3rem; }
+        .variant-2 { font-size: 2.5rem; }
+        .variant-3 { font-size: 2rem; }
+        .variant-4 { font-size: 1.8rem; }
+
+        .dark-bg {
+            background: #465C6E;
+            color: white;
+        }
+
+        .dark-bg .logo-variant {
+            color: #D9D2C1;
+        }
+
+        .light-bg {
+            background: #D9D2C1;
+        }
+
+        .light-bg .logo-variant {
+            color: #465C6E;
+        }
+    </style>
+</head>
+<body>
+    <div class="logo-container">
+        <div class="microphone-icon">🎤</div>
+        <h1 class="logo">The Open Mic App</h1>
+        <p class="logo-subtitle">Next Performer</p>
+        
+        <div class="variations">
+            <div class="variation">
+                <h3>Large Version</h3>
+                <h1 class="logo-variant variant-1">Next Performer</h1>
+            </div>
+            
+            <div class="variation">
+                <h3>Medium Version</h3>
+                <h1 class="logo-variant variant-2">Next Performer</h1>
+            </div>
+            
+            <div class="variation">
+                <h3>Small Version</h3>
+                <h1 class="logo-variant variant-3">Next Performer</h1>
+            </div>
+            
+            <div class="variation">
+                <h3>Compact Version</h3>
+                <h1 class="logo-variant variant-4">Next Performer</h1>
+            </div>
+            
+            <div class="variation dark-bg">
+                <h3>Dark Background</h3>
+                <h1 class="logo-variant variant-2">Next Performer</h1>
+            </div>
+            
+            <div class="variation light-bg">
+                <h3>Light Background</h3>
+                <h1 class="logo-variant variant-2">Next Performer</h1>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

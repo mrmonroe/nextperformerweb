@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Next Performer - Documentation</title>
+    <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.6/build/pure-min.css" integrity="sha384-Uu6IeWbM+gzNVXJcM9XV3SohHtmWE+3VGi496jvgX1jyvDTXfdK+rfZc8C1Aehk5" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.6/build/grids-responsive-min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Base Colors */
+            --base-primary: #D9D2C1;
+            --base-secondary: #B4C5B5;
+            --base-text: #465C6E;
+            
+            /* Accent Colors */
+            --accent-primary: #7B2F30;
+            --accent-secondary: #CC713F;
+            --accent-warm: #C7AB70;
+            
+            /* Legacy variables for compatibility */
+            --primary-color: var(--accent-primary);
+            --secondary-color: var(--accent-secondary);
+            --accent-color: var(--base-text);
+            --warm-neutral: var(--accent-warm);
+            --light-neutral: var(--base-primary);
+            --cool-neutral: var(--base-secondary);
+            --background-color: #fafafa;
+            --surface-color: #ffffff;
+            --text-primary: var(--base-text);
+            --text-secondary: var(--accent-primary);
+            --divider-color: var(--base-secondary);
+            --shadow-1: 0 2px 4px rgba(70, 92, 110, 0.1);
+            --shadow-2: 0 4px 8px rgba(70, 92, 110, 0.12);
+            --shadow-3: 0 8px 16px rgba(70, 92, 110, 0.14);
+            --border-radius: 8px;
+            --spacing-xs: 0.5rem;
+            --spacing-sm: 1rem;
+            --spacing-md: 1.5rem;
+            --spacing-lg: 2rem;
+            --spacing-xl: 3rem;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: var(--base-text);
+            background-color: var(--background-color);
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+            color: white;
+            padding: var(--spacing-xl) 0;
+            text-align: center;
+            box-shadow: var(--shadow-2);
+        }
+
+        .header-logo {
+            max-width: 300px;
+            width: 100%;
+            height: auto;
+            margin-bottom: var(--spacing-md);
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            font-weight: 300;
+            letter-spacing: -0.02em;
+        }
+
+        .header p {
+            margin: var(--spacing-sm) 0 0 0;
+            font-size: 1.1rem;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--spacing-sm);
+        }
+
+        .toc {
+            background: var(--surface-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-1);
+            padding: var(--spacing-lg);
+            margin: var(--spacing-lg) 0;
+        }
+
+        .toc h2 {
+            color: var(--primary-color);
+            font-weight: 400;
+            font-size: 1.5rem;
+            margin: 0 0 var(--spacing-md) 0;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .toc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--spacing-md);
+        }
+
+        .toc-section {
+            background: var(--base-primary);
+            border-radius: var(--border-radius);
+            padding: var(--spacing-md);
+            border-left: 4px solid var(--accent-primary);
+            transition: all 0.3s ease;
+        }
+
+        .toc-section:hover {
+            box-shadow: var(--shadow-2);
+            transform: translateY(-2px);
+        }
+
+        .toc-section h3 {
+            margin: 0 0 var(--spacing-sm) 0;
+            color: var(--text-primary);
+            font-size: 1.1rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .toc-section ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .toc-section li {
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .toc-section a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: var(--spacing-xs) 0;
+            display: block;
+            transition: all 0.3s ease;
+            border-radius: 4px;
+            padding-left: var(--spacing-sm);
+        }
+
+        .toc-section a:hover {
+            color: var(--accent-primary);
+            background-color: rgba(123, 47, 48, 0.08);
+        }
+
+        .content {
+            background: var(--surface-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-1);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .content h2 {
+            color: var(--primary-color);
+            font-weight: 400;
+            font-size: 1.75rem;
+            margin: var(--spacing-lg) 0 var(--spacing-md) 0;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .content h2:first-child {
+            margin-top: 0;
+        }
+
+        .content h3 {
+            color: var(--text-primary);
+            font-weight: 500;
+            font-size: 1.25rem;
+            margin: var(--spacing-md) 0 var(--spacing-sm) 0;
+        }
+
+        .content p {
+            margin-bottom: var(--spacing-sm);
+            color: var(--text-secondary);
+        }
+
+        .content ul, .content ol {
+            margin-bottom: var(--spacing-sm);
+            padding-left: var(--spacing-lg);
+        }
+
+        .content li {
+            margin-bottom: var(--spacing-xs);
+            color: var(--text-secondary);
+        }
+
+        .highlight-box {
+            background: var(--accent-warm);
+            border-left: 4px solid var(--accent-primary);
+            padding: var(--spacing-md);
+            margin: var(--spacing-md) 0;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            box-shadow: var(--shadow-1);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--spacing-sm);
+            margin: var(--spacing-md) 0;
+        }
+
+        .stat-card {
+            background: var(--surface-color);
+            padding: var(--spacing-md);
+            border-radius: var(--border-radius);
+            text-align: center;
+            box-shadow: var(--shadow-1);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            box-shadow: var(--shadow-2);
+            transform: translateY(-2px);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 300;
+            color: var(--primary-color);
+            display: block;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-weight: 400;
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: var(--spacing-lg);
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0.75rem;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--divider-color);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: var(--spacing-lg);
+            padding-left: var(--spacing-lg);
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -0.5rem;
+            top: 0.5rem;
+            width: 1rem;
+            height: 1rem;
+            background: var(--primary-color);
+            border-radius: 50%;
+            box-shadow: 0 0 0 4px var(--surface-color);
+        }
+
+        .timeline-item h4 {
+            margin: 0 0 var(--spacing-xs) 0;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .timeline-item p {
+            margin: 0;
+            color: var(--text-secondary);
+        }
+
+        .icon {
+            width: 1.2em;
+            height: 1.2em;
+            display: inline-block;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .toc-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .container {
+                padding: 0 var(--spacing-sm);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+            <img src="FullLogo_Transparent.png" alt="Next Performer Logo" class="header-logo">
+            <h1>Next Performer</h1>
+            <p>Comprehensive Documentation & Business Plan</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="toc">
+            <h2><i class="fas fa-list"></i> Table of Contents</h2>
+            <div class="toc-grid">
+                <div class="toc-section">
+                    <h3><i class="fas fa-chart-line"></i> Market Analysis</h3>
+                    <ul>
+                        <li><a href="#microniche-analysis">Microniche Analysis</a></li>
+                        <li><a href="#market-sizing">Market Sizing (TAM/SAM/SOM)</a></li>
+                        <li><a href="#competition">Competition Analysis</a></li>
+                        <li><a href="#target-segments">Target Segments</a></li>
+                    </ul>
+                </div>
+                
+                <div class="toc-section">
+                    <h3><i class="fas fa-briefcase"></i> Business Strategy</h3>
+                    <ul>
+                        <li><a href="#business-model">Business Model</a></li>
+                        <li><a href="#monetization">Monetization Strategy</a></li>
+                        <li><a href="#financial-projections">Financial Projections</a></li>
+                        <li><a href="#break-even">Break-Even Analysis</a></li>
+                    </ul>
+                </div>
+                
+                <div class="toc-section">
+                    <h3><i class="fas fa-rocket"></i> Go-to-Market</h3>
+                    <ul>
+                        <li><a href="#gtm-strategy">GTM Strategy</a></li>
+                        <li><a href="#pilot-launch">Pilot Launch Plan</a></li>
+                        <li><a href="#marketing-channels">Marketing Channels</a></li>
+                        <li><a href="#pilot-launch">Rollout Phases</a></li>
+                    </ul>
+                </div>
+                
+                <div class="toc-section">
+                    <h3><i class="fas fa-code"></i> Technology</h3>
+                    <ul>
+                        <li><a href="#tech-stack">Tech Stack</a></li>
+                        <li><a href="#development-roadmap">Development Roadmap</a></li>
+                        <li><a href="#mvp-features">MVP Features</a></li>
+                        <li><a href="#post-mvp">Post-MVP Roadmap</a></li>
+                    </ul>
+                </div>
+                
+                <div class="toc-section">
+                    <h3><i class="fas fa-chart-bar"></i> Metrics & KPIs</h3>
+                    <ul>
+                        <li><a href="#pilot-metrics">Pilot Metrics</a></li>
+                        <li><a href="#expansion-metrics">Expansion Metrics</a></li>
+                        <li><a href="#success-criteria">Success Criteria</a></li>
+                        <li><a href="#growth-flywheel">Growth Flywheel</a></li>
+                    </ul>
+                </div>
+                
+                <div class="toc-section">
+                    <h3><i class="fas fa-target"></i> Execution</h3>
+                    <ul>
+                        <li><a href="#next-steps">Next Steps</a></li>
+                        <li><a href="#timeline">Timeline</a></li>
+                        <li><a href="#risks">Risks & Mitigation</a></li>
+                        <li><a href="#glossary">Glossary</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="content">
+            <h2 id="microniche-analysis"><i class="fas fa-bullseye"></i> Microniche Analysis</h2>
+            <p>Next Performer targets specific microniches within the broader entertainment market:</p>
+            
+            <h3 id="target-segments">Target Segments</h3>
+            <ul>
+                <li><strong>Independent Musicians (Local/Regional)</strong> - Acoustic solo performers (folk, singer-songwriter, indie rock)</li>
+                <li><strong>Comedians (Stand-Up / Improv Newcomers)</strong> - Comedy open mics with 5-min set timers</li>
+                <li><strong>Spoken Word / Poets</strong> - Poetry nights and hybrid events</li>
+                <li><strong>Open Mic Hosts / Venues</strong> - Bars, cafés, kava bars, breweries, comedy clubs</li>
+            </ul>
+            
+            <div class="highlight-box">
+                <strong><i class="fas fa-map-marker-alt"></i> Geographic Focus:</strong> Jacksonville, Orlando, Miami - Florida cities with 50+ recurring open mics already mapped.
+            </div>
+
+            <h2 id="market-sizing"><i class="fas fa-chart-pie"></i> Market Sizing (TAM/SAM/SOM)</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-number">2M</span>
+                    <div class="stat-label">TAM Users</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">50K</span>
+                    <div class="stat-label">TAM Venues</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">$600M-$1B</span>
+                    <div class="stat-label">TAM Revenue Potential</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">200K</span>
+                    <div class="stat-label">SAM Users</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">5K</span>
+                    <div class="stat-label">SAM Venues</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">$60M-$100M</span>
+                    <div class="stat-label">SAM Revenue Potential</div>
+                </div>
+            </div>
+
+            <h2 id="competition"><i class="fas fa-trophy"></i> Competition Analysis</h2>
+            <p>No dominant app exists for open mic scheduling. Current solutions include:</p>
+            <ul>
+                <li><strong>Meetup</strong> - Strong event discovery, no slot signup</li>
+                <li><strong>Eventbrite</strong> - Strong ticketing, no slot management</li>
+                <li><strong>Facebook</strong> - Community-driven, limited functionality</li>
+                <li><strong>OpenMicX</strong> - Streaming focus, weak discovery</li>
+            </ul>
+
+            <h2 id="business-model"><i class="fas fa-building"></i> Business Model</h2>
+            <p><strong>Freemium SaaS Platform</strong> with dual revenue streams:</p>
+            
+            <h3>Hosts</h3>
+            <ul>
+                <li><strong>Free Tier:</strong> 1 event, 1 venue, 1 date, signup sheet only</li>
+                <li><strong>Pro Tier ($10/mo):</strong> Multiple events/venues, lineup timers, analytics</li>
+            </ul>
+            
+            <h3>Venues</h3>
+            <ul>
+                <li><strong>$50/mo</strong> subscription for featured placement and sponsorships</li>
+            </ul>
+            
+            <h3>Performers</h3>
+            <ul>
+                <li><strong>Always Free</strong> - Growth lever and virality driver</li>
+            </ul>
+
+            <h2 id="monetization"><i class="fas fa-dollar-sign"></i> Monetization Strategy</h2>
+            <h2 id="break-even"><i class="fas fa-balance-scale"></i> Break-Even Analysis</h2>
+            <div class="highlight-box">
+                <strong><i class="fas fa-balance-scale"></i> Break-Even Point:</strong> Only 8 Pro Hosts OR 2 Venues needed to cover $71.25/month operating costs.
+            </div>
+            
+            <h3>Revenue Streams</h3>
+            <ul>
+                <li><strong>Host Subscriptions:</strong> $10/month Pro tier</li>
+                <li><strong>Venue Sponsorships:</strong> $50/month featured placement</li>
+                <li><strong>Future:</strong> Premium performer features, local advertising</li>
+            </ul>
+
+            <h2 id="financial-projections"><i class="fas fa-chart-line"></i> Financial Projections</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-number">$24K</span>
+                    <div class="stat-label">Year 1 ARR</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">$120K</span>
+                    <div class="stat-label">Year 2 ARR</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">$480K</span>
+                    <div class="stat-label">Year 3 ARR</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">$71.25</span>
+                    <div class="stat-label">Monthly Costs</div>
+                </div>
+            </div>
+
+            <h2 id="gtm-strategy"><i class="fas fa-rocket"></i> Go-to-Market Strategy</h2>
+            <p><strong><i class="fas fa-map-marker-alt"></i> Geographic Focus:</strong> Jacksonville, FL pilot with expansion to Orlando & Miami</p>
+            
+            <h3 id="marketing-channels">Marketing Channels</h3>
+            <ul>
+                <li><strong>Digital:</strong> SEO/SEM, social media ads, content marketing</li>
+                <li><strong>Local:</strong> Venue partnerships, street-level marketing, flyers</li>
+                <li><strong>Community:</strong> Facebook groups, Reddit, word-of-mouth</li>
+            </ul>
+
+            <h2 id="pilot-launch"><i class="fas fa-play-circle"></i> Pilot Launch Plan</h2>
+            <p><strong><i class="fas fa-calendar-alt"></i> 90-Day Jacksonville Pilot</strong></p>
+            
+            <div class="timeline">
+                <div class="timeline-item">
+                    <h4>Month 1</h4>
+                    <p>Recruit 3 pilot venues, 5 hosts, seed 10-20 events, launch marketing</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>Month 2</h4>
+                    <p>Expand to 10 venues, hit 100 performers, run launch event</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>Month 3</h4>
+                    <p>200 performers, 5 paid venues, 20 paid hosts</p>
+                </div>
+            </div>
+
+            <h2 id="tech-stack"><i class="fas fa-cogs"></i> Technology Stack</h2>
+            <ul>
+                <li><strong>Frontend:</strong> React / Next.js (mobile-first PWA)</li>
+                <li><strong>Backend:</strong> Node.js / Express (REST API)</li>
+                <li><strong>Database:</strong> PostgreSQL (DigitalOcean managed)</li>
+                <li><strong>Hosting:</strong> DigitalOcean Droplet ($50/mo)</li>
+                <li><strong>Auth:</strong> JWT-based email login</li>
+                <li><strong>Payments:</strong> Stripe integration</li>
+            </ul>
+
+            <h2 id="development-roadmap"><i class="fas fa-road"></i> Development Roadmap</h2>
+            <p><strong><i class="fas fa-clock"></i> 12-Week MVP Development Cycle</strong></p>
+            
+            <div class="timeline">
+                <div class="timeline-item">
+                    <h4>Weeks 1-2: Foundation</h4>
+                    <p>Repo setup, CI/CD, PostgreSQL schema, basic auth, landing page</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>Weeks 3-4: Performer Signups</h4>
+                    <p>Event creation, listing, signup workflow, slot validation</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>Weeks 5-6: Host Tools</h4>
+                    <p>Host dashboard, lineup management, export functionality</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>Weeks 7-8: Payments</h4>
+                    <p>Stripe integration, subscription tiers, admin dashboard</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>Weeks 9-10: Polish</h4>
+                    <p>Notifications, waitlist, mobile UX, analytics</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>Weeks 11-12: Launch</h4>
+                    <p>Seed events, onboard venues, marketing test</p>
+                </div>
+            </div>
+
+            <h2 id="mvp-features"><i class="fas fa-star"></i> MVP Features</h2>
+            <ul>
+                <li>Event directory & discovery ("open mic near me")</li>
+                <li>Digital signup workflow with time slots</li>
+                <li>Host dashboard with lineup view/edit</li>
+                <li>Email/SMS notifications</li>
+                <li>Basic performer profiles</li>
+                <li>Waitlist functionality</li>
+            </ul>
+
+            <h2 id="post-mvp"><i class="fas fa-rocket"></i> Post-MVP Roadmap</h2>
+            <ul>
+                <li>Native mobile apps (React Native or Expo)</li>
+                <li>Performer profiles + ratings</li>
+                <li>Venue discovery map</li>
+                <li>SMS notifications (Twilio)</li>
+                <li>Referral program (hosts invite other hosts)</li>
+            </ul>
+
+            <h2 id="pilot-metrics"><i class="fas fa-chart-bar"></i> Pilot Metrics (First 3 Months)</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-number">5</span>
+                    <div class="stat-label">Venues Onboarded</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">10</span>
+                    <div class="stat-label">Hosts Onboarded</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">200</span>
+                    <div class="stat-label">Performer Accounts</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">50+</span>
+                    <div class="stat-label">Weekly Signups</div>
+                </div>
+            </div>
+
+            <h2 id="expansion-metrics"><i class="fas fa-expand-arrows-alt"></i> Expansion Metrics (Months 3-12)</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-number">100</span>
+                    <div class="stat-label">Venues Across FL</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">1,000</span>
+                    <div class="stat-label">Pro Hosts</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">10,000</span>
+                    <div class="stat-label">Performer Signups</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">70%</span>
+                    <div class="stat-label">Host Retention</div>
+                </div>
+            </div>
+
+            <h2 id="success-criteria"><i class="fas fa-check-circle"></i> Success Criteria</h2>
+            <div class="highlight-box">
+                <strong><i class="fas fa-expand-arrows-alt"></i> Expansion Criteria (Ready for Orlando/Miami):</strong>
+                <ul>
+                    <li>200+ active performers</li>
+                    <li>20+ Pro Hosts</li>
+                    <li>5+ paying venues</li>
+                    <li>CAC payback confirmed (&lt;10 months for hosts, &lt;3 months for venues)</li>
+                </ul>
+            </div>
+
+            <h2 id="growth-flywheel"><i class="fas fa-sync-alt"></i> Growth Flywheel</h2>
+            <ol>
+                <li>Performers search "open mic near me" → find app</li>
+                <li>Hosts list events → attract performers</li>
+                <li>Venues see value → pay for sponsorship</li>
+                <li>Venues bring in more hosts → repeat loop</li>
+            </ol>
+
+            <h2 id="next-steps"><i class="fas fa-forward"></i> Next Steps</h2>
+            <ol>
+                <li>Recruit 3-5 pilot venues in Jacksonville</li>
+                <li>Launch landing page + collect 200 performer emails</li>
+                <li>Build MVP prototype (10-12 weeks)</li>
+                <li>Run soft launch with weekly event partners</li>
+                <li>Iterate based on user feedback</li>
+            </ol>
+
+            <h2 id="timeline"><i class="fas fa-calendar-check"></i> Timeline</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <h4>Phase 1 (0-3 months) - Jacksonville Pilot</h4>
+                    <p>Launch landing page + app prototype, onboard first 3-5 venues manually, run $500/mo FB/IG ad campaign</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>Phase 2 (3-9 months) - Florida Expansion</h4>
+                    <p>Expand to Orlando, Miami, publish SEO content for "Florida open mics", double ad spend ($1,000/mo)</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>Phase 3 (9-18 months) - SE U.S. Rollout</h4>
+                    <p>Add Atlanta, Nashville, Austin, start venue sponsorship packages ($50/mo), introduce referral program for hosts</p>
+                </div>
+            </div>
+
+            <h2 id="risks"><i class="fas fa-exclamation-triangle"></i> Risks & Mitigation</h2>
+            <ul>
+                <li><strong>Adoption Risk:</strong> Hosts may resist → free tier mitigates barrier</li>
+                <li><strong>Competition Risk:</strong> Larger platforms could pivot → defend niche via slot mgmt focus</li>
+                <li><strong>Growth Risk:</strong> Scaling requires venue partnerships → prioritize high-value accounts</li>
+            </ul>
+
+            <h2 id="glossary"><i class="fas fa-book"></i> Glossary</h2>
+            <ul>
+                <li><strong>ARR (Annual Recurring Revenue):</strong> Revenue earned from subscriptions in a year</li>
+                <li><strong>ARPU (Average Revenue Per User):</strong> Average revenue generated per user</li>
+                <li><strong>CAC (Customer Acquisition Cost):</strong> Average cost to acquire a paying customer</li>
+                <li><strong>Churn:</strong> Percentage of customers that cancel in a given period</li>
+                <li><strong>Freemium:</strong> Basic product free, advanced features require payment</li>
+                <li><strong>KPI (Key Performance Indicator):</strong> Metrics used to measure success</li>
+                <li><strong>LTV (Lifetime Value):</strong> Total expected revenue from a customer</li>
+                <li><strong>MRR (Monthly Recurring Revenue):</strong> Revenue from subscriptions per month</li>
+                <li><strong>MVP (Minimum Viable Product):</strong> Smallest version that delivers value</li>
+                <li><strong>SaaS (Software-as-a-Service):</strong> Cloud-based software via subscription</li>
+                <li><strong>SAM (Serviceable Available Market):</strong> Portion of market you can realistically serve</li>
+                <li><strong>SOM (Serviceable Obtainable Market):</strong> Subset of SAM you can realistically capture</li>
+                <li><strong>TAM (Total Addressable Market):</strong> Entire potential market if adoption was 100%</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

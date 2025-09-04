@@ -1,0 +1,85 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: grabthemic_postgres
+    environment:
+      POSTGRES_DB: grabthemic
+      POSTGRES_USER: grabthemic_user
+      POSTGRES_PASSWORD: grabthemic_password
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init:/docker-entrypoint-initdb.d
+    networks:
+      - grabthemic_network
+
+  # Backend API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: grabthemic_backend
+    environment:
+      NODE_ENV: development
+      PORT: 3001
+      DATABASE_URL: postgresql://grabthemic_user:grabthemic_password@postgres:5432/grabthemic
+      JWT_SECRET: your-super-secret-jwt-key-change-in-production
+      CORS_ORIGIN: http://localhost:3002
+    ports:
+      - "3001:3001"
+    depends_on:
+      - postgres
+    volumes:
+      - ./backend:/app
+      - ./config:/app/config
+      - /app/node_modules
+    networks:
+      - grabthemic_network
+
+  # Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: grabthemic_frontend
+    environment:
+      REACT_APP_API_URL: http://localhost:3001
+      REACT_APP_ENV: development
+    ports:
+      - "3002:3000"
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    networks:
+      - grabthemic_network
+
+  # Nginx (for production)
+  nginx:
+    image: nginx:alpine
+    container_name: grabthemic_nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/ssl:/etc/nginx/ssl
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - grabthemic_network
+    profiles:
+      - production
+
+volumes:
+  postgres_data:
+
+networks:
+  grabthemic_network:
+    driver: bridge

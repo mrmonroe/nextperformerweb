@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Next Performer - The Open Mic App</title>
+    <meta name="description" content="Next Performer - The Open Mic App. Never miss your slot again. Find open mics near you, sign up for slots, and track your performances. Join the waitlist.">
+    <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.6/build/pure-min.css" integrity="sha384-Uu6IeWbM+gzNVXJcM9XV3SohHtmWE+3VGi496jvgX1jyvDTXfdK+rfZc8C1Aehk5" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.6/build/grids-responsive-min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Base Colors */
+            --base-primary: #D9D2C1;
+            --base-secondary: #B4C5B5;
+            --base-text: #465C6E;
+            
+            /* Accent Colors */
+            --accent-primary: #7B2F30;
+            --accent-secondary: #CC713F;
+            --accent-warm: #C7AB70;
+            
+            /* Legacy variables for compatibility */
+            --primary-color: var(--accent-primary);
+            --secondary-color: var(--accent-secondary);
+            --accent-color: var(--base-text);
+            --warm-neutral: var(--accent-warm);
+            --light-neutral: var(--base-primary);
+            --cool-neutral: var(--base-secondary);
+            --background-color: #fafafa;
+            --surface-color: #ffffff;
+            --text-primary: var(--base-text);
+            --text-secondary: var(--accent-primary);
+            --divider-color: var(--base-secondary);
+            --shadow-1: 0 2px 4px rgba(70, 92, 110, 0.1);
+            --shadow-2: 0 4px 8px rgba(70, 92, 110, 0.12);
+            --shadow-3: 0 8px 16px rgba(70, 92, 110, 0.14);
+            --border-radius: 8px;
+            --spacing-xs: 0.5rem;
+            --spacing-sm: 1rem;
+            --spacing-md: 1.5rem;
+            --spacing-lg: 2rem;
+            --spacing-xl: 3rem;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: var(--base-text);
+            background-color: var(--background-color);
+            margin: 0;
+            padding: 0;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+            color: white;
+            padding: var(--spacing-xl) 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/><circle cx="10" cy="60" r="0.5" fill="white" opacity="0.1"/><circle cx="90" cy="40" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-logo {
+            max-width: 400px;
+            width: 100%;
+            height: auto;
+            margin-bottom: var(--spacing-lg);
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+        }
+
+        .hero h1 {
+            font-family: 'Libre Baskerville', serif;
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin: 0 0 var(--spacing-sm) 0;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .hero .subtitle {
+            font-size: 1.4rem;
+            font-weight: 500;
+            margin: 0 0 var(--spacing-sm) 0;
+            opacity: 0.9;
+            font-style: italic;
+        }
+
+        .hero .tagline {
+            font-size: 1.1rem;
+            font-weight: 400;
+            margin: 0 0 var(--spacing-xl) 0;
+            opacity: 0.8;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--spacing-sm);
+        }
+
+        .signup-form {
+            background: var(--surface-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-3);
+            padding: var(--spacing-lg);
+            margin: -var(--spacing-lg) auto var(--spacing-xl) auto;
+            max-width: 500px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .signup-form h2 {
+            color: var(--primary-color);
+            font-family: 'Libre Baskerville', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 0 0 var(--spacing-md) 0;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: var(--spacing-md);
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: var(--spacing-xs);
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: var(--spacing-sm);
+            border: 2px solid var(--divider-color);
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+        }
+
+        .btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: var(--spacing-sm) var(--spacing-lg);
+            border-radius: var(--border-radius);
+            font-size: 1.1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-2);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .features {
+            padding: var(--spacing-xl) 0;
+            background: var(--surface-color);
+        }
+
+        .features h2 {
+            text-align: center;
+            color: var(--primary-color);
+            font-family: 'Libre Baskerville', serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 0 0 var(--spacing-xl) 0;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--spacing-lg);
+        }
+
+        .feature-card {
+            text-align: center;
+            padding: var(--spacing-lg);
+            border-radius: var(--border-radius);
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-2);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .feature-card h3 {
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            font-weight: 500;
+            margin: 0 0 var(--spacing-sm) 0;
+        }
+
+        .feature-card p {
+            color: var(--text-secondary);
+            margin: 0;
+        }
+
+        .problem {
+            padding: var(--spacing-xl) 0;
+            background: var(--background-color);
+        }
+
+        .problem h2 {
+            text-align: center;
+            color: var(--text-primary);
+            font-family: 'Libre Baskerville', serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 0 0 var(--spacing-lg) 0;
+        }
+
+        .problem-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-lg);
+        }
+
+        .problem-item {
+            background: var(--surface-color);
+            padding: var(--spacing-lg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-1);
+            text-align: center;
+        }
+
+        .problem-icon {
+            font-size: 2.5rem;
+            color: var(--accent-color);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .problem-item h3 {
+            color: var(--text-primary);
+            font-size: 1.3rem;
+            font-weight: 500;
+            margin: 0 0 var(--spacing-sm) 0;
+        }
+
+        .problem-item p {
+            color: var(--text-secondary);
+            margin: 0;
+        }
+
+        .stats {
+            padding: var(--spacing-xl) 0;
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .stats h2 {
+            text-align: center;
+            font-family: 'Libre Baskerville', serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 0 0 var(--spacing-xl) 0;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--spacing-lg);
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: var(--spacing-md);
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 700;
+            display: block;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .testimonials {
+            padding: var(--spacing-xl) 0;
+            background: var(--surface-color);
+        }
+
+        .testimonials h2 {
+            text-align: center;
+            color: var(--primary-color);
+            font-family: 'Libre Baskerville', serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 0 0 var(--spacing-xl) 0;
+        }
+
+        .testimonial-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--spacing-lg);
+        }
+
+        .testimonial {
+            background: var(--background-color);
+            padding: var(--spacing-lg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-1);
+            position: relative;
+        }
+
+        .testimonial::before {
+            content: '"';
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            font-size: 4rem;
+            color: var(--primary-color);
+            font-family: 'Libre Baskerville', serif;
+        }
+
+        .testimonial p {
+            color: var(--text-secondary);
+            font-style: italic;
+            margin: 0 0 var(--spacing-md) 0;
+            padding-top: var(--spacing-md);
+        }
+
+        .testimonial-author {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .cta {
+            padding: var(--spacing-xl) 0;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            color: white;
+            text-align: center;
+        }
+
+        .cta h2 {
+            font-family: 'Libre Baskerville', serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 0 0 var(--spacing-md) 0;
+        }
+
+        .cta p {
+            font-size: 1.2rem;
+            margin: 0 0 var(--spacing-lg) 0;
+            opacity: 0.9;
+        }
+
+        .cta .btn {
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        .footer {
+            background: var(--secondary-color);
+            color: white;
+            padding: var(--spacing-lg) 0;
+            text-align: center;
+        }
+
+        .footer-logo {
+            max-width: 200px;
+            width: 100%;
+            height: auto;
+            margin-bottom: var(--spacing-md);
+            filter: brightness(0) invert(1);
+            opacity: 0.9;
+        }
+
+        .footer p {
+            margin: 0;
+            opacity: 0.8;
+        }
+
+        .social-links {
+            margin: var(--spacing-md) 0;
+        }
+
+        .social-links a {
+            color: white;
+            font-size: 1.5rem;
+            margin: 0 var(--spacing-sm);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .social-links a:hover {
+            color: var(--primary-light);
+        }
+
+        .urgency {
+            background: var(--accent-color);
+            color: white;
+            padding: var(--spacing-sm);
+            text-align: center;
+            font-weight: 500;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.8; }
+            100% { opacity: 1; }
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero .subtitle {
+                font-size: 1.2rem;
+            }
+            
+            .features-grid,
+            .problem-grid,
+            .stats-grid,
+            .testimonial-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 0 var(--spacing-sm);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="urgency">
+        <i class="fas fa-exclamation-circle"></i> Limited Early Access - Join 500+ musicians already on the waitlist!
+    </div>
+
+    <div class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <img src="FullLogo_Transparent.png" alt="Next Performer Logo" class="hero-logo">
+                <h1>The Open Mic App</h1>
+                <p class="subtitle">Never Miss Your Slot Again</p>
+                <p class="tagline">Find open mics near you, sign up for slots, and track your performances all in one place. Join hundreds of musicians, comedians, and poets who are already on the waitlist.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="signup-form">
+            <h2>Join the Waitlist</h2>
+            <form id="signupForm" action="#" method="POST">
+                <div class="form-group">
+                    <label for="email">Email Address *</label>
+                    <input type="email" id="email" name="email" required placeholder="your@email.com">
+                </div>
+                
+                <div class="form-group">
+                    <label for="name">Full Name *</label>
+                    <input type="text" id="name" name="name" required placeholder="Your full name">
+                </div>
+                
+                <div class="form-group">
+                    <label for="role">I am a... *</label>
+                    <select id="role" name="role" required>
+                        <option value="">Select your role</option>
+                        <option value="performer">Musician/Performer</option>
+                        <option value="comedian">Comedian</option>
+                        <option value="poet">Poet/Spoken Word</option>
+                        <option value="host">Open Mic Host</option>
+                        <option value="venue">Venue Owner</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="location">Location *</label>
+                    <select id="location" name="location" required>
+                        <option value="">Select your area</option>
+                        <option value="jacksonville">Jacksonville, FL</option>
+                        <option value="orlando">Orlando, FL</option>
+                        <option value="miami">Miami, FL</option>
+                        <option value="tampa">Tampa, FL</option>
+                        <option value="atlanta">Atlanta, GA</option>
+                        <option value="nashville">Nashville, TN</option>
+                        <option value="austin">Austin, TX</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="btn">
+                    <i class="fas fa-rocket"></i> Get Early Access
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="problem">
+        <div class="container">
+            <h2>The Problem We're Solving</h2>
+            <div class="problem-grid">
+                <div class="problem-item">
+                    <div class="problem-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h3>Hard to Find Events</h3>
+                    <p>Open mics are scattered across Facebook groups, websites, and word-of-mouth. No central place to discover what's happening near you.</p>
+                </div>
+                
+                <div class="problem-item">
+                    <div class="problem-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h3>Miss Your Slot</h3>
+                    <p>Show up too late and the signup sheet is full. Arrive too early and waste time waiting. No way to reserve your spot in advance.</p>
+                </div>
+                
+                <div class="problem-item">
+                    <div class="problem-icon">
+                        <i class="fas fa-clipboard-list"></i>
+                    </div>
+                    <h3>Chaotic Signups</h3>
+                    <p>Paper signup sheets get messy, hosts lose track of who's next, and performers don't know when they'll go on stage.</p>
+                </div>
+                
+                <div class="problem-item">
+                    <div class="problem-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <h3>No Tracking</h3>
+                    <p>Can't keep track of where you've performed, what you played, or how the audience responded. No performance history.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="features">
+        <div class="container">
+            <h2>How We're Fixing It</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-map-marked-alt"></i>
+                    </div>
+                    <h3>Find Open Mics Near You</h3>
+                    <p>Discover all open mics in your area with detailed information about times, locations, and what to expect.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <h3>Reserve Your Slot</h3>
+                    <p>Sign up for specific time slots in advance. Never show up to a full signup sheet again.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <h3>Get Reminders</h3>
+                    <p>Receive notifications before your performance time and updates about event changes.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Track Your Journey</h3>
+                    <p>Keep a record of where you've performed, what you played, and how your skills are developing.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>Connect with Community</h3>
+                    <p>Meet other performers, discover new venues, and build your local music community.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3>Mobile-First Design</h3>
+                    <p>Access everything from your phone. Perfect for checking in at venues and managing your performances on the go.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="stats">
+        <div class="container">
+            <h2>Join the Movement</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-number">500+</span>
+                    <div class="stat-label">Musicians on Waitlist</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">50+</span>
+                    <div class="stat-label">Venues Interested</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">3</span>
+                    <div class="stat-label">Cities Launching</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">2024</span>
+                    <div class="stat-label">Launch Year</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="testimonials">
+        <div class="container">
+            <h2>What Musicians Are Saying</h2>
+            <div class="testimonial-grid">
+                <div class="testimonial">
+                    <p>"I've been playing open mics for 3 years and this is exactly what we need. No more showing up to full signup sheets!"</p>
+                    <div class="testimonial-author">- Sarah M., Singer-Songwriter</div>
+                </div>
+                
+                <div class="testimonial">
+                    <p>"As a venue owner, I can't wait to have a digital system instead of managing paper signup sheets every week."</p>
+                    <div class="testimonial-author">- Mike R., Coffee Shop Owner</div>
+                </div>
+                
+                <div class="testimonial">
+                    <p>"Finally, a way to track all my performances and see my growth over time. This is going to be a game-changer."</p>
+                    <div class="testimonial-author">- Alex T., Comedian</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="cta">
+        <div class="container">
+            <h2>Ready to Never Miss Your Slot Again?</h2>
+            <p>Join hundreds of musicians who are already on the waitlist for early access to the Open Mic App.</p>
+            <a href="#signupForm" class="btn">
+                <i class="fas fa-rocket"></i> Join the Waitlist Now
+            </a>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="container">
+            <img src="FullLogo_Transparent.png" alt="Next Performer Logo" class="footer-logo">
+            <div class="social-links">
+                <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                <a href="#" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+            </div>
+            <p>&copy; 2024 Next Performer. All rights reserved.</p>
+            <p>Launching first in Jacksonville, Orlando, and Miami, FL</p>
+        </div>
+    </div>
+
+    <script>
+        // Form submission handling
+        document.getElementById('signupForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get form data
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData);
+            
+            // Simple validation
+            if (!data.email || !data.name || !data.role || !data.location) {
+                alert('Please fill in all required fields.');
+                return;
+            }
+            
+            // Simulate form submission
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Joining...';
+            submitBtn.disabled = true;
+            
+            // Simulate API call
+            setTimeout(() => {
+                alert('Thank you for joining the waitlist! We\'ll notify you when the app launches.');
+                this.reset();
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+                
+                // Scroll to top
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }, 2000);
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add some interactivity to the urgency banner
+        const urgencyBanner = document.querySelector('.urgency');
+        if (urgencyBanner) {
+            urgencyBanner.addEventListener('click', function() {
+                document.querySelector('#signupForm').scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            });
+        }
+    </script>
+</body>
+</html>
