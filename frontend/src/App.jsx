@@ -21,6 +21,7 @@ import VenuesPage from './pages/VenuesPage'
 import ProfilePage from './pages/ProfilePage'
 import AdminLoginPage from './pages/AdminLoginPage'
 import AdminPanelPage from './pages/AdminPanelPage'
+import PublicEventsPage from './pages/PublicEventsPage'
 
 // Hooks
 import { useAuth } from './hooks/useAuth'
@@ -83,6 +84,7 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/events" element={<PublicEventsPage />} />
           
           {/* Admin routes */}
           <Route path="/admin/login" element={<AdminLoginPage />} />

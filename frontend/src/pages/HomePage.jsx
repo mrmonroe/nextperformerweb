@@ -44,6 +44,14 @@ export default function HomePage() {
                 </Link>
                 
                 <Link
+                  to="/events"
+                  className="btn-secondary btn-lg px-8 py-4 text-lg font-semibold"
+                >
+                  <Calendar className="mr-2 h-5 w-5" />
+                  View Events
+                </Link>
+                
+                <Link
                   to="/login"
                   className="btn-outline btn-lg px-8 py-4 text-lg font-semibold"
                 >
