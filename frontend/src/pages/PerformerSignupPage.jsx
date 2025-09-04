@@ -332,22 +332,20 @@ export default function PerformerSignupPage() {
                   required
                 >
                   <option value="">Choose a timeslot...</option>
-                  {event.timeslots?.map((timeslot) => (
+                  {event.timeslots?.filter(timeslot => timeslot.spots_remaining > 0).map((timeslot) => (
                     <option 
                       key={timeslot.id} 
                       value={timeslot.id}
-                      disabled={timeslot.spots_remaining <= 0}
                     >
-                      {timeslot.name} - {formatTime(timeslot.start_time)} to {formatTime(timeslot.end_time)}
-                      {timeslot.spots_remaining <= 0 ? ' (Full)' : ` (${timeslot.spots_remaining} spots left)`}
+                      {formatTime(timeslot.start_time)} - {formatTime(timeslot.end_time)}
                     </option>
                   ))}
                 </select>
                 {errors.timeslotId && (
                   <p className="mt-1 text-sm text-red-600">{errors.timeslotId}</p>
                 )}
-                {event.timeslots?.length === 0 && (
-                  <p className="mt-1 text-sm text-gray-500">No timeslots available for this event</p>
+                {event.timeslots?.filter(timeslot => timeslot.spots_remaining > 0).length === 0 && (
+                  <p className="mt-1 text-sm text-gray-500">No open timeslots available for this event</p>
                 )}
               </div>
 
