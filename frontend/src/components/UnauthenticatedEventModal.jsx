@@ -132,10 +132,6 @@ export default function UnauthenticatedEventModal({ event, isOpen, onClose }) {
             </div>
           )}
 
-          {/* Creator */}
-          <div className="text-sm text-gray-500">
-            Created by {event.creator?.name || 'Anonymous'}
-          </div>
         </div>
 
         {/* Action Buttons */}
