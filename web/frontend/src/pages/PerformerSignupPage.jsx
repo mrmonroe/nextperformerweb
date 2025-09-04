@@ -236,171 +236,170 @@ export default function PerformerSignupPage() {
               </div>
             </div>
           </div>
-            
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Timeslot Selection */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Select Timeslot <span className="text-red-500">*</span>
-                </label>
-                <select
-                  name="timeslotId"
-                  value={formData.timeslotId}
-                  onChange={handleInputChange}
-                  className={`input w-full ${errors.timeslotId ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
-                  required
-                >
-                  <option value="">Choose a timeslot...</option>
-                  {event.timeslots?.filter(timeslot => timeslot.spots_remaining > 0).map((timeslot) => (
-                    <option 
-                      key={timeslot.id} 
-                      value={timeslot.id}
-                    >
-                      {formatTime(timeslot.start_time)} - {formatTime(timeslot.end_time)}
-                    </option>
-                  ))}
-                </select>
-                {errors.timeslotId && (
-                  <p className="mt-1 text-sm text-red-600">{errors.timeslotId}</p>
-                )}
-                {event.timeslots?.filter(timeslot => timeslot.spots_remaining > 0).length === 0 && (
-                  <p className="mt-1 text-sm text-gray-500">No open timeslots available for this event</p>
-                )}
-              </div>
-
-              {/* Performer Name */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Performer Name <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  name="performerName"
-                  value={formData.performerName}
-                  onChange={handleInputChange}
-                  className={`input w-full ${errors.performerName ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
-                  placeholder="Enter your stage name or real name"
-                />
-                {errors.performerName && (
-                  <p className="mt-1 text-sm text-red-600">{errors.performerName}</p>
-                )}
-              </div>
-
-              {/* Performance Type */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Performance Type <span className="text-red-500">*</span>
-                </label>
-                <select
-                  name="performanceType"
-                  value={formData.performanceType}
-                  onChange={handleInputChange}
-                  className={`input w-full ${errors.performanceType ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
-                  required
-                >
-                  <option value="">Select your performance type...</option>
-                  <option value="Singer">Singer</option>
-                  <option value="Musician">Musician</option>
-                  <option value="Comedian">Comedian</option>
-                  <option value="Poet">Poet</option>
-                  <option value="Dancer">Dancer</option>
-                  <option value="Actor">Actor</option>
-                  <option value="Magician">Magician</option>
-                  <option value="Stand-up Comedian">Stand-up Comedian</option>
-                  <option value="Rapper">Rapper</option>
-                  <option value="Instrumentalist">Instrumentalist</option>
-                  <option value="Spoken Word">Spoken Word</option>
-                  <option value="Storyteller">Storyteller</option>
-                  <option value="Other">Other</option>
-                </select>
-                {errors.performanceType && (
-                  <p className="mt-1 text-sm text-red-600">{errors.performanceType}</p>
-                )}
-              </div>
-
-              {/* Email */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Email <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  className={`input w-full ${errors.email ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
-                  placeholder="your@email.com"
-                />
-                {errors.email && (
-                  <p className="mt-1 text-sm text-red-600">{errors.email}</p>
-                )}
-              </div>
-
-              {/* Phone */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Phone <span className="text-gray-500">(Optional)</span>
-                </label>
-                <input
-                  type="tel"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleInputChange}
-                  className={`input w-full ${errors.phone ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
-                  placeholder="(555) 123-4567"
-                />
-                {errors.phone && (
-                  <p className="mt-1 text-sm text-red-600">{errors.phone}</p>
-                )}
-              </div>
-
-
-              {/* Account Creation */}
-              <div className="border-t border-gray-200 pt-6">
-                <div className="flex items-center mb-4">
-                  <input
-                    type="checkbox"
-                    name="createAccount"
-                    checked={formData.createAccount}
-                    onChange={handleInputChange}
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                  />
-                  <label className="ml-2 block text-sm font-medium text-gray-700">
-                    Create an account to manage your signups
-                  </label>
-                </div>
-                <p className="text-sm text-gray-500 mb-4">
-                  Creating an account allows you to view and manage your event signups, get notifications, and more.
-                </p>
-                
-                {formData.createAccount && (
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Password <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="password"
-                      name="password"
-                      value={formData.password}
-                      onChange={handleInputChange}
-                      className={`input w-full ${errors.password ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
-                      placeholder="Enter a password (min 6 characters)"
-                    />
-                    {errors.password && (
-                      <p className="mt-1 text-sm text-red-600">{errors.password}</p>
-                    )}
-                  </div>
-                )}
-              </div>
-
-              {/* Submit Button */}
-              <button
-                type="submit"
-                disabled={submitting}
-                className="btn-primary w-full py-3 text-lg font-medium disabled:opacity-50"
+          
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Timeslot Selection */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Select Timeslot <span className="text-red-500">*</span>
+              </label>
+              <select
+                name="timeslotId"
+                value={formData.timeslotId}
+                onChange={handleInputChange}
+                className={`input w-full ${errors.timeslotId ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
+                required
               >
-                {submitting ? 'Signing Up...' : 'Sign Up for Event'}
-              </button>
+                <option value="">Choose a timeslot...</option>
+                {event.timeslots?.filter(timeslot => timeslot.spots_remaining > 0).map((timeslot) => (
+                  <option 
+                    key={timeslot.id} 
+                    value={timeslot.id}
+                  >
+                    {formatTime(timeslot.start_time)} - {formatTime(timeslot.end_time)}
+                  </option>
+                ))}
+              </select>
+              {errors.timeslotId && (
+                <p className="mt-1 text-sm text-red-600">{errors.timeslotId}</p>
+              )}
+              {event.timeslots?.filter(timeslot => timeslot.spots_remaining > 0).length === 0 && (
+                <p className="mt-1 text-sm text-gray-500">No open timeslots available for this event</p>
+              )}
+            </div>
+
+            {/* Performer Name */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Performer Name <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                name="performerName"
+                value={formData.performerName}
+                onChange={handleInputChange}
+                className={`input w-full ${errors.performerName ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
+                placeholder="Enter your stage name or real name"
+              />
+              {errors.performerName && (
+                <p className="mt-1 text-sm text-red-600">{errors.performerName}</p>
+              )}
+            </div>
+
+            {/* Performance Type */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Performance Type <span className="text-red-500">*</span>
+              </label>
+              <select
+                name="performanceType"
+                value={formData.performanceType}
+                onChange={handleInputChange}
+                className={`input w-full ${errors.performanceType ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
+                required
+              >
+                <option value="">Select your performance type...</option>
+                <option value="Singer">Singer</option>
+                <option value="Musician">Musician</option>
+                <option value="Comedian">Comedian</option>
+                <option value="Poet">Poet</option>
+                <option value="Dancer">Dancer</option>
+                <option value="Actor">Actor</option>
+                <option value="Magician">Magician</option>
+                <option value="Stand-up Comedian">Stand-up Comedian</option>
+                <option value="Rapper">Rapper</option>
+                <option value="Instrumentalist">Instrumentalist</option>
+                <option value="Spoken Word">Spoken Word</option>
+                <option value="Storyteller">Storyteller</option>
+                <option value="Other">Other</option>
+              </select>
+              {errors.performanceType && (
+                <p className="mt-1 text-sm text-red-600">{errors.performanceType}</p>
+              )}
+            </div>
+
+            {/* Email */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Email <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                className={`input w-full ${errors.email ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
+                placeholder="your@email.com"
+              />
+              {errors.email && (
+                <p className="mt-1 text-sm text-red-600">{errors.email}</p>
+              )}
+            </div>
+
+            {/* Phone */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Phone <span className="text-gray-500">(Optional)</span>
+              </label>
+              <input
+                type="tel"
+                name="phone"
+                value={formData.phone}
+                onChange={handleInputChange}
+                className={`input w-full ${errors.phone ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
+                placeholder="(555) 123-4567"
+              />
+              {errors.phone && (
+                <p className="mt-1 text-sm text-red-600">{errors.phone}</p>
+              )}
+            </div>
+
+            {/* Account Creation */}
+            <div className="border-t border-gray-200 pt-6">
+              <div className="flex items-center mb-4">
+                <input
+                  type="checkbox"
+                  name="createAccount"
+                  checked={formData.createAccount}
+                  onChange={handleInputChange}
+                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                />
+                <label className="ml-2 block text-sm font-medium text-gray-700">
+                  Create an account to manage your signups
+                </label>
+              </div>
+              <p className="text-sm text-gray-500 mb-4">
+                Creating an account allows you to view and manage your event signups, get notifications, and more.
+              </p>
+              
+              {formData.createAccount && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Password <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="password"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleInputChange}
+                    className={`input w-full ${errors.password ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
+                    placeholder="Enter a password (min 6 characters)"
+                  />
+                  {errors.password && (
+                    <p className="mt-1 text-sm text-red-600">{errors.password}</p>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Submit Button */}
+            <button
+              type="submit"
+              disabled={submitting}
+              className="btn-primary w-full py-3 text-lg font-medium disabled:opacity-50"
+            >
+              {submitting ? 'Signing Up...' : 'Sign Up for Event'}
+            </button>
             </form>
           </div>
         </div>
