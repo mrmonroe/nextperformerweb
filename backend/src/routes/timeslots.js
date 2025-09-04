@@ -16,6 +16,7 @@ const timeslotSchema = Joi.object({
 })
 
 const generateTimeslotsSchema = Joi.object({
+  eventId: Joi.string().uuid().required(),
   durationMinutes: Joi.number().integer().min(5).max(480).required() // Min 5 minutes, max 8 hours
 })
 
