@@ -15,11 +15,15 @@ import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import DashboardPage from './pages/DashboardPage'
 import EventsPage from './pages/EventsPage'
+import CreateEventPage from './pages/CreateEventPage'
 import EventDetailsPage from './pages/EventDetailsPage'
 import VenuesPage from './pages/VenuesPage'
 import ProfilePage from './pages/ProfilePage'
 import AdminLoginPage from './pages/AdminLoginPage'
 import AdminPanelPage from './pages/AdminPanelPage'
+import PublicEventsPage from './pages/PublicEventsPage'
+import PerformerSignupPage from './pages/PerformerSignupPage'
+import MySignupsPage from './pages/MySignupsPage'
 
 // Hooks
 import { useAuth } from './hooks/useAuth'
@@ -79,9 +83,39 @@ function App() {
 
         <Routes>
           {/* Public routes */}
-          <Route path="/" element={<HomePage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
+          <Route 
+            path="/" 
+            element={
+              user ? (
+                <Navigate to="/dashboard" replace />
+              ) : (
+                <HomePage />
+              )
+            } 
+          />
+          <Route 
+            path="/login" 
+            element={
+              user ? (
+                <Navigate to="/dashboard" replace />
+              ) : (
+                <LoginPage />
+              )
+            } 
+          />
+          <Route 
+            path="/register" 
+            element={
+              user ? (
+                <Navigate to="/dashboard" replace />
+              ) : (
+                <RegisterPage />
+              )
+            } 
+          />
+          <Route path="/events" element={<PublicEventsPage />} />
+          <Route path="/signup/:code" element={<PerformerSignupPage />} />
+          <Route path="/my-signups" element={<MySignupsPage />} />
           
           {/* Admin routes */}
           <Route path="/admin/login" element={<AdminLoginPage />} />
@@ -112,10 +146,16 @@ function App() {
           <Route
             path="/events"
             element={
+              <Layout>
+                <EventsPage />
+              </Layout>
+            }
+          />
+          <Route
+            path="/events/create"
+            element={
               user ? (
-                <Layout>
-                  <EventsPage />
-                </Layout>
+                <CreateEventPage />
               ) : (
                 <Navigate to="/login" replace />
               )
@@ -124,13 +164,9 @@ function App() {
           <Route
             path="/events/:id"
             element={
-              user ? (
-                <Layout>
-                  <EventDetailsPage />
-                </Layout>
-              ) : (
-                <Navigate to="/login" replace />
-              )
+              <Layout>
+                <EventDetailsPage />
+              </Layout>
             }
           />
           <Route

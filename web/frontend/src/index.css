@@ -83,7 +83,7 @@
   }
   
   .card-header {
-    @apply flex flex-col space-y-1.5 p-6;
+    @apply flex flex-col space-y-1.5 p-4;
   }
   
   .card-title {
@@ -95,11 +95,11 @@
   }
   
   .card-content {
-    @apply p-6 pt-0;
+    @apply p-4;
   }
   
   .card-footer {
-    @apply flex items-center p-6 pt-0;
+    @apply flex items-center p-4;
   }
 }
 

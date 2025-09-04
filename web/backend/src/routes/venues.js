@@ -8,14 +8,14 @@ const router = express.Router()
 // Validation schemas
 const venueSchema = Joi.object({
   name: Joi.string().min(3).required(),
-  description: Joi.string().min(10).optional(),
+  description: Joi.string().min(10).optional().allow(''),
   address: Joi.string().min(5).required(),
   city: Joi.string().min(2).required(),
   state: Joi.string().min(2).required(),
   zipCode: Joi.string().min(5).required(),
-  phone: Joi.string().optional(),
-  website: Joi.string().uri().optional(),
-  imageUrl: Joi.string().uri().optional(),
+  phone: Joi.string().optional().allow(''),
+  website: Joi.string().uri().optional().allow(''),
+  imageUrl: Joi.string().uri().optional().allow(''),
   latitude: Joi.number().optional(),
   longitude: Joi.number().optional()
 })

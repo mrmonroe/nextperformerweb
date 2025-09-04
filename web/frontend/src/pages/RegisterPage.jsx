@@ -7,6 +7,7 @@ import { Mic, Eye, EyeOff, ArrowLeft } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
 import { useConfig } from '../hooks/useConfig'
 import ConfigLoadingPlaceholder from '../components/ConfigLoadingPlaceholder'
+import PublicNavbar from '../components/PublicNavbar'
 
 const registerSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
@@ -56,8 +57,12 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 to-secondary-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
+    <div className="min-h-screen bg-gradient-to-br from-primary-50 to-secondary-50">
+      {/* Navigation */}
+      <PublicNavbar />
+      
+      <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-md w-full space-y-8">
         {/* Header */}
         <div className="text-center">
           <Link to="/" className="inline-flex items-center mb-6">
@@ -240,6 +245,7 @@ export default function RegisterPage() {
             </p>
           </div>
         </form>
+        </div>
       </div>
     </div>
   )

@@ -18,6 +18,7 @@ import {
 import LoadingSpinner from '../components/LoadingSpinner'
 import UserManagementPage from './UserManagementPage'
 import RoleManagementPage from './RoleManagementPage'
+import PublicNavbar from '../components/PublicNavbar'
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
 
@@ -163,6 +164,9 @@ export default function AdminPanelPage() {
 
   return (
     <div className="min-h-screen bg-gray-100">
+      {/* Navigation */}
+      <PublicNavbar />
+      
       {/* Header */}
       <div className="bg-white shadow">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

@@ -14,6 +14,8 @@ const authRoutes = require('./routes/auth');
 const adminRoutes = require('./routes/admin');
 const adminUsersRoutes = require('./routes/adminUsers');
 const adminRolesRoutes = require('./routes/adminRoles');
+const venuesRoutes = require('./routes/venues');
+const eventsRoutes = require('./routes/events');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -84,6 +86,10 @@ app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/admin', adminUsersRoutes);
 app.use('/api/admin', adminRolesRoutes);
+app.use('/api/venues', venuesRoutes);
+app.use('/api/events', eventsRoutes);
+app.use('/api/performer-signup', require('./routes/performerSignup'));
+app.use('/api/timeslots', require('./routes/timeslots'));
 
 // Legacy configuration endpoint (for fallback)
 app.get('/api/config-legacy', (req, res) => {
@@ -249,17 +255,6 @@ app.get('/api/events', (req, res) => {
   });
 });
 
-app.get('/api/venues', (req, res) => {
-  res.json({
-    venues: [],
-    pagination: {
-      page: 1,
-      limit: 10,
-      total: 0,
-      pages: 0
-    }
-  });
-});
 
 // Error handling middleware
 app.use((err, req, res, next) => {
