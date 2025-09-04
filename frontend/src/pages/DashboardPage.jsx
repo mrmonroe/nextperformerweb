@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
-import { Calendar, MapPin, Users, Plus, Star } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+import { Calendar, MapPin, Users, Plus, Star, Eye } from 'lucide-react'
 import { useConfig } from '../hooks/useConfig'
 import { useAuth } from '../hooks/useAuth'
 import { eventService } from '../services/eventService'
@@ -9,6 +10,7 @@ import CreateVenueModal from '../components/modals/CreateVenueModal'
 export default function DashboardPage() {
   const { config } = useConfig()
   const { user } = useAuth()
+  const navigate = useNavigate()
   const [showCreateEvent, setShowCreateEvent] = useState(false)
   const [showCreateVenue, setShowCreateVenue] = useState(false)
   const [events, setEvents] = useState([])
@@ -81,6 +83,10 @@ export default function DashboardPage() {
     })
   }
 
+  const handleViewDetails = (eventId) => {
+    navigate(`/events/${eventId}`)
+  }
+
   return (
     <div className="p-4 md:p-6 space-y-6">
       {/* Header */}
@@ -134,12 +140,21 @@ export default function DashboardPage() {
             <div className="space-y-4">
               {events?.filter(event => event.isSponsored).map(event => (
                 <div key={event.id} className="flex items-center justify-between p-4 bg-yellow-50 rounded-lg border border-yellow-200">
-                  <div>
+                  <div className="flex-1">
                     <h3 className="font-semibold text-gray-900">{event.title}</h3>
                     <p className="text-sm text-gray-600">{event.venue?.name}</p>
                     <p className="text-sm text-gray-500">{formatDate(event.eventDate)} at {formatTime(event.startTime)}</p>
                   </div>
-                  <Star className="h-5 w-5 text-yellow-500" />
+                  <div className="flex items-center space-x-3">
+                    <button
+                      onClick={() => handleViewDetails(event.id)}
+                      className="btn-outline btn-sm flex items-center space-x-1 px-3 py-2"
+                    >
+                      <Eye className="h-4 w-4" />
+                      <span>View Details</span>
+                    </button>
+                    <Star className="h-5 w-5 text-yellow-500" />
+                  </div>
                 </div>
               ))}
               {events?.filter(event => event.isSponsored).length === 0 && (
@@ -164,7 +179,7 @@ export default function DashboardPage() {
             <div className="space-y-4">
               {events?.map(event => (
                 <div key={event.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                  <div className="flex items-center space-x-4">
+                  <div className="flex items-center space-x-4 flex-1">
                     <Calendar className="h-5 w-5 text-gray-400" />
                     <div>
                       <h3 className="font-semibold text-gray-900">{event.title}</h3>
@@ -172,9 +187,18 @@ export default function DashboardPage() {
                       <p className="text-sm text-gray-500">{formatDate(event.eventDate)} at {formatTime(event.startTime)}</p>
                     </div>
                   </div>
-                  {event.isSponsored && (
-                    <Star className="h-5 w-5 text-yellow-500" />
-                  )}
+                  <div className="flex items-center space-x-3">
+                    <button
+                      onClick={() => handleViewDetails(event.id)}
+                      className="btn-outline btn-sm flex items-center space-x-1 px-3 py-2"
+                    >
+                      <Eye className="h-4 w-4" />
+                      <span>View Details</span>
+                    </button>
+                    {event.isSponsored && (
+                      <Star className="h-5 w-5 text-yellow-500" />
+                    )}
+                  </div>
                 </div>
               ))}
               {events?.length === 0 && (
