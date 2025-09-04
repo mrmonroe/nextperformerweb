@@ -1,53 +1,85 @@
-import { useState } from 'react'
-import { useQuery } from 'react-query'
+import { useState, useEffect } from 'react'
 import { Calendar, MapPin, Users, Plus, Star } from 'lucide-react'
 import { useConfig } from '../hooks/useConfig'
+import { useAuth } from '../hooks/useAuth'
+import { eventService } from '../services/eventService'
 import CreateEventModal from '../components/modals/CreateEventModal'
 import CreateVenueModal from '../components/modals/CreateVenueModal'
 
 export default function DashboardPage() {
   const { config } = useConfig()
+  const { user } = useAuth()
   const [showCreateEvent, setShowCreateEvent] = useState(false)
   const [showCreateVenue, setShowCreateVenue] = useState(false)
+  const [events, setEvents] = useState([])
+  const [eventsLoading, setEventsLoading] = useState(true)
 
-  // Mock data for now - replace with actual API calls
-  const { data: events, isLoading: eventsLoading } = useQuery('events', () => 
-    Promise.resolve([
-      {
-        id: '1',
-        title: 'Open Mic Night at The Coffee House',
-        date: '2024-01-15',
-        time: '19:00',
-        venue: 'The Coffee House',
-        isSpotlight: true
-      },
-      {
-        id: '2',
-        title: 'Acoustic Sessions',
-        date: '2024-01-20',
-        time: '20:00',
-        venue: 'Music Lounge',
-        isSpotlight: false
-      }
-    ])
-  )
+  useEffect(() => {
+    loadUserEvents()
+  }, [user])
 
-  const { data: venues, isLoading: venuesLoading } = useQuery('venues', () =>
-    Promise.resolve([
-      {
-        id: '1',
-        name: 'The Coffee House',
-        city: 'San Francisco',
-        eventsCount: 5
-      },
-      {
-        id: '2',
-        name: 'Music Lounge',
-        city: 'Oakland',
-        eventsCount: 3
-      }
-    ])
-  )
+  const loadUserEvents = async () => {
+    try {
+      setEventsLoading(true)
+      const data = await eventService.getEvents()
+      const rawEvents = Array.isArray(data) ? data : data?.events || []
+      
+      // Transform events to match expected structure
+      const transformedEvents = rawEvents.map(event => ({
+        ...event,
+        eventDate: event.event_date,
+        startTime: event.start_time,
+        endTime: event.end_time,
+        isSponsored: event.is_spotlight,
+        maxAttendees: event.max_attendees,
+        imageUrl: event.image_url,
+        venue: {
+          id: event.venue_id,
+          name: event.venue_name,
+          address: event.venue_address,
+          city: event.venue_city,
+          state: event.venue_state,
+          zip_code: event.venue_zip_code
+        },
+        creator: {
+          name: event.created_by_name
+        }
+      }))
+
+      // Filter events to only show those created by the user or that the user has signed up for
+      // For now, we'll show events created by the user (we'll add signup filtering later)
+      const userEvents = transformedEvents.filter(event => 
+        event.created_by === user?.id
+      )
+      
+      setEvents(userEvents)
+    } catch (error) {
+      console.error('Error loading user events:', error)
+    } finally {
+      setEventsLoading(false)
+    }
+  }
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString)
+    return date.toLocaleDateString('en-US', {
+      weekday: 'short',
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    })
+  }
+
+  const formatTime = (timeString) => {
+    const [hours, minutes] = timeString.split(':')
+    const date = new Date()
+    date.setHours(parseInt(hours), parseInt(minutes))
+    return date.toLocaleTimeString('en-US', {
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true
+    })
+  }
 
   return (
     <div className="p-4 md:p-6 space-y-6">
@@ -85,12 +117,12 @@ export default function DashboardPage() {
         </button>
       </div>
 
-      {/* Spotlight Events */}
+      {/* Sponsored Events */}
       <div className="card">
         <div className="card-header">
           <div className="flex items-center space-x-2">
             <Star className="h-5 w-5 text-yellow-500" />
-            <h2 className="card-title">Spotlight Events</h2>
+            <h2 className="card-title">Sponsored Events</h2>
           </div>
         </div>
         <div className="card-content">
@@ -100,28 +132,28 @@ export default function DashboardPage() {
             </div>
           ) : (
             <div className="space-y-4">
-              {events?.filter(event => event.isSpotlight).map(event => (
+              {events?.filter(event => event.isSponsored).map(event => (
                 <div key={event.id} className="flex items-center justify-between p-4 bg-yellow-50 rounded-lg border border-yellow-200">
                   <div>
                     <h3 className="font-semibold text-gray-900">{event.title}</h3>
-                    <p className="text-sm text-gray-600">{event.venue}</p>
-                    <p className="text-sm text-gray-500">{event.date} at {event.time}</p>
+                    <p className="text-sm text-gray-600">{event.venue?.name}</p>
+                    <p className="text-sm text-gray-500">{formatDate(event.eventDate)} at {formatTime(event.startTime)}</p>
                   </div>
                   <Star className="h-5 w-5 text-yellow-500" />
                 </div>
               ))}
-              {events?.filter(event => event.isSpotlight).length === 0 && (
-                <p className="text-gray-500 text-center py-4">No spotlight events at the moment</p>
+              {events?.filter(event => event.isSponsored).length === 0 && (
+                <p className="text-gray-500 text-center py-4">No sponsored events at the moment</p>
               )}
             </div>
           )}
         </div>
       </div>
 
-      {/* Recent Events */}
+      {/* My Events */}
       <div className="card">
         <div className="card-header">
-          <h2 className="card-title">Recent Events</h2>
+          <h2 className="card-title">My Events</h2>
         </div>
         <div className="card-content">
           {eventsLoading ? (
@@ -136,49 +168,17 @@ export default function DashboardPage() {
                     <Calendar className="h-5 w-5 text-gray-400" />
                     <div>
                       <h3 className="font-semibold text-gray-900">{event.title}</h3>
-                      <p className="text-sm text-gray-600">{event.venue}</p>
-                      <p className="text-sm text-gray-500">{event.date} at {event.time}</p>
+                      <p className="text-sm text-gray-600">{event.venue?.name}</p>
+                      <p className="text-sm text-gray-500">{formatDate(event.eventDate)} at {formatTime(event.startTime)}</p>
                     </div>
                   </div>
-                  {event.isSpotlight && (
+                  {event.isSponsored && (
                     <Star className="h-5 w-5 text-yellow-500" />
                   )}
                 </div>
               ))}
               {events?.length === 0 && (
-                <p className="text-gray-500 text-center py-4">No events yet</p>
-              )}
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Popular Venues */}
-      <div className="card">
-        <div className="card-header">
-          <h2 className="card-title">Popular Venues</h2>
-        </div>
-        <div className="card-content">
-          {venuesLoading ? (
-            <div className="flex justify-center py-8">
-              <div className="loading-spinner" />
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {venues?.map(venue => (
-                <div key={venue.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                  <div className="flex items-center space-x-4">
-                    <MapPin className="h-5 w-5 text-gray-400" />
-                    <div>
-                      <h3 className="font-semibold text-gray-900">{venue.name}</h3>
-                      <p className="text-sm text-gray-600">{venue.city}</p>
-                    </div>
-                  </div>
-                  <span className="text-sm text-gray-500">{venue.eventsCount} events</span>
-                </div>
-              ))}
-              {venues?.length === 0 && (
-                <p className="text-gray-500 text-center py-4">No venues yet</p>
+                <p className="text-gray-500 text-center py-4">No events yet. Create your first event!</p>
               )}
             </div>
           )}
@@ -191,7 +191,7 @@ export default function DashboardPage() {
         onClose={() => setShowCreateEvent(false)}
         onEventCreated={(event) => {
           console.log('Event created:', event)
-          // You can add logic here to refresh the events list
+          loadUserEvents() // Refresh the events list
         }}
       />
       
@@ -200,7 +200,7 @@ export default function DashboardPage() {
         onClose={() => setShowCreateVenue(false)}
         onVenueCreated={(venue) => {
           console.log('Venue created:', venue)
-          // You can add logic here to refresh the venues list
+          // Venue creation doesn't affect events list, but we could refresh if needed
         }}
       />
     </div>
