@@ -1,5 +1,6 @@
 const express = require('express')
 const Joi = require('joi')
+const bcrypt = require('bcryptjs')
 const db = require('../config/database')
 
 const router = express.Router()
@@ -13,7 +14,13 @@ const performerSignupSchema = Joi.object({
   phone: Joi.string().min(10).max(20).optional().allow(''),
   performanceType: Joi.string().min(2).max(100).required(),
   description: Joi.string().min(10).max(500).optional().allow(''),
-  socialMedia: Joi.string().max(200).optional().allow('')
+  socialMedia: Joi.string().max(200).optional().allow(''),
+  createAccount: Joi.boolean().default(false),
+  password: Joi.string().min(6).max(100).when('createAccount', {
+    is: true,
+    then: Joi.required(),
+    otherwise: Joi.optional()
+  })
 })
 
 // @route   POST /api/performer-signup
@@ -26,7 +33,7 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ message: error.details[0].message })
     }
 
-    const { eventCode, timeslotId, performerName, email, phone, performanceType, description, socialMedia } = value
+    const { eventCode, timeslotId, performerName, email, phone, performanceType, description, socialMedia, createAccount, password } = value
 
     // Check if event exists and is active
     const event = await db('events')
@@ -76,6 +83,33 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ message: 'This timeslot is full' })
     }
 
+    let userId = null
+
+    // If user wants to create an account, check if email already exists
+    if (createAccount) {
+      const existingUser = await db('users')
+        .where('email', email)
+        .first()
+
+      if (existingUser) {
+        return res.status(400).json({ message: 'An account with this email already exists' })
+      }
+
+      // Create new user account
+      const hashedPassword = await bcrypt.hash(password, 10)
+      const [newUser] = await db('users')
+        .insert({
+          email: email,
+          password: hashedPassword,
+          display_name: performerName,
+          phone: phone || null,
+          is_active: true
+        })
+        .returning('id')
+
+      userId = newUser.id
+    }
+
     // Create performer signup
     const [signup] = await db('performer_signups')
       .insert({
@@ -93,6 +127,7 @@ router.post('/', async (req, res) => {
 
     res.status(201).json({
       message: 'Successfully signed up for the event!',
+      accountCreated: createAccount,
       signup: {
         id: signup.id,
         performerName: signup.performer_name,

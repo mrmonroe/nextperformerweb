@@ -17,7 +17,9 @@ export default function PerformerSignupPage() {
     phone: '',
     performanceType: '',
     description: '',
-    socialMedia: ''
+    socialMedia: '',
+    createAccount: false,
+    password: ''
   })
   const [errors, setErrors] = useState({})
 
@@ -49,10 +51,10 @@ export default function PerformerSignupPage() {
   }
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target
+    const { name, value, type, checked } = e.target
     setFormData(prev => ({
       ...prev,
-      [name]: value
+      [name]: type === 'checkbox' ? checked : value
     }))
     
     // Clear error when user starts typing
@@ -97,6 +99,14 @@ export default function PerformerSignupPage() {
       newErrors.description = 'Description must be at least 10 characters'
     }
     
+    if (formData.createAccount) {
+      if (!formData.password.trim()) {
+        newErrors.password = 'Password is required when creating an account'
+      } else if (formData.password.length < 6) {
+        newErrors.password = 'Password must be at least 6 characters'
+      }
+    }
+    
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
@@ -118,14 +128,26 @@ export default function PerformerSignupPage() {
         },
         body: JSON.stringify({
           eventCode: code,
-          ...formData
+          timeslotId: formData.timeslotId,
+          performerName: formData.performerName,
+          email: formData.email,
+          phone: formData.phone,
+          performanceType: formData.performanceType,
+          description: formData.description,
+          socialMedia: formData.socialMedia,
+          createAccount: formData.createAccount,
+          password: formData.createAccount ? formData.password : undefined
         })
       })
       
       const data = await response.json()
       
       if (response.ok) {
-        toast.success('Successfully signed up for the event!')
+        if (data.accountCreated) {
+          toast.success('Account created and successfully signed up for the event!')
+        } else {
+          toast.success('Successfully signed up for the event!')
+        }
         navigate('/events')
       } else {
         toast.error(data.message || 'Failed to sign up for event')
@@ -440,6 +462,44 @@ export default function PerformerSignupPage() {
                   className="input w-full"
                   placeholder="Instagram, Twitter, YouTube, etc."
                 />
+              </div>
+
+              {/* Account Creation */}
+              <div className="border-t border-gray-200 pt-6">
+                <div className="flex items-center mb-4">
+                  <input
+                    type="checkbox"
+                    name="createAccount"
+                    checked={formData.createAccount}
+                    onChange={handleInputChange}
+                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  />
+                  <label className="ml-2 block text-sm font-medium text-gray-700">
+                    Create an account to manage your signups
+                  </label>
+                </div>
+                <p className="text-sm text-gray-500 mb-4">
+                  Creating an account allows you to view and manage your event signups, get notifications, and more.
+                </p>
+                
+                {formData.createAccount && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Password <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="password"
+                      name="password"
+                      value={formData.password}
+                      onChange={handleInputChange}
+                      className={`input w-full ${errors.password ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
+                      placeholder="Enter a password (min 6 characters)"
+                    />
+                    {errors.password && (
+                      <p className="mt-1 text-sm text-red-600">{errors.password}</p>
+                    )}
+                  </div>
+                )}
               </div>
 
               {/* Submit Button */}
