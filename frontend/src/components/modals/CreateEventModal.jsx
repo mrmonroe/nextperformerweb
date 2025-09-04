@@ -5,7 +5,7 @@ import { eventService } from '../../services/eventService'
 import { venueService } from '../../services/venueService'
 import CreateVenueModal from './CreateVenueModal'
 
-export default function CreateEventModal({ isOpen, onClose, onEventCreated }) {
+export default function CreateEventModal({ isOpen, onClose, onEventCreated, editingEvent, isEditMode = false }) {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -26,8 +26,27 @@ export default function CreateEventModal({ isOpen, onClose, onEventCreated }) {
   useEffect(() => {
     if (isOpen) {
       loadVenues()
+      if (isEditMode && editingEvent) {
+        populateFormForEdit()
+      }
     }
-  }, [isOpen])
+  }, [isOpen, isEditMode, editingEvent])
+
+  const populateFormForEdit = () => {
+    if (editingEvent) {
+      setFormData({
+        title: editingEvent.title || '',
+        description: editingEvent.description || '',
+        venueId: editingEvent.venue?.id || editingEvent.venue_id || '',
+        eventDate: editingEvent.eventDate || editingEvent.event_date || '',
+        startTime: editingEvent.startTime || editingEvent.start_time || '',
+        endTime: editingEvent.endTime || editingEvent.end_time || '',
+        isSpotlight: editingEvent.isSpotlight || editingEvent.is_spotlight || false,
+        maxAttendees: editingEvent.maxAttendees || editingEvent.max_attendees || '',
+        imageUrl: editingEvent.imageUrl || editingEvent.image_url || ''
+      })
+    }
+  }
 
   const loadVenues = async () => {
     try {
@@ -138,8 +157,15 @@ export default function CreateEventModal({ isOpen, onClose, onEventCreated }) {
         maxAttendees: formData.maxAttendees ? parseInt(formData.maxAttendees) : null
       }
       
-      const event = await eventService.createEvent(eventData)
-      toast.success('Event created successfully!')
+      let event
+      if (isEditMode && editingEvent) {
+        event = await eventService.updateEvent(editingEvent.id, eventData)
+        toast.success('Event updated successfully!')
+      } else {
+        event = await eventService.createEvent(eventData)
+        toast.success('Event created successfully!')
+      }
+      
       setFormData({
         title: '',
         description: '',
@@ -155,8 +181,8 @@ export default function CreateEventModal({ isOpen, onClose, onEventCreated }) {
       onEventCreated?.(event)
       onClose()
     } catch (error) {
-      console.error('Error creating event:', error)
-      toast.error(error.response?.data?.message || 'Failed to create event')
+      console.error(`Error ${isEditMode ? 'updating' : 'creating'} event:`, error)
+      toast.error(error.response?.data?.message || `Failed to ${isEditMode ? 'update' : 'create'} event`)
     } finally {
       setLoading(false)
     }
@@ -191,7 +217,9 @@ export default function CreateEventModal({ isOpen, onClose, onEventCreated }) {
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
         <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
           <div className="flex items-center justify-between p-6 border-b">
-            <h2 className="text-xl font-semibold text-gray-900">Create New Event</h2>
+            <h2 className="text-xl font-semibold text-gray-900">
+              {isEditMode ? 'Edit Event' : 'Create New Event'}
+            </h2>
             <button
               onClick={handleClose}
               className="text-gray-400 hover:text-gray-600 transition-colors"
@@ -384,7 +412,7 @@ export default function CreateEventModal({ isOpen, onClose, onEventCreated }) {
                 className="btn-primary flex-1"
                 disabled={loading}
               >
-                {loading ? 'Creating...' : 'Create Event'}
+                {loading ? (isEditMode ? 'Updating...' : 'Creating...') : (isEditMode ? 'Update Event' : 'Create Event')}
               </button>
             </div>
           </form>

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Calendar, MapPin, Users, Plus, Star, Eye } from 'lucide-react'
+import { Calendar, MapPin, Users, Plus, Star, Eye, Edit } from 'lucide-react'
 import { useConfig } from '../hooks/useConfig'
 import { useAuth } from '../hooks/useAuth'
 import { eventService } from '../services/eventService'
@@ -16,6 +16,8 @@ export default function DashboardPage() {
   const [eventsLoading, setEventsLoading] = useState(true)
   const [selectedEvent, setSelectedEvent] = useState(null)
   const [showEventModal, setShowEventModal] = useState(false)
+  const [editingEvent, setEditingEvent] = useState(null)
+  const [showEditEvent, setShowEditEvent] = useState(false)
 
   useEffect(() => {
     loadUserEvents()
@@ -94,6 +96,22 @@ export default function DashboardPage() {
     setSelectedEvent(null)
   }
 
+  const handleEditEvent = (event) => {
+    setEditingEvent(event)
+    setShowEditEvent(true)
+  }
+
+  const closeEditEvent = () => {
+    setShowEditEvent(false)
+    setEditingEvent(null)
+  }
+
+  const handleEventUpdated = (updatedEvent) => {
+    console.log('Event updated:', updatedEvent)
+    loadUserEvents() // Refresh the events list
+    closeEditEvent()
+  }
+
   return (
     <div className="p-4 md:p-6 space-y-6">
       {/* Header */}
@@ -159,14 +177,21 @@ export default function DashboardPage() {
                     <p className="text-sm text-gray-500">{formatDate(event.eventDate)} at {formatTime(event.startTime)}</p>
                   </div>
                   
-                  {/* View Details Button */}
-                  <div className="mt-4">
+                  {/* Action Buttons */}
+                  <div className="mt-4 flex space-x-2">
                     <button
                       onClick={() => handleViewDetails(event)}
                       className="btn-outline btn-sm flex items-center space-x-1 px-3 py-2"
                     >
                       <Eye className="h-4 w-4" />
                       <span>View Details</span>
+                    </button>
+                    <button
+                      onClick={() => handleEditEvent(event)}
+                      className="btn-primary btn-sm flex items-center space-x-1 px-3 py-2"
+                    >
+                      <Edit className="h-4 w-4" />
+                      <span>Edit</span>
                     </button>
                   </div>
                 </div>
@@ -210,14 +235,21 @@ export default function DashboardPage() {
                     </div>
                   </div>
                   
-                  {/* View Details Button */}
-                  <div className="mt-4">
+                  {/* Action Buttons */}
+                  <div className="mt-4 flex space-x-2">
                     <button
                       onClick={() => handleViewDetails(event)}
                       className="btn-outline btn-sm flex items-center space-x-1 px-3 py-2"
                     >
                       <Eye className="h-4 w-4" />
                       <span>View Details</span>
+                    </button>
+                    <button
+                      onClick={() => handleEditEvent(event)}
+                      className="btn-primary btn-sm flex items-center space-x-1 px-3 py-2"
+                    >
+                      <Edit className="h-4 w-4" />
+                      <span>Edit</span>
                     </button>
                   </div>
                 </div>
@@ -254,6 +286,17 @@ export default function DashboardPage() {
         event={selectedEvent}
         isOpen={showEventModal}
         onClose={closeEventModal}
+        onEdit={handleEditEvent}
+        showEditButton={true}
+      />
+
+      {/* Edit Event Modal */}
+      <CreateEventModal
+        isOpen={showEditEvent}
+        onClose={closeEditEvent}
+        onEventCreated={handleEventUpdated}
+        editingEvent={editingEvent}
+        isEditMode={true}
       />
     </div>
   )

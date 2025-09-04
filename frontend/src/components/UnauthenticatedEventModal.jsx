@@ -1,9 +1,9 @@
 import { useState } from 'react'
-import { X, UserPlus, Share2, Calendar, MapPin, Clock, Users } from 'lucide-react'
+import { X, UserPlus, Share2, Calendar, MapPin, Clock, Users, Edit } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
 
-export default function UnauthenticatedEventModal({ event, isOpen, onClose }) {
-  const { isAuthenticated } = useAuth()
+export default function UnauthenticatedEventModal({ event, isOpen, onClose, onEdit, showEditButton = false }) {
+  const { isAuthenticated, user } = useAuth()
   const [isSharing, setIsSharing] = useState(false)
 
   if (!isOpen || !event) return null
@@ -61,6 +61,16 @@ export default function UnauthenticatedEventModal({ event, isOpen, onClose }) {
       setIsSharing(false)
     }
   }
+
+  const handleEdit = () => {
+    if (onEdit) {
+      onEdit(event)
+      onClose()
+    }
+  }
+
+  // Check if current user is the event creator
+  const isEventCreator = isAuthenticated && user && event.created_by === user.id
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -136,27 +146,50 @@ export default function UnauthenticatedEventModal({ event, isOpen, onClose }) {
 
         {/* Action Buttons */}
         <div className="px-6 py-6 border-t bg-gray-50">
-          <div className="flex flex-col sm:flex-row gap-4 mb-4">
-            <button
-              onClick={handleSignUp}
-              className="flex-1 btn-primary btn-lg flex items-center justify-center space-x-2 px-6 py-3 min-h-[48px] font-medium"
-            >
-              <UserPlus className="h-5 w-5" />
-              <span>Sign Up for Event</span>
-            </button>
-            
-            <button
-              onClick={handleShare}
-              disabled={isSharing}
-              className="flex-1 btn-outline btn-lg flex items-center justify-center space-x-2 px-6 py-3 min-h-[48px] font-medium"
-            >
-              <Share2 className="h-5 w-5" />
-              <span>{isSharing ? 'Sharing...' : 'Share Event'}</span>
-            </button>
-          </div>
+          {isEventCreator && showEditButton ? (
+            // Event creator buttons
+            <div className="flex flex-col sm:flex-row gap-4 mb-4">
+              <button
+                onClick={handleEdit}
+                className="flex-1 btn-primary btn-lg flex items-center justify-center space-x-2 px-6 py-3 min-h-[48px] font-medium"
+              >
+                <Edit className="h-5 w-5" />
+                <span>Edit Event</span>
+              </button>
+              
+              <button
+                onClick={handleShare}
+                disabled={isSharing}
+                className="flex-1 btn-outline btn-lg flex items-center justify-center space-x-2 px-6 py-3 min-h-[48px] font-medium"
+              >
+                <Share2 className="h-5 w-5" />
+                <span>{isSharing ? 'Sharing...' : 'Share Event'}</span>
+              </button>
+            </div>
+          ) : (
+            // Non-creator or unauthenticated buttons
+            <div className="flex flex-col sm:flex-row gap-4 mb-4">
+              <button
+                onClick={handleSignUp}
+                className="flex-1 btn-primary btn-lg flex items-center justify-center space-x-2 px-6 py-3 min-h-[48px] font-medium"
+              >
+                <UserPlus className="h-5 w-5" />
+                <span>Sign Up for Event</span>
+              </button>
+              
+              <button
+                onClick={handleShare}
+                disabled={isSharing}
+                className="flex-1 btn-outline btn-lg flex items-center justify-center space-x-2 px-6 py-3 min-h-[48px] font-medium"
+              >
+                <Share2 className="h-5 w-5" />
+                <span>{isSharing ? 'Sharing...' : 'Share Event'}</span>
+              </button>
+            </div>
+          )}
           
           <p className="text-center text-sm text-gray-500">
-            Sign in to view full event details and manage your participation
+            {isEventCreator ? 'You created this event' : 'Sign in to view full event details and manage your participation'}
           </p>
         </div>
       </div>
