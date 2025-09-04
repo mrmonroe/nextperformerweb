@@ -139,11 +139,11 @@ export default function UnauthenticatedEventModal({ event, isOpen, onClose }) {
         </div>
 
         {/* Action Buttons */}
-        <div className="p-6 border-t bg-gray-50">
-          <div className="flex flex-col sm:flex-row gap-3">
+        <div className="px-6 py-6 border-t bg-gray-50">
+          <div className="flex flex-col sm:flex-row gap-4 mb-4">
             <button
               onClick={handleSignUp}
-              className="flex-1 btn-primary flex items-center justify-center space-x-2"
+              className="flex-1 btn-primary btn-lg flex items-center justify-center space-x-2 px-6 py-3 min-h-[48px] font-medium"
             >
               <UserPlus className="h-5 w-5" />
               <span>Sign Up for Event</span>
@@ -152,14 +152,14 @@ export default function UnauthenticatedEventModal({ event, isOpen, onClose }) {
             <button
               onClick={handleShare}
               disabled={isSharing}
-              className="flex-1 btn-outline flex items-center justify-center space-x-2"
+              className="flex-1 btn-outline btn-lg flex items-center justify-center space-x-2 px-6 py-3 min-h-[48px] font-medium"
             >
               <Share2 className="h-5 w-5" />
               <span>{isSharing ? 'Sharing...' : 'Share Event'}</span>
             </button>
           </div>
           
-          <p className="text-center text-sm text-gray-500 mt-3">
+          <p className="text-center text-sm text-gray-500">
             Sign in to view full event details and manage your participation
           </p>
         </div>
