@@ -1,12 +1,18 @@
 import { Link, useLocation } from 'react-router-dom'
-import { Mic, Calendar, LogIn, UserPlus, Home } from 'lucide-react'
+import { Mic, Calendar, LogIn, UserPlus, Home, LogOut, User } from 'lucide-react'
 import { useConfig } from '../hooks/useConfig'
+import { useAuth } from '../hooks/useAuth'
 
 export default function PublicNavbar() {
   const location = useLocation()
   const { config } = useConfig()
+  const { user, isAuthenticated, logout } = useAuth()
 
   const isActive = (path) => location.pathname === path
+
+  const handleLogout = () => {
+    logout()
+  }
 
   return (
     <nav className="bg-white shadow-sm border-b">
@@ -53,25 +59,43 @@ export default function PublicNavbar() {
 
           {/* Auth Links */}
           <div className="flex items-center space-x-4">
-            <Link
-              to="/login"
-              className={`flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                isActive('/login') 
-                  ? 'text-primary bg-primary-50' 
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-              }`}
-            >
-              <LogIn className="h-4 w-4" />
-              <span>Sign In</span>
-            </Link>
+            {isAuthenticated ? (
+              <>
+                <div className="flex items-center space-x-2 text-sm text-gray-700">
+                  <User className="h-4 w-4" />
+                  <span>Welcome, {user?.displayName || user?.firstName || 'User'}</span>
+                </div>
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors"
+                >
+                  <LogOut className="h-4 w-4" />
+                  <span>Logout</span>
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  to="/login"
+                  className={`flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                    isActive('/login') 
+                      ? 'text-primary bg-primary-50' 
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                  }`}
+                >
+                  <LogIn className="h-4 w-4" />
+                  <span>Sign In</span>
+                </Link>
 
-            <Link
-              to="/register"
-              className="btn-primary btn-sm"
-            >
-              <UserPlus className="h-4 w-4 mr-1" />
-              Get Started
-            </Link>
+                <Link
+                  to="/register"
+                  className="btn-primary btn-sm"
+                >
+                  <UserPlus className="h-4 w-4 mr-1" />
+                  Get Started
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -116,25 +140,43 @@ export default function PublicNavbar() {
             </Link>
 
             <div className="border-t border-gray-200 pt-2 mt-2">
-              <Link
-                to="/login"
-                className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium ${
-                  isActive('/login') 
-                    ? 'text-primary bg-primary-50' 
-                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                }`}
-              >
-                <LogIn className="h-4 w-4" />
-                <span>Sign In</span>
-              </Link>
+              {isAuthenticated ? (
+                <>
+                  <div className="flex items-center space-x-2 px-3 py-2 text-sm text-gray-700">
+                    <User className="h-4 w-4" />
+                    <span>Welcome, {user?.displayName || user?.firstName || 'User'}</span>
+                  </div>
+                  <button
+                    onClick={handleLogout}
+                    className="flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 w-full"
+                  >
+                    <LogOut className="h-4 w-4" />
+                    <span>Logout</span>
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link
+                    to="/login"
+                    className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium ${
+                      isActive('/login') 
+                        ? 'text-primary bg-primary-50' 
+                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                    }`}
+                  >
+                    <LogIn className="h-4 w-4" />
+                    <span>Sign In</span>
+                  </Link>
 
-              <Link
-                to="/register"
-                className="flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium text-white bg-primary hover:bg-primary-600 rounded-md"
-              >
-                <UserPlus className="h-4 w-4" />
-                <span>Get Started</span>
-              </Link>
+                  <Link
+                    to="/register"
+                    className="flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium text-white bg-primary hover:bg-primary-600 rounded-md"
+                  >
+                    <UserPlus className="h-4 w-4" />
+                    <span>Get Started</span>
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>
