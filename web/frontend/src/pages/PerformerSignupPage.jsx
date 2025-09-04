@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { Calendar, MapPin, Clock, Users, QrCode, Copy, Check } from 'lucide-react'
+import { Calendar, MapPin, Clock, Users } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 
 export default function PerformerSignupPage() {
@@ -9,7 +9,6 @@ export default function PerformerSignupPage() {
   const [event, setEvent] = useState(null)
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
-  const [copied, setCopied] = useState(false)
   const [formData, setFormData] = useState({
     timeslotId: '',
     performerName: '',
@@ -164,17 +163,6 @@ export default function PerformerSignupPage() {
     }
   }
 
-  const copyEventCode = async () => {
-    try {
-      await navigator.clipboard.writeText(code)
-      setCopied(true)
-      toast.success('Event code copied to clipboard!')
-      setTimeout(() => setCopied(false), 2000)
-    } catch (error) {
-      console.error('Error copying code:', error)
-      toast.error('Failed to copy event code')
-    }
-  }
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -230,100 +218,66 @@ export default function PerformerSignupPage() {
           <p className="text-gray-600">Join this amazing event and showcase your talent!</p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="space-y-8">
           {/* Event Details */}
-          <div className="space-y-6">
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">{event.title}</h2>
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">{event.title}</h2>
+            
+            {/* Event Image */}
+            {event.image_url && (
+              <div className="w-full h-48 bg-gray-200 rounded-lg mb-4">
+                <img
+                  src={event.image_url}
+                  alt={event.title}
+                  className="w-full h-full object-cover rounded-lg"
+                />
+              </div>
+            )}
+
+            {/* Event Info */}
+            <div className="space-y-3">
+              <div className="flex items-center space-x-3 text-gray-600">
+                <Calendar className="h-5 w-5" />
+                <span className="font-medium">{formatDate(event.event_date)}</span>
+              </div>
               
-              {/* Event Image */}
-              {event.image_url && (
-                <div className="w-full h-48 bg-gray-200 rounded-lg mb-4">
-                  <img
-                    src={event.image_url}
-                    alt={event.title}
-                    className="w-full h-full object-cover rounded-lg"
-                  />
-                </div>
-              )}
-
-              {/* Event Info */}
-              <div className="space-y-3">
-                <div className="flex items-center space-x-3 text-gray-600">
-                  <Calendar className="h-5 w-5" />
-                  <span className="font-medium">{formatDate(event.event_date)}</span>
-                </div>
-                
-                <div className="flex items-center space-x-3 text-gray-600">
-                  <Clock className="h-5 w-5" />
-                  <span>{formatTime(event.start_time)} - {formatTime(event.end_time)}</span>
-                </div>
-                
-                <div className="flex items-start space-x-3 text-gray-600">
-                  <MapPin className="h-5 w-5 mt-0.5" />
-                  <div>
-                    <div className="font-medium">{event.venue_name}</div>
-                    <div className="text-sm">
-                      {event.venue_address}, {event.venue_city}, {event.venue_state}
-                    </div>
-                  </div>
-                </div>
-
-                {event.max_attendees && (
-                  <div className="flex items-center space-x-3 text-gray-600">
-                    <Users className="h-5 w-5" />
-                    <span>
-                      {event.current_signups} / {event.max_attendees} performers
-                      {event.spots_remaining !== null && (
-                        <span className="text-green-600 font-medium">
-                          {' '}({event.spots_remaining} spots remaining)
-                        </span>
-                      )}
-                    </span>
-                  </div>
-                )}
+              <div className="flex items-center space-x-3 text-gray-600">
+                <Clock className="h-5 w-5" />
+                <span>{formatTime(event.start_time)} - {formatTime(event.end_time)}</span>
               </div>
-
-              {/* Event Code */}
-              <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="font-medium text-gray-900">Event Code</h3>
-                    <p className="text-2xl font-mono font-bold text-blue-600">{event.event_code}</p>
+              
+              <div className="flex items-start space-x-3 text-gray-600">
+                <MapPin className="h-5 w-5 mt-0.5" />
+                <div>
+                  <div className="font-medium">{event.venue_name}</div>
+                  <div className="text-sm">
+                    {event.venue_address}, {event.venue_city}, {event.venue_state}
                   </div>
-                  <button
-                    onClick={copyEventCode}
-                    className="btn-outline btn-sm flex items-center space-x-2"
-                  >
-                    {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                    <span>{copied ? 'Copied!' : 'Copy'}</span>
-                  </button>
                 </div>
               </div>
 
-              {/* QR Code */}
-              {event.qr_code_data && (
-                <div className="mt-4 text-center">
-                  <h3 className="font-medium text-gray-900 mb-2">QR Code</h3>
-                  <div className="inline-block p-4 bg-white rounded-lg border border-gray-200">
-                    <img
-                      src={event.qr_code_data}
-                      alt="Event QR Code"
-                      className="w-32 h-32"
-                    />
-                  </div>
-                  <p className="text-sm text-gray-500 mt-2">Scan to share this event</p>
-                </div>
-              )}
-
-              {/* Description */}
-              {event.description && (
-                <div className="mt-6">
-                  <h3 className="font-medium text-gray-900 mb-2">Description</h3>
-                  <p className="text-gray-700 text-sm leading-relaxed">{event.description}</p>
+              {event.max_attendees && (
+                <div className="flex items-center space-x-3 text-gray-600">
+                  <Users className="h-5 w-5" />
+                  <span>
+                    {event.current_signups} / {event.max_attendees} performers
+                    {event.spots_remaining !== null && (
+                      <span className="text-green-600 font-medium">
+                        {' '}({event.spots_remaining} spots remaining)
+                      </span>
+                    )}
+                  </span>
                 </div>
               )}
             </div>
+
+            {/* Description */}
+            {event.description && (
+              <div className="mt-6">
+                <h3 className="font-medium text-gray-900 mb-2">Description</h3>
+                <p className="text-gray-700 text-sm leading-relaxed">{event.description}</p>
+              </div>
+            )}
           </div>
 
           {/* Sign-up Form */}
