@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import { X, UserPlus, Share2, Calendar, MapPin, Clock, Users, Edit } from 'lucide-react'
+import { X, UserPlus, Share2, Calendar, MapPin, Clock, Users, Edit, Trash2 } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
 
-export default function UnauthenticatedEventModal({ event, isOpen, onClose, onEdit, showEditButton = false }) {
+export default function UnauthenticatedEventModal({ event, isOpen, onClose, onEdit, onDelete, showEditButton = false }) {
   const { isAuthenticated, user } = useAuth()
   const [isSharing, setIsSharing] = useState(false)
 
@@ -65,6 +65,13 @@ export default function UnauthenticatedEventModal({ event, isOpen, onClose, onEd
   const handleEdit = () => {
     if (onEdit) {
       onEdit(event)
+      onClose()
+    }
+  }
+
+  const handleDelete = () => {
+    if (onDelete) {
+      onDelete(event)
       onClose()
     }
   }
@@ -148,23 +155,35 @@ export default function UnauthenticatedEventModal({ event, isOpen, onClose, onEd
         <div className="px-6 py-6 border-t bg-gray-50">
           {isEventCreator && showEditButton ? (
             // Event creator buttons
-            <div className="flex flex-col sm:flex-row gap-4 mb-4">
-              <button
-                onClick={handleEdit}
-                className="flex-1 btn-primary btn-lg flex items-center justify-center space-x-2 px-6 py-3 min-h-[48px] font-medium"
-              >
-                <Edit className="h-5 w-5" />
-                <span>Edit Event</span>
-              </button>
+            <div className="space-y-4 mb-4">
+              <div className="flex flex-col sm:flex-row gap-4">
+                <button
+                  onClick={handleEdit}
+                  className="flex-1 btn-primary btn-lg flex items-center justify-center space-x-2 px-6 py-3 min-h-[48px] font-medium"
+                >
+                  <Edit className="h-5 w-5" />
+                  <span>Edit Event</span>
+                </button>
+                
+                <button
+                  onClick={handleShare}
+                  disabled={isSharing}
+                  className="flex-1 btn-outline btn-lg flex items-center justify-center space-x-2 px-6 py-3 min-h-[48px] font-medium"
+                >
+                  <Share2 className="h-5 w-5" />
+                  <span>{isSharing ? 'Sharing...' : 'Share Event'}</span>
+                </button>
+              </div>
               
-              <button
-                onClick={handleShare}
-                disabled={isSharing}
-                className="flex-1 btn-outline btn-lg flex items-center justify-center space-x-2 px-6 py-3 min-h-[48px] font-medium"
-              >
-                <Share2 className="h-5 w-5" />
-                <span>{isSharing ? 'Sharing...' : 'Share Event'}</span>
-              </button>
+              <div className="flex justify-center">
+                <button
+                  onClick={handleDelete}
+                  className="btn-outline btn-lg flex items-center justify-center space-x-2 px-6 py-3 min-h-[48px] font-medium text-red-600 hover:text-red-700 hover:border-red-300"
+                >
+                  <Trash2 className="h-5 w-5" />
+                  <span>Delete Event</span>
+                </button>
+              </div>
             </div>
           ) : (
             // Non-creator or unauthenticated buttons
