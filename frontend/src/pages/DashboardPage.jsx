@@ -1,9 +1,14 @@
+import { useState } from 'react'
 import { useQuery } from 'react-query'
 import { Calendar, MapPin, Users, Plus, Star } from 'lucide-react'
 import { useConfig } from '../hooks/useConfig'
+import CreateEventModal from '../components/modals/CreateEventModal'
+import CreateVenueModal from '../components/modals/CreateVenueModal'
 
 export default function DashboardPage() {
   const { config } = useConfig()
+  const [showCreateEvent, setShowCreateEvent] = useState(false)
+  const [showCreateVenue, setShowCreateVenue] = useState(false)
 
   // Mock data for now - replace with actual API calls
   const { data: events, isLoading: eventsLoading } = useQuery('events', () => 
@@ -60,11 +65,17 @@ export default function DashboardPage() {
 
       {/* Quick Actions */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <button className="btn-primary btn-lg flex items-center justify-center space-x-2">
+        <button 
+          onClick={() => setShowCreateEvent(true)}
+          className="btn-primary btn-lg flex items-center justify-center space-x-2"
+        >
           <Plus className="h-5 w-5" />
           <span>Create Event</span>
         </button>
-        <button className="btn-outline btn-lg flex items-center justify-center space-x-2">
+        <button 
+          onClick={() => setShowCreateVenue(true)}
+          className="btn-outline btn-lg flex items-center justify-center space-x-2"
+        >
           <MapPin className="h-5 w-5" />
           <span>Add Venue</span>
         </button>
@@ -173,6 +184,25 @@ export default function DashboardPage() {
           )}
         </div>
       </div>
+
+      {/* Modals */}
+      <CreateEventModal
+        isOpen={showCreateEvent}
+        onClose={() => setShowCreateEvent(false)}
+        onEventCreated={(event) => {
+          console.log('Event created:', event)
+          // You can add logic here to refresh the events list
+        }}
+      />
+      
+      <CreateVenueModal
+        isOpen={showCreateVenue}
+        onClose={() => setShowCreateVenue(false)}
+        onVenueCreated={(venue) => {
+          console.log('Venue created:', venue)
+          // You can add logic here to refresh the venues list
+        }}
+      />
     </div>
   )
 }

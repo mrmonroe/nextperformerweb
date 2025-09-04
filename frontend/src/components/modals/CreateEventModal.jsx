@@ -1,21 +1,11 @@
-import React, { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { Calendar, Clock, MapPin, Users, Image, Star, X } from 'lucide-react'
-import { useAuth } from '../hooks/useAuth'
-import { useConfig } from '../hooks/useConfig'
-import { eventService } from '../services/eventService'
-import { venueService } from '../services/venueService'
-import toast from 'react-hot-toast'
-import CreateVenueModal from '../components/modals/CreateVenueModal'
+import { useState, useEffect } from 'react'
+import { X, MapPin } from 'lucide-react'
+import { toast } from 'react-hot-toast'
+import { eventService } from '../../services/eventService'
+import { venueService } from '../../services/venueService'
+import CreateVenueModal from './CreateVenueModal'
 
-const CreateEventPage = () => {
-  const navigate = useNavigate()
-  const { user, isAuthenticated } = useAuth()
-  const { config } = useConfig()
-  const [loading, setLoading] = useState(false)
-  const [venues, setVenues] = useState([])
-  const [showCreateVenue, setShowCreateVenue] = useState(false)
-
+export default function CreateEventModal({ isOpen, onClose, onEventCreated }) {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -28,33 +18,25 @@ const CreateEventPage = () => {
     imageUrl: ''
   })
 
+  const [venues, setVenues] = useState([])
   const [errors, setErrors] = useState({})
+  const [loading, setLoading] = useState(false)
+  const [showCreateVenue, setShowCreateVenue] = useState(false)
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      navigate('/login')
-      return
+    if (isOpen) {
+      loadVenues()
     }
-    loadVenues()
-  }, [isAuthenticated, navigate])
+  }, [isOpen])
 
   const loadVenues = async () => {
     try {
       const venuesData = await venueService.getVenues()
-      console.log('Venues data received:', venuesData)
-      // Ensure venuesData is an array
-      if (Array.isArray(venuesData)) {
-        setVenues(venuesData)
-      } else if (venuesData && Array.isArray(venuesData.venues)) {
-        setVenues(venuesData.venues)
-      } else {
-        console.warn('Unexpected venues data format:', venuesData)
-        setVenues([])
-      }
+      setVenues(Array.isArray(venuesData) ? venuesData : venuesData?.venues || [])
     } catch (error) {
       console.error('Error loading venues:', error)
       toast.error('Failed to load venues')
-      setVenues([]) // Ensure venues is always an array
+      setVenues([])
     }
   }
 
@@ -116,7 +98,6 @@ const CreateEventPage = () => {
     return Object.keys(newErrors).length === 0
   }
 
-
   const isValidUrl = (string) => {
     try {
       new URL(string)
@@ -142,7 +123,6 @@ const CreateEventPage = () => {
     }
   }
 
-
   const handleSubmit = async (e) => {
     e.preventDefault()
     
@@ -160,7 +140,20 @@ const CreateEventPage = () => {
       
       const event = await eventService.createEvent(eventData)
       toast.success('Event created successfully!')
-      navigate(`/events/${event.id}`)
+      setFormData({
+        title: '',
+        description: '',
+        venueId: '',
+        eventDate: '',
+        startTime: '',
+        endTime: '',
+        isSpotlight: false,
+        maxAttendees: '',
+        imageUrl: ''
+      })
+      setErrors({})
+      onEventCreated?.(event)
+      onClose()
     } catch (error) {
       console.error('Error creating event:', error)
       toast.error(error.response?.data?.message || 'Failed to create event')
@@ -169,35 +162,42 @@ const CreateEventPage = () => {
     }
   }
 
-  const handleCreateVenue = (venue) => {
+  const handleVenueCreated = (venue) => {
     setVenues(prev => [...prev, venue])
     setFormData(prev => ({ ...prev, venueId: venue.id }))
     setShowCreateVenue(false)
   }
 
-  if (!isAuthenticated) {
-    return null
+  const handleClose = () => {
+    setFormData({
+      title: '',
+      description: '',
+      venueId: '',
+      eventDate: '',
+      startTime: '',
+      endTime: '',
+      isSpotlight: false,
+      maxAttendees: '',
+      imageUrl: ''
+    })
+    setErrors({})
+    onClose()
   }
 
+  if (!isOpen) return null
+
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-2xl mx-auto px-4">
-        <div className="bg-white rounded-lg shadow-sm">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <div className="flex items-center justify-between">
-              <h1 className="text-2xl font-bold text-gray-900">
-                {config?.content?.copy?.events?.createTitle || 'Create Event'}
-              </h1>
-              <button
-                onClick={() => navigate('/events')}
-                className="text-gray-400 hover:text-gray-600"
-              >
-                <X className="h-6 w-6" />
-              </button>
-            </div>
-            <p className="text-gray-600 mt-1">
-              {config?.content?.copy?.events?.createSubtitle || 'Create a new open mic event'}
-            </p>
+    <>
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+        <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="flex items-center justify-between p-6 border-b">
+            <h2 className="text-xl font-semibold text-gray-900">Create New Event</h2>
+            <button
+              onClick={handleClose}
+              className="text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              <X className="h-6 w-6" />
+            </button>
           </div>
 
           <form onSubmit={handleSubmit} className="p-6 space-y-6">
@@ -365,51 +365,38 @@ const CreateEventPage = () => {
                 onChange={handleInputChange}
                 className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
               />
-              <label className="ml-2 block text-sm text-gray-700">
-                <Star className="h-4 w-4 inline mr-1" />
-                Spotlight Event (featured on homepage)
+              <label className="ml-2 block text-sm text-gray-900">
+                Make this a spotlight event
               </label>
             </div>
 
-            {/* Submit Buttons */}
             <div className="flex gap-3 pt-4">
               <button
                 type="button"
-                onClick={() => navigate('/events')}
+                onClick={handleClose}
                 className="btn-outline flex-1"
+                disabled={loading}
               >
                 Cancel
               </button>
               <button
                 type="submit"
+                className="btn-primary flex-1"
                 disabled={loading}
-                className="btn-primary flex-1 flex items-center justify-center gap-2"
               >
-                {loading ? (
-                  <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                    Creating...
-                  </>
-                ) : (
-                  <>
-                    <Calendar className="h-4 w-4" />
-                    Create Event
-                  </>
-                )}
+                {loading ? 'Creating...' : 'Create Event'}
               </button>
             </div>
           </form>
         </div>
-
-        {/* Create Venue Modal */}
-        <CreateVenueModal
-          isOpen={showCreateVenue}
-          onClose={() => setShowCreateVenue(false)}
-          onVenueCreated={handleCreateVenue}
-        />
       </div>
-    </div>
+
+      {/* Create Venue Modal */}
+      <CreateVenueModal
+        isOpen={showCreateVenue}
+        onClose={() => setShowCreateVenue(false)}
+        onVenueCreated={handleVenueCreated}
+      />
+    </>
   )
 }
-
-export default CreateEventPage
