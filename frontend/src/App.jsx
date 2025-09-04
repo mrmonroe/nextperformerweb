@@ -22,6 +22,7 @@ import ProfilePage from './pages/ProfilePage'
 import AdminLoginPage from './pages/AdminLoginPage'
 import AdminPanelPage from './pages/AdminPanelPage'
 import PublicEventsPage from './pages/PublicEventsPage'
+import PerformerSignupPage from './pages/PerformerSignupPage'
 
 // Hooks
 import { useAuth } from './hooks/useAuth'
@@ -112,6 +113,7 @@ function App() {
             } 
           />
           <Route path="/events" element={<PublicEventsPage />} />
+          <Route path="/signup/:code" element={<PerformerSignupPage />} />
           
           {/* Admin routes */}
           <Route path="/admin/login" element={<AdminLoginPage />} />

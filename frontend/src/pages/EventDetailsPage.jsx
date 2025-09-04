@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { Calendar, MapPin, Clock, Users, Star, ArrowLeft, Edit, Trash2 } from 'lucide-react'
+import { Calendar, MapPin, Clock, Users, Star, ArrowLeft, Edit, Trash2, QrCode, Copy, Check } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
 import { useConfig } from '../hooks/useConfig'
 import { eventService } from '../services/eventService'
@@ -14,6 +14,7 @@ export default function EventDetailsPage() {
   const { config, configLoading } = useConfig()
   const [event, setEvent] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [copied, setCopied] = useState(false)
 
   useEffect(() => {
     if (id) {
@@ -47,6 +48,33 @@ export default function EventDetailsPage() {
     } catch (error) {
       console.error('Error deleting event:', error)
       toast.error('Failed to delete event')
+    }
+  }
+
+  const copyEventCode = async () => {
+    if (!event?.event_code) return
+    
+    try {
+      await navigator.clipboard.writeText(event.event_code)
+      setCopied(true)
+      toast.success('Event code copied to clipboard!')
+      setTimeout(() => setCopied(false), 2000)
+    } catch (error) {
+      console.error('Error copying code:', error)
+      toast.error('Failed to copy event code')
+    }
+  }
+
+  const copySignupLink = async () => {
+    if (!event?.event_code) return
+    
+    const signupUrl = `${window.location.origin}/signup/${event.event_code}`
+    try {
+      await navigator.clipboard.writeText(signupUrl)
+      toast.success('Signup link copied to clipboard!')
+    } catch (error) {
+      console.error('Error copying link:', error)
+      toast.error('Failed to copy signup link')
     }
   }
 
@@ -236,12 +264,74 @@ export default function EventDetailsPage() {
               </div>
             </div>
 
+            {/* Event Code and QR Code - Only for event owners */}
+            {isOwner && event.event_code && (
+              <div className="mt-8 pt-6 border-t border-gray-200">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Performer Sign-Up</h3>
+                <div className="grid gap-6 md:grid-cols-2">
+                  {/* Event Code */}
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <h4 className="font-medium text-gray-900 mb-2">Event Code</h4>
+                    <div className="flex items-center justify-between">
+                      <p className="text-2xl font-mono font-bold text-blue-600">{event.event_code}</p>
+                      <button
+                        onClick={copyEventCode}
+                        className="btn-outline btn-sm flex items-center space-x-2"
+                      >
+                        {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                        <span>{copied ? 'Copied!' : 'Copy'}</span>
+                      </button>
+                    </div>
+                    <p className="text-sm text-gray-500 mt-2">
+                      Share this code with performers to sign up
+                    </p>
+                  </div>
+
+                  {/* QR Code */}
+                  {event.qr_code_data && (
+                    <div className="bg-gray-50 rounded-lg p-4">
+                      <h4 className="font-medium text-gray-900 mb-2">QR Code</h4>
+                      <div className="text-center">
+                        <div className="inline-block p-2 bg-white rounded-lg border border-gray-200">
+                          <img
+                            src={event.qr_code_data}
+                            alt="Event QR Code"
+                            className="w-24 h-24"
+                          />
+                        </div>
+                        <p className="text-sm text-gray-500 mt-2">
+                          Scan to share signup link
+                        </p>
+                        <button
+                          onClick={copySignupLink}
+                          className="btn-outline btn-sm mt-2 text-xs"
+                        >
+                          Copy Signup Link
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
             {/* Action Buttons */}
             <div className="mt-8 pt-6 border-t border-gray-200">
               <div className="flex gap-3">
-                <button className="btn-primary">
-                  Sign Up for Event
-                </button>
+                {event.event_code ? (
+                  <a
+                    href={`/signup/${event.event_code}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn-primary"
+                  >
+                    View Signup Page
+                  </a>
+                ) : (
+                  <button className="btn-primary" disabled>
+                    Sign Up for Event
+                  </button>
+                )}
                 <button className="btn-outline">
                   Share Event
                 </button>

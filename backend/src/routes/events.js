@@ -2,6 +2,7 @@ const express = require('express')
 const Joi = require('joi')
 const db = require('../config/database')
 const { auth } = require('../middleware/auth')
+const { generateUniqueEventCode, generateQRCode } = require('../utils/eventCodeGenerator')
 
 const router = express.Router()
 
@@ -77,6 +78,39 @@ router.get('/', async (req, res) => {
   }
 })
 
+// @route   GET /api/events/code/:code
+// @desc    Get event by event code
+// @access  Public
+router.get('/code/:code', async (req, res) => {
+  try {
+    const event = await db('events')
+      .select(
+        'events.*',
+        'venues.name as venue_name',
+        'venues.address as venue_address',
+        'venues.city as venue_city',
+        'venues.state as venue_state',
+        'venues.phone as venue_phone',
+        'venues.website as venue_website',
+        'users.display_name as created_by_name'
+      )
+      .leftJoin('venues', 'events.venue_id', 'venues.id')
+      .leftJoin('users', 'events.created_by', 'users.id')
+      .where('events.event_code', req.params.code)
+      .where('events.is_active', true)
+      .first()
+
+    if (!event) {
+      return res.status(404).json({ message: 'Event not found' })
+    }
+
+    res.json(event)
+  } catch (error) {
+    console.error('Get event by code error:', error)
+    res.status(500).json({ message: 'Server error' })
+  }
+})
+
 // @route   GET /api/events/:id
 // @desc    Get event by ID
 // @access  Public
@@ -138,6 +172,11 @@ router.post('/', auth, async (req, res) => {
       return res.status(400).json({ message: 'Venue not found' })
     }
 
+    // Generate unique event code and QR code
+    const eventCode = await generateUniqueEventCode(db)
+    const baseUrl = process.env.FRONTEND_URL || 'http://localhost:3002'
+    const qrCodeData = await generateQRCode(eventCode, baseUrl)
+
     const [event] = await db('events')
       .insert({
         title,
@@ -149,7 +188,10 @@ router.post('/', auth, async (req, res) => {
         end_time: endTime,
         is_spotlight: isSpotlight,
         max_attendees: maxAttendees,
-        image_url: imageUrl
+        image_url: imageUrl,
+        event_code: eventCode,
+        qr_code_data: qrCodeData,
+        code_generated_at: new Date()
       })
       .returning('*')
 
