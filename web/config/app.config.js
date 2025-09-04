@@ -18,7 +18,7 @@ const appConfig = {
 
   // Database Configuration
   database: {
-    url: process.env.DATABASE_URL || 'postgresql://nextperformer_user:nextperformer_password@localhost:5432/nextperformer',
+    url: process.env.DATABASE_URL || 'postgresql://grabthemic_user:grabthemic_password@postgres:5432/grabthemic',
     pool: {
       min: 2,
       max: 10,

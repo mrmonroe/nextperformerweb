@@ -8,14 +8,17 @@ import {
   Menu, 
   X,
   Mic,
-  Plus
+  Plus,
+  Shield
 } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
 import { useConfig } from '../hooks/useConfig'
+import { useAdminAuth } from '../hooks/useAdminAuth'
 
 export default function Layout({ children }) {
   const { user, logout } = useAuth()
   const { config } = useConfig()
+  const { isAuthenticated: isAdminAuthenticated } = useAdminAuth()
   const location = useLocation()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
@@ -24,6 +27,10 @@ export default function Layout({ children }) {
     { name: 'Events', href: '/events', icon: Calendar },
     { name: 'Venues', href: '/venues', icon: MapPin },
     { name: 'Profile', href: '/profile', icon: User },
+  ]
+
+  const adminNavigation = [
+    { name: 'Admin Panel', href: '/admin', icon: Shield },
   ]
 
   const isActive = (path) => location.pathname === path
@@ -122,6 +129,34 @@ export default function Layout({ children }) {
                 </Link>
               )
             })}
+            
+            {/* Admin Navigation */}
+            {isAdminAuthenticated && (
+              <div className="pt-4 border-t border-gray-200">
+                <div className="px-3 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                  Admin
+                </div>
+                {adminNavigation.map((item) => {
+                  const Icon = item.icon
+                  return (
+                    <Link
+                      key={item.name}
+                      to={item.href}
+                      className={`
+                        flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors
+                        ${isActive(item.href)
+                          ? 'bg-red-600 text-white'
+                          : 'text-gray-700 hover:bg-gray-100'
+                        }
+                      `}
+                    >
+                      <Icon className="h-5 w-5" />
+                      <span>{item.name}</span>
+                    </Link>
+                  )
+                })}
+              </div>
+            )}
           </nav>
 
           <div className="p-4 border-t">

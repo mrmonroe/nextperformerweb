@@ -4,6 +4,8 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 const compression = require('compression');
 const rateLimit = require('express-rate-limit');
+const configService = require('./services/configService');
+const adminAuthService = require('./services/adminAuthService');
 require('dotenv').config();
 
 const app = express();
@@ -44,8 +46,25 @@ app.get('/health', (req, res) => {
   });
 });
 
-// Configuration endpoint
-app.get('/api/config', (req, res) => {
+// Configuration endpoint - now uses database
+app.get('/api/config', async (req, res) => {
+  try {
+    const config = await configService.getPublicConfig()
+    res.json(config)
+  } catch (error) {
+    console.error('Error fetching configuration:', error)
+    res.status(500).json({ 
+      message: 'Failed to load configuration',
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+    })
+  }
+});
+
+// Admin routes
+app.use('/api/admin', require('./routes/admin'));
+
+// Legacy configuration endpoint (for fallback)
+app.get('/api/config-legacy', (req, res) => {
   res.json({
     app: {
       name: 'Next Performer',
@@ -292,11 +311,28 @@ app.use('*', (req, res) => {
   res.status(404).json({ message: 'Route not found' });
 });
 
-// Start server
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`🚀 Next Performer Backend API running on port ${PORT}`);
-  console.log(`📊 Health check: http://localhost:${PORT}/health`);
-  console.log(`⚙️  Config: http://localhost:${PORT}/api/config`);
-});
+// Initialize database and start server
+async function startServer() {
+  try {
+    // Initialize default admin user and configurations
+    console.log('🔄 Initializing default data...');
+    await adminAuthService.initializeDefaultAdmin();
+    await configService.initializeDefaultConfigs();
+    console.log('✅ Default data initialized');
+    
+    app.listen(PORT, '0.0.0.0', () => {
+      console.log(`🚀 Next Performer Backend API running on port ${PORT}`);
+      console.log(`📊 Health check: http://localhost:${PORT}/health`);
+      console.log(`⚙️  Config: http://localhost:${PORT}/api/config`);
+      console.log(`🔧 Admin Panel: http://localhost:${PORT}/api/admin`);
+      console.log(`👤 Default Admin: username=admin, password=admin123`);
+    });
+  } catch (error) {
+    console.error('Failed to start server:', error);
+    process.exit(1);
+  }
+}
+
+startServer();
 
 module.exports = app;

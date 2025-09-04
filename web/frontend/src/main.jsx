@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { Toaster } from 'react-hot-toast'
 import { AuthProvider } from './hooks/useAuth.jsx'
+import { AdminAuthProvider } from './hooks/useAdminAuth.jsx'
 import App from './App.jsx'
 import './index.css'
 
@@ -29,8 +30,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         }}
       >
         <AuthProvider>
-          <App />
-          <Toaster
+          <AdminAuthProvider>
+            <App />
+            <Toaster
             position="top-center"
             toastOptions={{
               duration: 4000,
@@ -54,6 +56,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
               },
             }}
           />
+          </AdminAuthProvider>
         </AuthProvider>
       </BrowserRouter>
     </QueryClientProvider>

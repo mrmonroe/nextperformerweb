@@ -5,18 +5,25 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
 class ConfigService {
   constructor() {
     this.config = null
+    this.isLoading = false
     this.listeners = []
   }
 
   // Get configuration from server
   async getConfig() {
     try {
+      this.isLoading = true
+      this.notifyListeners()
+      
       const response = await axios.get(`${API_BASE_URL}/api/config`)
       this.config = response.data
+      this.isLoading = false
       this.notifyListeners()
       return this.config
     } catch (error) {
       console.error('Failed to load configuration:', error)
+      this.isLoading = false
+      this.notifyListeners()
       // Return default config if server is unavailable
       return this.getDefaultConfig()
     }

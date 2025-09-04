@@ -17,10 +17,13 @@ import EventsPage from './pages/EventsPage'
 import EventDetailsPage from './pages/EventDetailsPage'
 import VenuesPage from './pages/VenuesPage'
 import ProfilePage from './pages/ProfilePage'
+import AdminLoginPage from './pages/AdminLoginPage'
+import AdminPanelPage from './pages/AdminPanelPage'
 
 // Hooks
 import { useAuth } from './hooks/useAuth'
 import { useConfig } from './hooks/useConfig'
+import { useAdminAuth } from './hooks/useAdminAuth'
 
 // Services
 import { configService } from './services/configService'
@@ -28,6 +31,7 @@ import { configService } from './services/configService'
 function App() {
   const { user, isLoading: authLoading } = useAuth()
   const { config, isLoading: configLoading } = useConfig()
+  const { admin, isAuthenticated: isAdminAuthenticated } = useAdminAuth()
   const [isOnline, setIsOnline] = useState(navigator.onLine)
 
   // Handle online/offline status
@@ -77,6 +81,19 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          
+          {/* Admin routes */}
+          <Route path="/admin/login" element={<AdminLoginPage />} />
+          <Route 
+            path="/admin" 
+            element={
+              isAdminAuthenticated ? (
+                <AdminPanelPage />
+              ) : (
+                <Navigate to="/admin/login" replace />
+              )
+            } 
+          />
           
           {/* Protected routes */}
           <Route
