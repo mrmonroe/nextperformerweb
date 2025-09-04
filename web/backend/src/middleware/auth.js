@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken')
-const appConfig = require('../config/app.config')
+const appConfig = require('../../config/app.config')
 
 const auth = (req, res, next) => {
   const token = req.header('Authorization')?.replace('Bearer ', '')

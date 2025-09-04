@@ -11,13 +11,20 @@ import {
   Eye, 
   EyeOff,
   LogOut,
-  RefreshCw
+  RefreshCw,
+  Users,
+  UserCog
 } from 'lucide-react'
 import LoadingSpinner from '../components/LoadingSpinner'
+import UserManagementPage from './UserManagementPage'
+import RoleManagementPage from './RoleManagementPage'
+
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
 
 export default function AdminPanelPage() {
   const { admin, logout, isAuthenticated } = useAdminAuth()
   const navigate = useNavigate()
+  const [activeTab, setActiveTab] = useState('config')
   const [configs, setConfigs] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [editingKey, setEditingKey] = useState(null)
@@ -38,7 +45,13 @@ export default function AdminPanelPage() {
   const loadConfigs = async () => {
     try {
       setIsLoading(true)
-      const response = await fetch('/api/admin/configs')
+      const token = localStorage.getItem('adminToken')
+      const response = await fetch(`${API_BASE_URL}/api/admin/configs`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      })
       if (!response.ok) throw new Error('Failed to load configurations')
       const data = await response.json()
       setConfigs(data)
@@ -71,7 +84,7 @@ export default function AdminPanelPage() {
       setIsSaving(true)
       const parsedValue = JSON.parse(editingValue)
       
-      const response = await fetch(`/api/admin/configs/${editingKey}`, {
+      const response = await fetch(`${API_BASE_URL}/api/admin/configs/${editingKey}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -102,7 +115,7 @@ export default function AdminPanelPage() {
     if (!confirm('Are you sure you want to delete this configuration?')) return
     
     try {
-      const response = await fetch(`/api/admin/configs/${key}`, {
+      const response = await fetch(`${API_BASE_URL}/api/admin/configs/${key}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
@@ -123,7 +136,7 @@ export default function AdminPanelPage() {
     if (!confirm('This will reset all configurations to defaults. Continue?')) return
     
     try {
-      const response = await fetch('/api/admin/configs/initialize', {
+      const response = await fetch(`${API_BASE_URL}/api/admin/configs/initialize`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
@@ -177,10 +190,53 @@ export default function AdminPanelPage() {
         </div>
       </div>
 
+      {/* Tab Navigation */}
+      <div className="bg-white border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <nav className="-mb-px flex space-x-8">
+            <button
+              onClick={() => setActiveTab('config')}
+              className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                activeTab === 'config'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              <Settings className="h-5 w-5 inline mr-2" />
+              Configuration
+            </button>
+            <button
+              onClick={() => setActiveTab('users')}
+              className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                activeTab === 'users'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              <Users className="h-5 w-5 inline mr-2" />
+              User Management
+            </button>
+            <button
+              onClick={() => setActiveTab('roles')}
+              className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                activeTab === 'roles'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              <UserCog className="h-5 w-5 inline mr-2" />
+              Role Management
+            </button>
+          </nav>
+        </div>
+      </div>
+
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Actions */}
-        <div className="mb-6 flex justify-between items-center">
+        {activeTab === 'config' && (
+          <>
+            {/* Actions */}
+            <div className="mb-6 flex justify-between items-center">
           <h2 className="text-lg font-medium text-gray-900">Configurations</h2>
           <div className="flex space-x-3">
             <button
@@ -369,6 +425,11 @@ export default function AdminPanelPage() {
             </div>
           </div>
         )}
+          </>
+        )}
+
+        {activeTab === 'users' && <UserManagementPage />}
+        {activeTab === 'roles' && <RoleManagementPage />}
       </div>
     </div>
   )

@@ -21,11 +21,23 @@ class ConfigService {
       this.notifyListeners()
       return this.config
     } catch (error) {
-      console.error('Failed to load configuration:', error)
-      this.isLoading = false
-      this.notifyListeners()
-      // Return default config if server is unavailable
-      return this.getDefaultConfig()
+      console.error('Failed to load configuration from database:', error)
+      console.log('Falling back to legacy configuration...')
+      
+      // Try to get legacy config as fallback
+      try {
+        const legacyResponse = await axios.get(`${API_BASE_URL}/api/config-legacy`)
+        this.config = legacyResponse.data
+        this.isLoading = false
+        this.notifyListeners()
+        return this.config
+      } catch (legacyError) {
+        console.error('Failed to load legacy configuration:', legacyError)
+        this.isLoading = false
+        this.notifyListeners()
+        // Return minimal default config if both fail
+        return this.getDefaultConfig()
+      }
     }
   }
 

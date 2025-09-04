@@ -13,10 +13,17 @@ export function AuthProvider({ children }) {
       // Verify token is still valid
       authService.getCurrentUser()
         .then(user => setUser(user))
-        .catch(() => {
-          // Token is invalid, logout
-          authService.logout()
-          setUser(null)
+        .catch((error) => {
+          // Only logout if it's a 401 (unauthorized), not network errors
+          if (error.response?.status === 401) {
+            console.log('Token invalid, logging out')
+            authService.logout()
+            setUser(null)
+          } else {
+            // For network errors, keep the user logged in with cached data
+            console.log('Network error verifying token, using cached user data')
+            setUser(authService.getUser())
+          }
         })
     }
   }, [])

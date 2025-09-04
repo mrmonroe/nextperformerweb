@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken')
 const Joi = require('joi')
 const db = require('../config/database')
 const { auth } = require('../middleware/auth')
-const appConfig = require('../../../config/app.config')
+const appConfig = require('../../config/app.config')
 
 const router = express.Router()
 

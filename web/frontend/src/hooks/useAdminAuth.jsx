@@ -2,6 +2,13 @@ import { useState, useEffect, createContext, useContext } from 'react'
 import axios from 'axios'
 import toast from 'react-hot-toast'
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
+
+// Create a separate axios instance for admin operations
+const adminAxios = axios.create({
+  baseURL: API_BASE_URL
+})
+
 const AdminAuthContext = createContext()
 
 export function AdminAuthProvider({ children }) {
@@ -11,7 +18,7 @@ export function AdminAuthProvider({ children }) {
   useEffect(() => {
     const token = localStorage.getItem('adminToken')
     if (token) {
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
+      adminAxios.defaults.headers.common['Authorization'] = `Bearer ${token}`
       // Verify token on app load
       verifyToken()
     } else {
@@ -21,11 +28,11 @@ export function AdminAuthProvider({ children }) {
 
   const verifyToken = async () => {
     try {
-      const response = await axios.get('/api/admin/profile')
+      const response = await adminAxios.get('/api/admin/profile')
       setAdmin(response.data)
     } catch (error) {
       localStorage.removeItem('adminToken')
-      delete axios.defaults.headers.common['Authorization']
+      delete adminAxios.defaults.headers.common['Authorization']
       setAdmin(null)
     } finally {
       setIsLoading(false)
@@ -35,7 +42,7 @@ export function AdminAuthProvider({ children }) {
   const login = async (username, password) => {
     try {
       setIsLoading(true)
-      const response = await axios.post('/api/admin/login', {
+      const response = await adminAxios.post('/api/admin/login', {
         username,
         password
       })
@@ -44,7 +51,7 @@ export function AdminAuthProvider({ children }) {
       
       // Store auth data
       localStorage.setItem('adminToken', token)
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
+      adminAxios.defaults.headers.common['Authorization'] = `Bearer ${token}`
       setAdmin(adminData)
       
       toast.success('Admin login successful!')
@@ -60,13 +67,14 @@ export function AdminAuthProvider({ children }) {
 
   const logout = () => {
     localStorage.removeItem('adminToken')
-    delete axios.defaults.headers.common['Authorization']
+    delete adminAxios.defaults.headers.common['Authorization']
     setAdmin(null)
     toast.success('Logged out successfully')
   }
 
   const value = {
     admin,
+    adminToken: localStorage.getItem('adminToken'),
     isLoading,
     login,
     logout,

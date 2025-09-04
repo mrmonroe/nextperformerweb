@@ -6,7 +6,14 @@ const compression = require('compression');
 const rateLimit = require('express-rate-limit');
 const configService = require('./services/configService');
 const adminAuthService = require('./services/adminAuthService');
+const roleService = require('./services/roleService');
 require('dotenv').config();
+
+// Import routes
+const authRoutes = require('./routes/auth');
+const adminRoutes = require('./routes/admin');
+const adminUsersRoutes = require('./routes/adminUsers');
+const adminRolesRoutes = require('./routes/adminRoles');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -15,12 +22,23 @@ const PORT = process.env.PORT || 3001;
 app.use(helmet());
 app.use(compression());
 
-// Rate limiting
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100 // limit each IP to 100 requests per windowMs
-});
-app.use(limiter);
+// Development-specific middleware
+if (process.env.NODE_ENV === 'development') {
+  // Add request logging for development
+  app.use((req, res, next) => {
+    console.log(`${new Date().toISOString()} - ${req.method} ${req.path} - ${req.ip}`);
+    next();
+  });
+}
+
+// Rate limiting - only in production
+if (process.env.NODE_ENV === 'production') {
+  const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100 // limit each IP to 100 requests per windowMs
+  });
+  app.use(limiter);
+}
 
 // CORS
 app.use(cors({
@@ -61,7 +79,11 @@ app.get('/api/config', async (req, res) => {
 });
 
 // Admin routes
-app.use('/api/admin', require('./routes/admin'));
+// API Routes
+app.use('/api/auth', authRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/admin', adminUsersRoutes);
+app.use('/api/admin', adminRolesRoutes);
 
 // Legacy configuration endpoint (for fallback)
 app.get('/api/config-legacy', (req, res) => {
@@ -212,65 +234,7 @@ app.get('/api/config-legacy', (req, res) => {
   });
 });
 
-// Authentication endpoints
-app.post('/api/auth/register', (req, res) => {
-  const { firstName, lastName, displayName, email, password } = req.body;
-  
-  // Basic validation
-  if (!firstName || !lastName || !displayName || !email || !password) {
-    return res.status(400).json({ 
-      message: 'First name, last name, display name, email, and password are required' 
-    });
-  }
-  
-  if (password.length < 8) {
-    return res.status(400).json({ 
-      message: 'Password must be at least 8 characters' 
-    });
-  }
-  
-  // Mock successful registration
-  res.status(201).json({
-    message: 'User registered successfully',
-    user: {
-      id: Math.random().toString(36).substr(2, 9),
-      firstName,
-      lastName,
-      displayName,
-      name: `${firstName} ${lastName}`, // For backward compatibility
-      email,
-      createdAt: new Date().toISOString()
-    },
-    token: 'mock-jwt-token-' + Math.random().toString(36).substr(2, 9)
-  });
-});
-
-app.post('/api/auth/login', (req, res) => {
-  const { email, password } = req.body;
-  
-  // Basic validation
-  if (!email || !password) {
-    return res.status(400).json({ 
-      message: 'Email and password are required' 
-    });
-  }
-  
-  // Mock successful login
-  res.json({
-    message: 'Login successful',
-    user: {
-      id: Math.random().toString(36).substr(2, 9),
-      name: 'Test User',
-      email,
-      createdAt: new Date().toISOString()
-    },
-    token: 'mock-jwt-token-' + Math.random().toString(36).substr(2, 9)
-  });
-});
-
-app.post('/api/auth/logout', (req, res) => {
-  res.json({ message: 'Logout successful' });
-});
+// Authentication endpoints are now handled by the auth routes
 
 // Mock API endpoints for now
 app.get('/api/events', (req, res) => {
@@ -314,9 +278,10 @@ app.use('*', (req, res) => {
 // Initialize database and start server
 async function startServer() {
   try {
-    // Initialize default admin user and configurations
+    // Initialize default admin user, roles, and configurations
     console.log('🔄 Initializing default data...');
     await adminAuthService.initializeDefaultAdmin();
+    await roleService.initializeDefaultRoles();
     await configService.initializeDefaultConfigs();
     console.log('✅ Default data initialized');
     
