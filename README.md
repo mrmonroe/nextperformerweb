@@ -1,361 +1,186 @@
-# Next Performer - Progressive Web App
+# Next Performer
 
-A mobile-first Progressive Web App (PWA) for discovering and managing open mic events. Built with React, Node.js, PostgreSQL, and Docker.
+A configuration-driven web application with admin panel and role-based access control (RBAC) for managing open mic events and venues.
 
-## 🚀 Features
+## Features
 
-- **Progressive Web App**: Installable on mobile devices with offline capabilities
-- **Mobile-First Design**: Optimized for mobile devices with responsive design
-- **Configuration-Driven**: All content and features driven by configuration files
-- **Real-time Updates**: Live data synchronization
-- **Authentication**: Secure user authentication with JWT
-- **Event Management**: Create, edit, and manage events
-- **Venue Management**: Discover and manage venues
-- **Profile Management**: User profiles and settings
-- **Offline Support**: Works offline with service worker caching
+- 🎤 **Event Management**: Create and manage open mic events
+- 🏢 **Venue Management**: Manage venues and their details
+- 👥 **User Management**: Complete user management with role assignment
+- 🔐 **Role-Based Access Control**: Configurable roles and permissions
+- ⚙️ **Configuration-Driven**: All content and features configurable via admin panel
+- 🔒 **Secure Admin Panel**: Protected admin interface for system management
+- 📱 **Progressive Web App**: Mobile-first design with offline capabilities
+- 🐳 **Dockerized**: Complete containerized development environment
 
-## 🛠 Tech Stack
+## Tech Stack
 
 ### Frontend
-- **React 18** - Modern React with hooks
-- **Vite** - Fast build tool and dev server
-- **Tailwind CSS** - Utility-first CSS framework
-- **React Router** - Client-side routing
-- **React Query** - Data fetching and caching
-- **React Hook Form** - Form handling
-- **Zod** - Schema validation
-- **Framer Motion** - Animations
-- **Lucide React** - Icons
-- **PWA** - Progressive Web App features
+- React 18 with Vite
+- Tailwind CSS for styling
+- React Router for navigation
+- React Query for state management
+- PWA capabilities with service worker
 
 ### Backend
-- **Node.js** - JavaScript runtime
-- **Express** - Web framework
-- **PostgreSQL** - Database
-- **Knex.js** - SQL query builder
-- **JWT** - Authentication
-- **Joi** - Validation
-- **bcryptjs** - Password hashing
+- Node.js with Express
+- PostgreSQL database
+- Knex.js for database migrations
+- JWT authentication
+- Role-based access control
 
 ### Infrastructure
-- **Docker** - Containerization
-- **Docker Compose** - Multi-container orchestration
-- **Nginx** - Reverse proxy (production)
+- Docker & Docker Compose
+- PostgreSQL database
+- Nginx (production ready)
 
-## 📁 Project Structure
-
-```
-web/
-├── frontend/                 # React PWA frontend
-│   ├── src/
-│   │   ├── components/      # Reusable components
-│   │   ├── pages/          # Page components
-│   │   ├── hooks/          # Custom hooks
-│   │   ├── services/       # API services
-│   │   └── utils/          # Utility functions
-│   ├── public/             # Static assets
-│   ├── package.json
-│   ├── vite.config.js      # Vite configuration
-│   └── Dockerfile
-├── backend/                # Node.js API
-│   ├── src/
-│   │   ├── routes/         # API routes
-│   │   ├── middleware/     # Express middleware
-│   │   ├── migrations/     # Database migrations
-│   │   └── seeds/          # Database seeds
-│   ├── package.json
-│   └── Dockerfile
-├── config/                 # Configuration files
-│   └── app.config.js      # App configuration
-├── database/               # Database files
-│   └── init/              # Database initialization
-├── docker-compose.yml     # Docker Compose configuration
-├── env.example            # Environment variables example
-└── README.md
-```
-
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
-
 - Docker and Docker Compose
-- Node.js 18+ (for local development)
-- PostgreSQL (for local development)
-
-### Using Docker (Recommended)
-
-1. **Clone and navigate to the project**
-   ```bash
-   cd web
-   ```
-
-2. **Copy environment variables**
-   ```bash
-   cp env.example .env
-   ```
-
-3. **Start all services**
-   ```bash
-   docker-compose up -d
-   ```
-
-4. **Run database migrations**
-   ```bash
-   docker-compose exec backend npm run migrate
-   ```
-
-5. **Seed the database (optional)**
-   ```bash
-   docker-compose exec backend npm run seed
-   ```
-
-6. **Access the application**
-   - Frontend: http://localhost:3000
-   - Backend API: http://localhost:3001
-   - Database: localhost:5432
-
-### Local Development
-
-1. **Install dependencies**
-   ```bash
-   # Frontend
-   cd frontend
-   npm install
-   
-   # Backend
-   cd ../backend
-   npm install
-   ```
-
-2. **Start PostgreSQL**
-   ```bash
-   # Using Docker
-   docker run --name postgres -e POSTGRES_PASSWORD=password -p 5432:5432 -d postgres:15
-   ```
-
-3. **Set up environment variables**
-   ```bash
-   cp env.example .env
-   # Edit .env with your database credentials
-   ```
-
-4. **Run database migrations**
-   ```bash
-   cd backend
-   npm run migrate
-   ```
-
-5. **Start the development servers**
-   ```bash
-   # Terminal 1 - Backend
-   cd backend
-   npm run dev
-   
-   # Terminal 2 - Frontend
-   cd frontend
-   npm run dev
-   ```
-
-## 🔧 Configuration
-
-The app uses a configuration-driven architecture. All content, features, and settings are managed through configuration files:
-
-### App Configuration (`config/app.config.js`)
-
-- App metadata (name, version, environment)
-- API settings (base URL, timeout, retry attempts)
-- Database configuration
-- Authentication settings
-- UI theme and styling
-- Feature flags
-- Content and copy
-- Validation messages
-
-### Environment Variables
-
-- `DATABASE_URL` - PostgreSQL connection string
-- `JWT_SECRET` - JWT signing secret
-- `NODE_ENV` - Environment (development/production)
-- `PORT` - Backend port (default: 3001)
-- `CORS_ORIGIN` - Frontend URL for CORS
-
-## 📱 PWA Features
+- Git
 
 ### Installation
-- **Mobile**: Add to home screen from browser
-- **Desktop**: Install button in browser address bar
-- **Offline**: Works without internet connection
 
-### Service Worker
-- Caches API responses for offline access
-- Caches static assets
-- Background sync for form submissions
-- Push notifications (configurable)
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/mrmonroe/nextperformerweb.git
+   cd nextperformerweb
+   ```
 
-### Manifest
-- App name, description, and icons
-- Theme colors and display mode
-- Start URL and scope
-- Orientation preferences
+2. **Set up environment variables**
+   ```bash
+   cp env.example .env
+   # Edit .env with your configuration
+   ```
 
-## 🗄️ Database Schema
+3. **Start the application**
+   ```bash
+   docker-compose up --build
+   ```
 
-### Users
-- `id` - UUID primary key
-- `email` - Unique email address
-- `password_hash` - Hashed password
-- `first_name`, `last_name` - User names
-- `display_name` - Public display name
-- `bio` - User biography
-- `avatar_url` - Profile picture URL
-- `is_verified` - Email verification status
-- `created_at`, `updated_at` - Timestamps
+4. **Access the application**
+   - Frontend: http://localhost:3002
+   - Backend API: http://localhost:3001
+   - Admin Panel: http://localhost:3002/admin
 
-### Venues
-- `id` - UUID primary key
-- `name` - Venue name
-- `description` - Venue description
-- `address`, `city`, `state`, `zip_code` - Location
-- `phone`, `website` - Contact information
-- `latitude`, `longitude` - GPS coordinates
-- `is_active` - Soft delete flag
-- `created_at`, `updated_at` - Timestamps
+### Default Admin Credentials
+- Username: `admin`
+- Password: `admin123`
 
-### Events
-- `id` - UUID primary key
-- `title` - Event title
-- `description` - Event description
-- `venue_id` - Foreign key to venues
-- `created_by` - Foreign key to users
-- `event_date`, `start_time`, `end_time` - Timing
-- `is_spotlight` - Featured event flag
-- `max_attendees` - Capacity limit
-- `image_url` - Event image
-- `is_active` - Soft delete flag
-- `created_at`, `updated_at` - Timestamps
+## Configuration
 
-## 🔌 API Endpoints
+The application is fully configuration-driven. All content, features, and settings can be managed through the admin panel:
+
+- **App Settings**: Title, description, branding
+- **Content Management**: Homepage content, copy, messaging
+- **Feature Toggles**: Enable/disable features
+- **User Roles**: Create and manage custom roles
+- **Permissions**: Configure granular permissions
+
+## User Roles
+
+### Admin
+- Full access to all features
+- Admin panel access
+- User and role management
+- System configuration
+
+### Host
+- Event and venue management
+- User management (non-admin)
+- No admin panel access
+
+### Performer
+- View events and venues
+- Sign up for events
+- Profile management
+
+## API Endpoints
 
 ### Authentication
 - `POST /api/auth/register` - User registration
 - `POST /api/auth/login` - User login
 - `GET /api/auth/me` - Get current user
-- `POST /api/auth/logout` - User logout
-- `PUT /api/auth/change-password` - Change password
 
-### Events
-- `GET /api/events` - List events (with pagination, search, filters)
-- `GET /api/events/:id` - Get event details
-- `POST /api/events` - Create event (authenticated)
-- `PUT /api/events/:id` - Update event (authenticated)
-- `DELETE /api/events/:id` - Delete event (authenticated)
-
-### Venues
-- `GET /api/venues` - List venues (with pagination, search, filters)
-- `GET /api/venues/:id` - Get venue details
-- `POST /api/venues` - Create venue (authenticated)
-- `PUT /api/venues/:id` - Update venue (authenticated)
-- `DELETE /api/venues/:id` - Delete venue (authenticated)
+### Admin
+- `POST /api/admin/login` - Admin login
+- `GET /api/admin/config` - Get configuration
+- `PUT /api/admin/config/:key` - Update configuration
 
 ### Users
-- `GET /api/users/profile` - Get user profile (authenticated)
-- `PUT /api/users/profile` - Update user profile (authenticated)
+- `GET /api/admin/users` - Get all users
+- `POST /api/admin/users/:id/roles` - Assign role to user
+- `DELETE /api/admin/users/:id/roles/:roleId` - Remove role from user
 
-### Configuration
-- `GET /api/config` - Get app configuration
+### Roles
+- `GET /api/admin/roles` - Get all roles
+- `POST /api/admin/roles` - Create role
+- `PUT /api/admin/roles/:id` - Update role
+- `DELETE /api/admin/roles/:id` - Delete role
 
-## 🧪 Testing
+## Development
 
+### Project Structure
+```
+web/
+├── backend/           # Node.js/Express API
+│   ├── src/
+│   │   ├── config/    # Database configuration
+│   │   ├── migrations/ # Database migrations
+│   │   ├── routes/    # API routes
+│   │   ├── services/  # Business logic
+│   │   └── middleware/ # Express middleware
+├── frontend/          # React application
+│   ├── src/
+│   │   ├── components/ # React components
+│   │   ├── pages/     # Page components
+│   │   ├── hooks/     # Custom React hooks
+│   │   └── services/  # API services
+└── docker-compose.yml # Docker configuration
+```
+
+### Database Migrations
 ```bash
-# Run backend tests
-cd backend
-npm test
+# Run migrations
+docker-compose exec backend npx knex migrate:latest
 
-# Run frontend tests
-cd frontend
-npm test
-
-# Run all tests with Docker
-docker-compose exec backend npm test
+# Rollback migrations
+docker-compose exec backend npx knex migrate:rollback
 ```
 
-## 🚀 Deployment
+### Adding New Features
+1. Create database migrations if needed
+2. Add backend API endpoints
+3. Create frontend components
+4. Update role permissions if needed
+5. Add configuration options
 
-### Production with Docker
+## Security
 
-1. **Build production images**
-   ```bash
-   docker-compose -f docker-compose.yml -f docker-compose.prod.yml build
-   ```
-
-2. **Start production services**
-   ```bash
-   docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
-   ```
-
-### Environment Variables for Production
-
-```env
-NODE_ENV=production
-DATABASE_URL=postgresql://user:password@host:5432/database
-JWT_SECRET=your-super-secret-jwt-key
-CORS_ORIGIN=https://yourdomain.com
-```
-
-## 📊 Performance
-
-- **Lighthouse Score**: 90+ on all metrics
-- **First Contentful Paint**: < 1.5s
-- **Largest Contentful Paint**: < 2.5s
-- **Cumulative Layout Shift**: < 0.1
-- **Time to Interactive**: < 3.5s
-
-## 🔒 Security
-
-- JWT authentication with secure tokens
-- Password hashing with bcrypt
-- CORS protection
-- Rate limiting
+- JWT-based authentication
+- Role-based access control
 - Input validation and sanitization
-- SQL injection prevention with Knex.js
-- XSS protection with helmet.js
+- SQL injection protection
+- CORS configuration
+- Environment variable protection
 
-## 🤝 Contributing
+## Contributing
 
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
-4. Add tests for new functionality
-5. Ensure all tests pass
-6. Submit a pull request
+4. Add tests if applicable
+5. Submit a pull request
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
-## 🆘 Support
+## Support
 
-For support and questions:
+For support and questions, please open an issue on GitHub.
 
-1. Check the documentation
-2. Search existing issues
-3. Create a new issue with detailed information
-4. Contact the development team
+---
 
-## 🔄 Updates
-
-The app is designed for easy updates:
-
-- **Configuration Changes**: Update config files without code changes
-- **Content Updates**: Modify content configuration for new copy
-- **Feature Rollouts**: Use feature flags for gradual rollouts
-- **A/B Testing**: Built-in support for A/B testing different configurations
-
-## 📚 Additional Resources
-
-- [React Documentation](https://react.dev/)
-- [Vite Documentation](https://vitejs.dev/)
-- [Tailwind CSS Documentation](https://tailwindcss.com/)
-- [Progressive Web Apps](https://web.dev/progressive-web-apps/)
-- [Docker Documentation](https://docs.docker.com/)
-- [PostgreSQL Documentation](https://www.postgresql.org/docs/)
+Built with ❤️ for the open mic community
