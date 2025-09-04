@@ -16,8 +16,6 @@ export default function PerformerSignupPage() {
     email: '',
     phone: '',
     performanceType: '',
-    description: '',
-    socialMedia: '',
     createAccount: false,
     password: ''
   })
@@ -95,10 +93,6 @@ export default function PerformerSignupPage() {
       newErrors.phone = 'Phone number must be at least 10 digits'
     }
     
-    if (formData.description && formData.description.length < 10) {
-      newErrors.description = 'Description must be at least 10 characters'
-    }
-    
     if (formData.createAccount) {
       if (!formData.password.trim()) {
         newErrors.password = 'Password is required when creating an account'
@@ -133,8 +127,6 @@ export default function PerformerSignupPage() {
           email: formData.email,
           phone: formData.phone,
           performanceType: formData.performanceType,
-          description: formData.description,
-          socialMedia: formData.socialMedia,
           createAccount: formData.createAccount,
           password: formData.createAccount ? formData.password : undefined
         })
@@ -445,38 +437,6 @@ export default function PerformerSignupPage() {
                 )}
               </div>
 
-              {/* Description */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Performance Description <span className="text-gray-500">(Optional)</span>
-                </label>
-                <textarea
-                  name="description"
-                  value={formData.description}
-                  onChange={handleInputChange}
-                  rows={3}
-                  className={`input w-full ${errors.description ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
-                  placeholder="Tell us about your performance style, what you'll be performing, etc."
-                />
-                {errors.description && (
-                  <p className="mt-1 text-sm text-red-600">{errors.description}</p>
-                )}
-              </div>
-
-              {/* Social Media */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Social Media <span className="text-gray-500">(Optional)</span>
-                </label>
-                <input
-                  type="text"
-                  name="socialMedia"
-                  value={formData.socialMedia}
-                  onChange={handleInputChange}
-                  className="input w-full"
-                  placeholder="Instagram, Twitter, YouTube, etc."
-                />
-              </div>
 
               {/* Account Creation */}
               <div className="border-t border-gray-200 pt-6">

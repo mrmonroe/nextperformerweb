@@ -13,8 +13,6 @@ const performerSignupSchema = Joi.object({
   email: Joi.string().email().required(),
   phone: Joi.string().min(10).max(20).optional().allow(''),
   performanceType: Joi.string().min(2).max(100).required(),
-  description: Joi.string().min(10).max(500).optional().allow(''),
-  socialMedia: Joi.string().max(200).optional().allow(''),
   createAccount: Joi.boolean().default(false),
   password: Joi.string().min(6).max(100).when('createAccount', {
     is: true,
@@ -33,7 +31,7 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ message: error.details[0].message })
     }
 
-    const { eventCode, timeslotId, performerName, email, phone, performanceType, description, socialMedia, createAccount, password } = value
+    const { eventCode, timeslotId, performerName, email, phone, performanceType, createAccount, password } = value
 
     // Check if event exists and is active
     const event = await db('events')
@@ -119,8 +117,6 @@ router.post('/', async (req, res) => {
         email: email,
         phone: phone || null,
         performance_type: performanceType,
-        description: description || null,
-        social_media: socialMedia || null,
         signup_date: new Date()
       })
       .returning('*')
