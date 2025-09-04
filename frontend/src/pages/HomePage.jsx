@@ -1,11 +1,13 @@
 import { Link } from 'react-router-dom'
 import { Mic, Calendar, MapPin, Users, ArrowRight, Star } from 'lucide-react'
 import { useConfig } from '../hooks/useConfig'
+import { useAuth } from '../hooks/useAuth'
 import ConfigLoadingPlaceholder from '../components/ConfigLoadingPlaceholder'
 import PublicNavbar from '../components/PublicNavbar'
 
 export default function HomePage() {
   const { config, isLoading: configLoading } = useConfig()
+  const { isAuthenticated } = useAuth()
 
   // Show loading placeholder while config is loading
   if (configLoading) {
@@ -39,13 +41,15 @@ export default function HomePage() {
               </p>
               
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link
-                  to="/register"
-                  className="btn-primary btn-lg px-8 py-4 text-lg font-semibold"
-                >
-                  Get Started
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Link>
+                {!isAuthenticated && (
+                  <Link
+                    to="/register"
+                    className="btn-primary btn-lg px-8 py-4 text-lg font-semibold"
+                  >
+                    Get Started
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Link>
+                )}
                 
                 <Link
                   to="/events"
@@ -55,12 +59,14 @@ export default function HomePage() {
                   View Events
                 </Link>
                 
-                <Link
-                  to="/login"
-                  className="btn-outline btn-lg px-8 py-4 text-lg font-semibold"
-                >
-                  Sign In
-                </Link>
+                {!isAuthenticated && (
+                  <Link
+                    to="/login"
+                    className="btn-outline btn-lg px-8 py-4 text-lg font-semibold"
+                  >
+                    Sign In
+                  </Link>
+                )}
               </div>
             </div>
           </div>
