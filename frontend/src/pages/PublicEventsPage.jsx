@@ -2,18 +2,23 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Calendar, Clock, MapPin, Users, Star, Search, Filter } from 'lucide-react'
 import { useConfig } from '../hooks/useConfig'
+import { useAuth } from '../hooks/useAuth'
 import { eventService } from '../services/eventService'
 import ConfigLoadingPlaceholder from '../components/ConfigLoadingPlaceholder'
 import PublicNavbar from '../components/PublicNavbar'
+import UnauthenticatedEventModal from '../components/UnauthenticatedEventModal'
 import toast from 'react-hot-toast'
 
 export default function PublicEventsPage() {
   const navigate = useNavigate()
   const { config, isLoading: configLoading } = useConfig()
+  const { isAuthenticated } = useAuth()
   const [events, setEvents] = useState([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
   const [showSpotlightOnly, setShowSpotlightOnly] = useState(false)
+  const [selectedEvent, setSelectedEvent] = useState(null)
+  const [showModal, setShowModal] = useState(false)
 
   useEffect(() => {
     loadEvents()
@@ -96,8 +101,20 @@ export default function PublicEventsPage() {
     return event >= today
   }
 
-  const handleViewDetails = (eventId) => {
-    navigate(`/events/${eventId}`)
+  const handleViewDetails = (event) => {
+    if (isAuthenticated) {
+      // Authenticated users can navigate to the full event details page
+      navigate(`/events/${event.id}`)
+    } else {
+      // Unauthenticated users see a modal with sign up and share options
+      setSelectedEvent(event)
+      setShowModal(true)
+    }
+  }
+
+  const closeModal = () => {
+    setShowModal(false)
+    setSelectedEvent(null)
   }
 
   // Separate spotlight and regular upcoming events
@@ -238,7 +255,7 @@ export default function PublicEventsPage() {
 
                       <div className="ml-6 flex-shrink-0">
                         <button 
-                          onClick={() => handleViewDetails(event.id)}
+                          onClick={() => handleViewDetails(event)}
                           className="btn-outline btn-sm"
                         >
                           View Details
@@ -313,6 +330,13 @@ export default function PublicEventsPage() {
           </div>
         )}
       </div>
+
+      {/* Unauthenticated Event Modal */}
+      <UnauthenticatedEventModal
+        event={selectedEvent}
+        isOpen={showModal}
+        onClose={closeModal}
+      />
     </div>
   )
 }
