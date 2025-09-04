@@ -201,8 +201,8 @@ export default function PublicEventsPage() {
               </h2>
               <div className="space-y-4">
                 {displayEvents.map((event) => (
-                  <div key={event.id} className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-md transition-shadow">
-                    <div className="flex items-start justify-between">
+                  <div key={event.id} className="bg-white rounded-lg border border-gray-200 p-4 sm:p-6 hover:shadow-md transition-shadow">
+                    <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                       <div className="flex-1">
                         <div className="flex items-center space-x-3 mb-3">
                           {event.isSpotlight && (
@@ -253,10 +253,10 @@ export default function PublicEventsPage() {
                         </div>
                       </div>
 
-                      <div className="ml-6 flex-shrink-0">
+                      <div className="flex-shrink-0 sm:ml-6">
                         <button 
                           onClick={() => handleViewDetails(event)}
-                          className="btn-outline btn-lg px-6 py-3 min-h-[48px] font-medium"
+                          className="btn-outline btn-sm sm:btn-lg px-3 py-2 sm:px-6 sm:py-3 min-h-[36px] sm:min-h-[48px] font-medium w-full sm:w-auto"
                         >
                           View Details
                         </button>
@@ -275,8 +275,8 @@ export default function PublicEventsPage() {
                 </h2>
                 <div className="space-y-4">
                   {pastEvents.map((event) => (
-                    <div key={event.id} className="bg-white rounded-lg border border-gray-200 p-6 opacity-75">
-                      <div className="flex items-start justify-between">
+                    <div key={event.id} className="bg-white rounded-lg border border-gray-200 p-4 sm:p-6 opacity-75">
+                      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                         <div className="flex-1">
                           <h3 className="text-xl font-semibold text-gray-900 mb-2">
                             {event.title}
