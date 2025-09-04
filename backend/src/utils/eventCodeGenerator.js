@@ -1,4 +1,4 @@
-const { v4: uuidv4 } = require('uuid')
+// const { v4: uuidv4 } = require('uuid') // Not needed for this implementation
 
 /**
  * Generate a unique 6-digit event code

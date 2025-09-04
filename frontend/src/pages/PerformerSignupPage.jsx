@@ -11,6 +11,7 @@ export default function PerformerSignupPage() {
   const [submitting, setSubmitting] = useState(false)
   const [copied, setCopied] = useState(false)
   const [formData, setFormData] = useState({
+    timeslotId: '',
     performerName: '',
     email: '',
     phone: '',
@@ -65,6 +66,10 @@ export default function PerformerSignupPage() {
 
   const validateForm = () => {
     const newErrors = {}
+    
+    if (!formData.timeslotId) {
+      newErrors.timeslotId = 'Please select a timeslot'
+    }
     
     if (!formData.performerName.trim()) {
       newErrors.performerName = 'Performer name is required'
@@ -300,6 +305,38 @@ export default function PerformerSignupPage() {
             <h2 className="text-xl font-semibold text-gray-900 mb-6">Sign Up Form</h2>
             
             <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Timeslot Selection */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Select Timeslot <span className="text-red-500">*</span>
+                </label>
+                <select
+                  name="timeslotId"
+                  value={formData.timeslotId}
+                  onChange={handleInputChange}
+                  className={`input w-full ${errors.timeslotId ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
+                  required
+                >
+                  <option value="">Choose a timeslot...</option>
+                  {event.timeslots?.map((timeslot) => (
+                    <option 
+                      key={timeslot.id} 
+                      value={timeslot.id}
+                      disabled={timeslot.spots_remaining <= 0}
+                    >
+                      {timeslot.name} - {formatTime(timeslot.start_time)} to {formatTime(timeslot.end_time)}
+                      {timeslot.spots_remaining <= 0 ? ' (Full)' : ` (${timeslot.spots_remaining} spots left)`}
+                    </option>
+                  ))}
+                </select>
+                {errors.timeslotId && (
+                  <p className="mt-1 text-sm text-red-600">{errors.timeslotId}</p>
+                )}
+                {event.timeslots?.length === 0 && (
+                  <p className="mt-1 text-sm text-gray-500">No timeslots available for this event</p>
+                )}
+              </div>
+
               {/* Performer Name */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">

@@ -89,6 +89,7 @@ app.use('/api/admin', adminRolesRoutes);
 app.use('/api/venues', venuesRoutes);
 app.use('/api/events', eventsRoutes);
 app.use('/api/performer-signup', require('./routes/performerSignup'));
+app.use('/api/timeslots', require('./routes/timeslots'));
 
 // Legacy configuration endpoint (for fallback)
 app.get('/api/config-legacy', (req, res) => {

@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { Calendar, MapPin, Clock, Users, Star, ArrowLeft, Edit, Trash2, QrCode, Copy, Check } from 'lucide-react'
+import { Calendar, MapPin, Clock, Users, Star, ArrowLeft, Edit, Trash2, QrCode, Copy, Check, Settings } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
 import { useConfig } from '../hooks/useConfig'
 import { eventService } from '../services/eventService'
 import ConfigLoadingPlaceholder from '../components/ConfigLoadingPlaceholder'
+import TimeslotManagementModal from '../components/modals/TimeslotManagementModal'
 import toast from 'react-hot-toast'
 
 export default function EventDetailsPage() {
@@ -15,6 +16,7 @@ export default function EventDetailsPage() {
   const [event, setEvent] = useState(null)
   const [loading, setLoading] = useState(true)
   const [copied, setCopied] = useState(false)
+  const [showTimeslotManagement, setShowTimeslotManagement] = useState(false)
 
   useEffect(() => {
     if (id) {
@@ -183,6 +185,13 @@ export default function EventDetailsPage() {
               {isOwner && (
                 <div className="flex gap-2 ml-4">
                   <button
+                    onClick={() => setShowTimeslotManagement(true)}
+                    className="btn-outline btn-sm flex items-center gap-2"
+                  >
+                    <Settings className="h-4 w-4" />
+                    Manage Timeslots
+                  </button>
+                  <button
                     onClick={() => navigate(`/events/${event.id}/edit`)}
                     className="btn-outline btn-sm flex items-center gap-2"
                   >
@@ -339,6 +348,17 @@ export default function EventDetailsPage() {
             </div>
           </div>
         </div>
+
+        {/* Timeslot Management Modal */}
+        <TimeslotManagementModal
+          isOpen={showTimeslotManagement}
+          onClose={() => setShowTimeslotManagement(false)}
+          event={event}
+          onTimeslotsUpdated={() => {
+            // Optionally reload event data if needed
+            console.log('Timeslots updated')
+          }}
+        />
       </div>
     </div>
   )

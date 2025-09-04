@@ -7,6 +7,7 @@ const router = express.Router()
 // Validation schema for performer signup
 const performerSignupSchema = Joi.object({
   eventCode: Joi.string().length(6).required(),
+  timeslotId: Joi.string().uuid().required(),
   performerName: Joi.string().min(2).max(100).required(),
   email: Joi.string().email().required(),
   phone: Joi.string().min(10).max(20).optional().allow(''),
@@ -25,7 +26,7 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ message: error.details[0].message })
     }
 
-    const { eventCode, performerName, email, phone, performanceType, description, socialMedia } = value
+    const { eventCode, timeslotId, performerName, email, phone, performanceType, description, socialMedia } = value
 
     // Check if event exists and is active
     const event = await db('events')
@@ -37,6 +38,17 @@ router.post('/', async (req, res) => {
       return res.status(404).json({ message: 'Event not found or inactive' })
     }
 
+    // Check if timeslot exists and belongs to this event
+    const timeslot = await db('timeslots')
+      .where('id', timeslotId)
+      .where('event_id', event.id)
+      .where('is_available', true)
+      .first()
+
+    if (!timeslot) {
+      return res.status(404).json({ message: 'Timeslot not found or unavailable' })
+    }
+
     // Check if event is in the future
     const eventDate = new Date(event.event_date)
     const now = new Date()
@@ -44,32 +56,31 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ message: 'Event has already passed' })
     }
 
-    // Check if performer is already signed up for this event
+    // Check if performer is already signed up for this timeslot
     const existingSignup = await db('performer_signups')
-      .where('event_id', event.id)
+      .where('timeslot_id', timeslotId)
       .where('email', email)
       .first()
 
     if (existingSignup) {
-      return res.status(400).json({ message: 'You are already signed up for this event' })
+      return res.status(400).json({ message: 'You are already signed up for this timeslot' })
     }
 
-    // Check if event has reached max attendees
-    if (event.max_attendees) {
-      const currentSignups = await db('performer_signups')
-        .where('event_id', event.id)
-        .count('* as count')
-        .first()
+    // Check if timeslot has reached max performers
+    const currentSignups = await db('performer_signups')
+      .where('timeslot_id', timeslotId)
+      .count('* as count')
+      .first()
 
-      if (parseInt(currentSignups.count) >= event.max_attendees) {
-        return res.status(400).json({ message: 'Event is full' })
-      }
+    if (parseInt(currentSignups.count) >= timeslot.max_performers) {
+      return res.status(400).json({ message: 'This timeslot is full' })
     }
 
     // Create performer signup
     const [signup] = await db('performer_signups')
       .insert({
         event_id: event.id,
+        timeslot_id: timeslotId,
         performer_name: performerName,
         email: email,
         phone: phone || null,
@@ -87,7 +98,9 @@ router.post('/', async (req, res) => {
         performerName: signup.performer_name,
         eventTitle: event.title,
         eventDate: event.event_date,
-        eventTime: event.start_time
+        eventTime: event.start_time,
+        timeslotName: timeslot.name,
+        timeslotTime: `${timeslot.start_time} - ${timeslot.end_time}`
       }
     })
   } catch (error) {
@@ -122,16 +135,30 @@ router.get('/event/:code', async (req, res) => {
       return res.status(404).json({ message: 'Event not found' })
     }
 
-    // Get current signup count
-    const signupCount = await db('performer_signups')
-      .where('event_id', event.id)
-      .count('* as count')
-      .first()
+    // Get timeslots with signup counts
+    const timeslots = await db('timeslots')
+      .leftJoin('performer_signups', function() {
+        this.on('timeslots.id', '=', 'performer_signups.timeslot_id')
+      })
+      .where('timeslots.event_id', event.id)
+      .where('timeslots.is_available', true)
+      .select(
+        'timeslots.*',
+        db.raw('COUNT(performer_signups.id) as current_signups')
+      )
+      .groupBy('timeslots.id')
+      .orderBy('timeslots.start_time', 'asc')
+      .orderBy('timeslots.sort_order', 'asc')
+
+    const timeslotsWithCounts = timeslots.map(timeslot => ({
+      ...timeslot,
+      current_signups: parseInt(timeslot.current_signups),
+      spots_remaining: timeslot.max_performers - parseInt(timeslot.current_signups)
+    }))
 
     res.json({
       ...event,
-      current_signups: parseInt(signupCount.count),
-      spots_remaining: event.max_attendees ? event.max_attendees - parseInt(signupCount.count) : null
+      timeslots: timeslotsWithCounts
     })
   } catch (error) {
     console.error('Get event for signup error:', error)
