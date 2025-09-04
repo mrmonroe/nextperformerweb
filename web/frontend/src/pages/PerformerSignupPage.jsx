@@ -218,66 +218,73 @@ export default function PerformerSignupPage() {
           <p className="text-gray-600">Join this amazing event and showcase your talent!</p>
         </div>
 
-        <div className="space-y-8">
-          {/* Event Details */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">{event.title}</h2>
-            
-            {/* Event Image */}
-            {event.image_url && (
-              <div className="w-full h-48 bg-gray-200 rounded-lg mb-4">
-                <img
-                  src={event.image_url}
-                  alt={event.title}
-                  className="w-full h-full object-cover rounded-lg"
-                />
-              </div>
-            )}
-
-            {/* Event Info */}
-            <div className="space-y-3">
-              <div className="flex items-center space-x-3 text-gray-600">
-                <Calendar className="h-5 w-5" />
-                <span className="font-medium">{formatDate(event.event_date)}</span>
-              </div>
-              
-              <div className="flex items-center space-x-3 text-gray-600">
-                <Clock className="h-5 w-5" />
-                <span>{formatTime(event.start_time)} - {formatTime(event.end_time)}</span>
-              </div>
-              
-              <div className="flex items-start space-x-3 text-gray-600">
-                <MapPin className="h-5 w-5 mt-0.5" />
-                <div>
-                  <div className="font-medium">{event.venue_name}</div>
-                  <div className="text-sm">
-                    {event.venue_address}, {event.venue_city}, {event.venue_state}
-                  </div>
-                </div>
-              </div>
-
-              {event.max_attendees && (
-                <div className="flex items-center space-x-3 text-gray-600">
-                  <Users className="h-5 w-5" />
-                  <span>
-                    {event.current_signups} / {event.max_attendees} performers
-                    {event.spots_remaining !== null && (
-                      <span className="text-green-600 font-medium">
-                        {' '}({event.spots_remaining} spots remaining)
-                      </span>
-                    )}
-                  </span>
+        <div className="space-y-6">
+          {/* Event Details - Compact */}
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+            <div className="flex items-start space-x-4">
+              {/* Event Image - Small */}
+              {event.image_url && (
+                <div className="w-20 h-20 bg-gray-200 rounded-lg flex-shrink-0">
+                  <img
+                    src={event.image_url}
+                    alt={event.title}
+                    className="w-full h-full object-cover rounded-lg"
+                  />
                 </div>
               )}
-            </div>
+              
+              {/* Event Info - Compact */}
+              <div className="flex-1 min-w-0">
+                <h2 className="text-lg font-semibold text-gray-900 mb-2 truncate">{event.title}</h2>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm text-gray-600">
+                  <div className="flex items-center space-x-2">
+                    <Calendar className="h-4 w-4 flex-shrink-0" />
+                    <span className="truncate">{formatDate(event.event_date)}</span>
+                  </div>
+                  
+                  <div className="flex items-center space-x-2">
+                    <Clock className="h-4 w-4 flex-shrink-0" />
+                    <span className="truncate">{formatTime(event.start_time)} - {formatTime(event.end_time)}</span>
+                  </div>
+                  
+                  <div className="flex items-start space-x-2 md:col-span-2">
+                    <MapPin className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                    <div className="min-w-0">
+                      <div className="font-medium truncate">{event.venue_name}</div>
+                      <div className="text-xs text-gray-500 truncate">
+                        {event.venue_city}, {event.venue_state}
+                      </div>
+                    </div>
+                  </div>
 
-            {/* Description */}
-            {event.description && (
-              <div className="mt-6">
-                <h3 className="font-medium text-gray-900 mb-2">Description</h3>
-                <p className="text-gray-700 text-sm leading-relaxed">{event.description}</p>
+                  {event.max_attendees && (
+                    <div className="flex items-center space-x-2 md:col-span-2">
+                      <Users className="h-4 w-4 flex-shrink-0" />
+                      <span className="text-sm">
+                        {event.current_signups} / {event.max_attendees} performers
+                        {event.spots_remaining !== null && (
+                          <span className="text-green-600 font-medium">
+                            {' '}({event.spots_remaining} spots remaining)
+                          </span>
+                        )}
+                      </span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Description - Truncated */}
+                {event.description && (
+                  <div className="mt-2">
+                    <p className="text-gray-700 text-sm overflow-hidden" style={{
+                      display: '-webkit-box',
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: 'vertical'
+                    }}>{event.description}</p>
+                  </div>
+                )}
               </div>
-            )}
+            </div>
           </div>
 
           {/* Sign-up Form */}
