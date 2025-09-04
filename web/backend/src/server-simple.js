@@ -137,6 +137,32 @@ app.get('/api/config', (req, res) => {
           editTitle: 'Edit Profile',
           settingsTitle: 'Settings'
         },
+        homepage: {
+          heroTitle: 'Next Performer',
+          heroSubtitle: 'Find Your Voice, Share Your Talent',
+          whyChooseTitle: 'Why Choose Next Performer?',
+          whyChooseSubtitle: 'Everything you need to discover, connect, and showcase your talent',
+          ctaTitle: 'Ready to Share Your Voice?',
+          ctaSubtitle: 'Join thousands of performers who have found their stage with Next Performer',
+          features: [
+            {
+              title: 'Discover Events',
+              description: 'Find amazing open mic events happening near you'
+            },
+            {
+              title: 'Find Venues',
+              description: 'Explore venues that host open mic nights'
+            },
+            {
+              title: 'Connect',
+              description: 'Meet other performers and build your network'
+            },
+            {
+              title: 'Showcase Talent',
+              description: 'Share your voice and get discovered'
+            }
+          ]
+        },
         common: {
           loading: 'Loading...',
           error: 'Something went wrong',

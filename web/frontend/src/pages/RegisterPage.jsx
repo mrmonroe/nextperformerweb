@@ -66,10 +66,10 @@ export default function RegisterPage() {
           </div>
           
           <h2 className="text-3xl font-bold text-gray-900">
-            {config?.content?.copy?.auth?.signUpTitle || 'Create Account'}
+            {config?.content?.copy?.auth?.signUpTitle || ''}
           </h2>
           <p className="mt-2 text-gray-600">
-            Join {config?.app?.name || 'Next Performer'} today
+            Join {config?.app?.name || ''} today
           </p>
         </div>
 
@@ -217,7 +217,7 @@ export default function RegisterPage() {
                 Creating account...
               </div>
             ) : (
-              'Create Account'
+              {config?.content?.copy?.auth?.signUpTitle || ''}
             )}
           </button>
 

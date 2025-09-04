@@ -5,28 +5,7 @@ import { useConfig } from '../hooks/useConfig'
 export default function HomePage() {
   const { config } = useConfig()
 
-  const features = [
-    {
-      icon: Calendar,
-      title: 'Discover Events',
-      description: 'Find amazing open mic events happening near you'
-    },
-    {
-      icon: MapPin,
-      title: 'Find Venues',
-      description: 'Explore venues that host open mic nights'
-    },
-    {
-      icon: Users,
-      title: 'Connect',
-      description: 'Meet other performers and build your network'
-    },
-    {
-      icon: Star,
-      title: 'Showcase Talent',
-      description: 'Share your voice and get discovered'
-    }
-  ]
+  const features = config?.content?.copy?.homepage?.features || []
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 to-secondary-50">
@@ -42,11 +21,11 @@ export default function HomePage() {
               </div>
               
               <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
-                {config?.content?.branding?.title || 'Next Performer'}
+                {config?.content?.copy?.homepage?.heroTitle || config?.content?.branding?.title || ''}
               </h1>
               
               <p className="text-xl md:text-2xl text-gray-600 mb-8 max-w-3xl mx-auto">
-                {config?.content?.branding?.tagline || 'Find Your Voice, Share Your Talent'}
+                {config?.content?.copy?.homepage?.heroSubtitle || config?.content?.branding?.tagline || ''}
               </p>
               
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -75,16 +54,24 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Why Choose Next Performer?
+              {config?.content?.copy?.homepage?.whyChooseTitle || ''}
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Everything you need to discover, connect, and showcase your talent
+              {config?.content?.copy?.homepage?.whyChooseSubtitle || ''}
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {features.map((feature, index) => {
-              const Icon = feature.icon
+              // Map feature titles to icons
+              const iconMap = {
+                'Discover Events': Calendar,
+                'Find Venues': MapPin,
+                'Connect': Users,
+                'Showcase Talent': Star
+              }
+              const Icon = iconMap[feature.title] || Calendar
+              
               return (
                 <div key={index} className="text-center group">
                   <div className="inline-flex items-center justify-center w-16 h-16 bg-primary-100 rounded-full mb-4 group-hover:bg-primary-200 transition-colors">
@@ -107,10 +94,10 @@ export default function HomePage() {
       <div className="py-20 bg-primary">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-            Ready to Share Your Voice?
+            {config?.content?.copy?.homepage?.ctaTitle || ''}
           </h2>
           <p className="text-xl text-primary-100 mb-8 max-w-2xl mx-auto">
-            Join thousands of performers who have found their stage with Next Performer
+            {config?.content?.copy?.homepage?.ctaSubtitle || ''}
           </p>
           <Link
             to="/register"
@@ -129,14 +116,14 @@ export default function HomePage() {
             <div className="flex items-center justify-center mb-4">
               <Mic className="h-8 w-8 text-primary" />
               <span className="ml-2 text-2xl font-bold">
-                {config?.app?.name || 'Next Performer'}
+                {config?.app?.name || ''}
               </span>
             </div>
             <p className="text-gray-400 mb-4">
-              {config?.app?.description || 'Find Your Voice, Share Your Talent'}
+              {config?.app?.description || ''}
             </p>
             <p className="text-sm text-gray-500">
-              © 2024 Next Performer. All rights reserved.
+              © 2024 {config?.app?.name || ''}. All rights reserved.
             </p>
           </div>
         </div>

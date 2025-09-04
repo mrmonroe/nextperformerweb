@@ -27,13 +27,13 @@ class ConfigService {
     return this.config || this.getDefaultConfig()
   }
 
-  // Default configuration fallback
+  // Default configuration fallback - minimal fallback only
   getDefaultConfig() {
     return {
       app: {
-        name: 'Next Performer',
+        name: '',
         version: '1.0.0',
-        description: 'Find Your Voice, Share Your Talent',
+        description: '',
         environment: 'development',
         debug: true
       },
@@ -90,60 +90,60 @@ class ConfigService {
         branding: {
           logo: '/assets/logo.png',
           favicon: '/assets/favicon.ico',
-          title: 'Next Performer',
-          tagline: 'Find Your Voice, Share Your Talent'
+          title: '',
+          tagline: ''
         },
         copy: {
           auth: {
-            welcomeTitle: 'Welcome to Next Performer',
-            welcomeSubtitle: 'Find your voice, share your talent',
-            signInTitle: 'Sign In',
-            signUpTitle: 'Create Account',
-            forgotPasswordTitle: 'Forgot Password?',
-            resetPasswordTitle: 'Reset Password'
+            welcomeTitle: '',
+            welcomeSubtitle: '',
+            signInTitle: '',
+            signUpTitle: '',
+            forgotPasswordTitle: '',
+            resetPasswordTitle: ''
           },
           dashboard: {
-            title: 'Dashboard',
-            subtitle: 'Welcome back!',
-            quickActionsTitle: 'Quick Actions',
-            recentActivityTitle: 'Recent Activity'
+            title: '',
+            subtitle: '',
+            quickActionsTitle: '',
+            recentActivityTitle: ''
           },
           events: {
-            title: 'Events',
-            createTitle: 'Create Event',
-            editTitle: 'Edit Event',
-            noEventsTitle: 'No Events Yet',
-            noEventsSubtitle: 'Create your first event to get started'
+            title: '',
+            createTitle: '',
+            editTitle: '',
+            noEventsTitle: '',
+            noEventsSubtitle: ''
           },
           profile: {
-            title: 'Profile',
-            editTitle: 'Edit Profile',
-            settingsTitle: 'Settings'
+            title: '',
+            editTitle: '',
+            settingsTitle: ''
           },
           common: {
-            loading: 'Loading...',
-            error: 'Something went wrong',
-            retry: 'Retry',
-            cancel: 'Cancel',
-            save: 'Save',
-            delete: 'Delete',
-            confirm: 'Confirm',
-            success: 'Success!'
+            loading: '',
+            error: '',
+            retry: '',
+            cancel: '',
+            save: '',
+            delete: '',
+            confirm: '',
+            success: ''
           }
         },
         validation: {
           email: {
-            required: 'Email is required',
-            invalid: 'Please enter a valid email address'
+            required: '',
+            invalid: ''
           },
           password: {
-            required: 'Password is required',
-            minLength: 'Password must be at least 8 characters',
-            weak: 'Password is too weak'
+            required: '',
+            minLength: '',
+            weak: ''
           },
           name: {
-            required: 'Name is required',
-            minLength: 'Name must be at least 2 characters'
+            required: '',
+            minLength: ''
           }
         }
       }

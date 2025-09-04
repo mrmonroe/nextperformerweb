@@ -52,10 +52,10 @@ export default function LoginPage() {
           </div>
           
           <h2 className="text-3xl font-bold text-gray-900">
-            {config?.content?.copy?.auth?.signInTitle || 'Sign In'}
+            {config?.content?.copy?.auth?.signInTitle || ''}
           </h2>
           <p className="mt-2 text-gray-600">
-            Welcome back to {config?.app?.name || 'Next Performer'}
+            Welcome back to {config?.app?.name || ''}
           </p>
         </div>
 
@@ -134,7 +134,7 @@ export default function LoginPage() {
                 Signing in...
               </div>
             ) : (
-              'Sign In'
+              {config?.content?.copy?.auth?.signInTitle || ''}
             )}
           </button>
 
