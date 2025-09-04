@@ -1,9 +1,15 @@
 import { Link } from 'react-router-dom'
 import { Mic, Calendar, MapPin, Users, ArrowRight, Star } from 'lucide-react'
 import { useConfig } from '../hooks/useConfig'
+import ConfigLoadingPlaceholder from '../components/ConfigLoadingPlaceholder'
 
 export default function HomePage() {
-  const { config } = useConfig()
+  const { config, isLoading: configLoading } = useConfig()
+
+  // Show loading placeholder while config is loading
+  if (configLoading) {
+    return <ConfigLoadingPlaceholder type="home" />
+  }
 
   const features = config?.content?.copy?.homepage?.features || []
 

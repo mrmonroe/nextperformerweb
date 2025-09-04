@@ -14,13 +14,19 @@ import {
 import { useAuth } from '../hooks/useAuth'
 import { useConfig } from '../hooks/useConfig'
 import { useAdminAuth } from '../hooks/useAdminAuth'
+import ConfigLoadingPlaceholder from './ConfigLoadingPlaceholder'
 
 export default function Layout({ children }) {
   const { user, logout } = useAuth()
-  const { config } = useConfig()
+  const { config, isLoading: configLoading } = useConfig()
   const { isAuthenticated: isAdminAuthenticated } = useAdminAuth()
   const location = useLocation()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+
+  // Show loading placeholder while config is loading
+  if (configLoading) {
+    return <ConfigLoadingPlaceholder type="layout" />
+  }
 
   const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: Home },

@@ -6,6 +6,7 @@ import { Toaster } from 'react-hot-toast'
 // Components
 import Layout from './components/Layout'
 import LoadingSpinner from './components/LoadingSpinner'
+import ConfigLoadingPlaceholder from './components/ConfigLoadingPlaceholder'
 import ErrorBoundary from './components/ErrorBoundary'
 
 // Pages
@@ -61,9 +62,9 @@ function App() {
     }
   }, [])
 
-  // Show loading spinner while config is loading
+  // Show loading placeholder while config is loading
   if (configLoading) {
-    return <LoadingSpinner />
+    return <ConfigLoadingPlaceholder type="home" />
   }
 
   return (

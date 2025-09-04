@@ -6,6 +6,7 @@ import { z } from 'zod'
 import { Mic, Eye, EyeOff, ArrowLeft } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
 import { useConfig } from '../hooks/useConfig'
+import ConfigLoadingPlaceholder from '../components/ConfigLoadingPlaceholder'
 
 const registerSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
@@ -21,10 +22,15 @@ const registerSchema = z.object({
 
 export default function RegisterPage() {
   const { register: registerUser, isLoading } = useAuth()
-  const { config } = useConfig()
+  const { config, isLoading: configLoading } = useConfig()
   const navigate = useNavigate()
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+
+  // Show loading placeholder while config is loading
+  if (configLoading) {
+    return <ConfigLoadingPlaceholder type="page" />
+  }
 
   const {
     register,
@@ -217,7 +223,7 @@ export default function RegisterPage() {
                 Creating account...
               </div>
             ) : (
-              {config?.content?.copy?.auth?.signUpTitle || ''}
+              config?.content?.copy?.auth?.signUpButton || 'Create Account'
             )}
           </button>
 
