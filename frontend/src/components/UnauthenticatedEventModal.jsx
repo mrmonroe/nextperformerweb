@@ -28,8 +28,13 @@ export default function UnauthenticatedEventModal({ event, isOpen, onClose, onEd
   }
 
   const handleSignUp = () => {
-    // Redirect to login page with return URL
-    window.location.href = `/login?returnUrl=${encodeURIComponent(`/events/${event.id}`)}`
+    // Redirect to performer signup page using event code
+    if (event.event_code) {
+      window.location.href = `/signup/${event.event_code}`
+    } else {
+      // Fallback to login if no event code
+      window.location.href = `/login?returnUrl=${encodeURIComponent(`/events/${event.id}`)}`
+    }
   }
 
   const handleShare = async () => {
