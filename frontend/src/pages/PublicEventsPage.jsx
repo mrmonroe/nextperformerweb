@@ -248,9 +248,6 @@ export default function PublicEventsPage() {
                           )}
                         </div>
 
-                        <div className="mt-4 text-sm text-gray-500">
-                          Created by {event.creator?.name || 'Anonymous'}
-                        </div>
                       </div>
 
                       <div className="flex-shrink-0 sm:ml-6">
