@@ -81,7 +81,16 @@ function App() {
 
         <Routes>
           {/* Public routes */}
-          <Route path="/" element={<HomePage />} />
+          <Route 
+            path="/" 
+            element={
+              user ? (
+                <Navigate to="/dashboard" replace />
+              ) : (
+                <HomePage />
+              )
+            } 
+          />
           <Route 
             path="/login" 
             element={
