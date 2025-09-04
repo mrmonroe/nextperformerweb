@@ -139,13 +139,21 @@ export default function DashboardPage() {
           ) : (
             <div className="space-y-4">
               {events?.filter(event => event.isSponsored).map(event => (
-                <div key={event.id} className="flex items-center justify-between p-4 bg-yellow-50 rounded-lg border border-yellow-200">
-                  <div className="flex-1">
+                <div key={event.id} className="relative p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                  {/* Sponsored Star - Top Right Corner */}
+                  <div className="absolute top-3 right-3">
+                    <Star className="h-5 w-5 text-yellow-500" />
+                  </div>
+                  
+                  {/* Event Content */}
+                  <div className="pr-8">
                     <h3 className="font-semibold text-gray-900">{event.title}</h3>
                     <p className="text-sm text-gray-600">{event.venue?.name}</p>
                     <p className="text-sm text-gray-500">{formatDate(event.eventDate)} at {formatTime(event.startTime)}</p>
                   </div>
-                  <div className="flex items-center space-x-3">
+                  
+                  {/* View Details Button */}
+                  <div className="mt-4">
                     <button
                       onClick={() => handleViewDetails(event.id)}
                       className="btn-outline btn-sm flex items-center space-x-1 px-3 py-2"
@@ -153,7 +161,6 @@ export default function DashboardPage() {
                       <Eye className="h-4 w-4" />
                       <span>View Details</span>
                     </button>
-                    <Star className="h-5 w-5 text-yellow-500" />
                   </div>
                 </div>
               ))}
@@ -178,16 +185,26 @@ export default function DashboardPage() {
           ) : (
             <div className="space-y-4">
               {events?.map(event => (
-                <div key={event.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                  <div className="flex items-center space-x-4 flex-1">
-                    <Calendar className="h-5 w-5 text-gray-400" />
-                    <div>
+                <div key={event.id} className="relative p-4 bg-gray-50 rounded-lg">
+                  {/* Sponsored Star - Top Right Corner (only if sponsored) */}
+                  {event.isSponsored && (
+                    <div className="absolute top-3 right-3">
+                      <Star className="h-5 w-5 text-yellow-500" />
+                    </div>
+                  )}
+                  
+                  {/* Event Content */}
+                  <div className="flex items-start space-x-4 pr-8">
+                    <Calendar className="h-5 w-5 text-gray-400 mt-1" />
+                    <div className="flex-1">
                       <h3 className="font-semibold text-gray-900">{event.title}</h3>
                       <p className="text-sm text-gray-600">{event.venue?.name}</p>
                       <p className="text-sm text-gray-500">{formatDate(event.eventDate)} at {formatTime(event.startTime)}</p>
                     </div>
                   </div>
-                  <div className="flex items-center space-x-3">
+                  
+                  {/* View Details Button */}
+                  <div className="mt-4">
                     <button
                       onClick={() => handleViewDetails(event.id)}
                       className="btn-outline btn-sm flex items-center space-x-1 px-3 py-2"
@@ -195,9 +212,6 @@ export default function DashboardPage() {
                       <Eye className="h-4 w-4" />
                       <span>View Details</span>
                     </button>
-                    {event.isSponsored && (
-                      <Star className="h-5 w-5 text-yellow-500" />
-                    )}
                   </div>
                 </div>
               ))}
