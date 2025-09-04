@@ -204,7 +204,10 @@ export default function PublicEventsPage() {
                   <div key={event.id} className="bg-white rounded-lg border border-gray-200 p-4 sm:p-6 hover:shadow-md transition-shadow">
                     <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                       <div className="flex-1">
-                        <div className="flex items-center space-x-3 mb-3">
+                        <div className="flex items-center justify-between mb-3">
+                          <h3 className="text-xl font-semibold text-gray-900">
+                            {event.title}
+                          </h3>
                           {event.isSpotlight && (
                             <div className="flex items-center space-x-2">
                               <Star className="h-4 w-4 text-yellow-500 fill-current" />
@@ -213,9 +216,6 @@ export default function PublicEventsPage() {
                               </span>
                             </div>
                           )}
-                          <h3 className="text-xl font-semibold text-gray-900">
-                            {event.title}
-                          </h3>
                         </div>
                         
                         <p className="text-gray-600 mb-4 line-clamp-2">
