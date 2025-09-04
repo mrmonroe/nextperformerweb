@@ -5,6 +5,7 @@ import { useAuth } from '../hooks/useAuth'
 import { useConfig } from '../hooks/useConfig'
 import { eventService } from '../services/eventService'
 import { venueService } from '../services/venueService'
+import { FormField } from '../components/ui'
 import toast from 'react-hot-toast'
 import CreateVenueModal from '../components/modals/CreateVenueModal'
 
@@ -252,60 +253,48 @@ const CreateEventPage = () => {
 
           <form onSubmit={handleSubmit} className="p-6 space-y-6">
             {/* Event Title */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Event Title <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                name="title"
-                value={formData.title}
-                onChange={handleInputChange}
-                className={`input w-full ${errors.title ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
-                placeholder="Enter event title"
-              />
-              {errors.title && (
-                <p className="mt-1 text-sm text-red-600">{errors.title}</p>
-              )}
-            </div>
+            <FormField
+              label="Event Title"
+              name="title"
+              value={formData.title}
+              onChange={handleInputChange}
+              placeholder="Enter event title"
+              required
+              error={errors.title}
+            />
 
             {/* Description */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Description <span className="text-red-500">*</span>
-              </label>
-              <textarea
-                name="description"
-                value={formData.description}
-                onChange={handleInputChange}
-                rows={4}
-                className={`input w-full ${errors.description ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
-                placeholder="Describe your event..."
-              />
-              {errors.description && (
-                <p className="mt-1 text-sm text-red-600">{errors.description}</p>
-              )}
-            </div>
+            <FormField
+              label="Description"
+              name="description"
+              type="textarea"
+              value={formData.description}
+              onChange={handleInputChange}
+              placeholder="Describe your event..."
+              rows={4}
+              required
+              error={errors.description}
+            />
 
             {/* Venue Selection */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Venue <span className="text-red-500">*</span>
-              </label>
-              <div className="flex gap-2">
-                <select
-                  name="venueId"
-                  value={formData.venueId}
-                  onChange={handleInputChange}
-                  className={`input flex-1 ${errors.venueId ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
-                >
-                  <option value="">Select a venue</option>
-                  {Array.isArray(venues) && venues.map((venue) => (
-                    <option key={venue.id} value={venue.id}>
-                      {venue.name} - {venue.city}, {venue.state}
-                    </option>
-                  ))}
-                </select>
+              <FormField
+                label="Venue"
+                name="venueId"
+                type="select"
+                value={formData.venueId}
+                onChange={handleInputChange}
+                placeholder="Select a venue"
+                required
+                error={errors.venueId}
+              >
+                {Array.isArray(venues) && venues.map((venue) => (
+                  <option key={venue.id} value={venue.id}>
+                    {venue.name} - {venue.city}, {venue.state}
+                  </option>
+                ))}
+              </FormField>
+              <div className="mt-2">
                 <button
                   type="button"
                   onClick={() => setShowCreateVenue(true)}
@@ -315,111 +304,72 @@ const CreateEventPage = () => {
                   New Venue
                 </button>
               </div>
-              {errors.venueId && (
-                <p className="mt-1 text-sm text-red-600">{errors.venueId}</p>
-              )}
             </div>
 
             {/* Date and Time */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Event Date <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="date"
-                  name="eventDate"
-                  value={formData.eventDate}
-                  onChange={handleInputChange}
-                  className={`input w-full ${errors.eventDate ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
-                />
-                {errors.eventDate && (
-                  <p className="mt-1 text-sm text-red-600">{errors.eventDate}</p>
-                )}
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Start Time <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="time"
-                  name="startTime"
-                  value={formData.startTime}
-                  onChange={handleInputChange}
-                  className={`input w-full ${errors.startTime ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
-                />
-                {errors.startTime && (
-                  <p className="mt-1 text-sm text-red-600">{errors.startTime}</p>
-                )}
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  End Time <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="time"
-                  name="endTime"
-                  value={formData.endTime}
-                  onChange={handleInputChange}
-                  className={`input w-full ${errors.endTime ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
-                />
-                {errors.endTime && (
-                  <p className="mt-1 text-sm text-red-600">{errors.endTime}</p>
-                )}
-              </div>
+              <FormField
+                label="Event Date"
+                name="eventDate"
+                type="date"
+                value={formData.eventDate}
+                onChange={handleInputChange}
+                required
+                error={errors.eventDate}
+              />
+              <FormField
+                label="Start Time"
+                name="startTime"
+                type="time"
+                value={formData.startTime}
+                onChange={handleInputChange}
+                required
+                error={errors.startTime}
+              />
+              <FormField
+                label="End Time"
+                name="endTime"
+                type="time"
+                value={formData.endTime}
+                onChange={handleInputChange}
+                required
+                error={errors.endTime}
+              />
             </div>
 
             {/* Additional Options */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Max Attendees <span className="text-gray-500">(Optional)</span>
-                </label>
-                <input
-                  type="number"
-                  name="maxAttendees"
-                  value={formData.maxAttendees}
-                  onChange={handleInputChange}
-                  min="1"
-                  className={`input w-full ${errors.maxAttendees ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
-                  placeholder="Optional"
-                />
-                {errors.maxAttendees && (
-                  <p className="mt-1 text-sm text-red-600">{errors.maxAttendees}</p>
-                )}
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Image URL <span className="text-gray-500">(Optional)</span>
-                </label>
-                <input
-                  type="url"
-                  name="imageUrl"
-                  value={formData.imageUrl}
-                  onChange={handleInputChange}
-                  className={`input w-full ${errors.imageUrl ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
-                  placeholder="https://example.com/image.jpg"
-                />
-                {errors.imageUrl && (
-                  <p className="mt-1 text-sm text-red-600">{errors.imageUrl}</p>
-                )}
-              </div>
+              <FormField
+                label="Max Attendees"
+                name="maxAttendees"
+                type="number"
+                value={formData.maxAttendees}
+                onChange={handleInputChange}
+                placeholder="Optional"
+                min="1"
+                error={errors.maxAttendees}
+                helpText="(Optional)"
+              />
+              <FormField
+                label="Image URL"
+                name="imageUrl"
+                type="url"
+                value={formData.imageUrl}
+                onChange={handleInputChange}
+                placeholder="https://example.com/image.jpg"
+                error={errors.imageUrl}
+                helpText="(Optional)"
+              />
             </div>
 
             {/* Spotlight Option */}
-            <div className="flex items-center">
-              <input
-                type="checkbox"
-                name="isSpotlight"
-                checked={formData.isSpotlight}
-                onChange={handleInputChange}
-                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-              />
-              <label className="ml-2 block text-sm text-gray-700">
-                <Star className="h-4 w-4 inline mr-1" />
-                Spotlight Event (featured on homepage)
-              </label>
-            </div>
+            <FormField
+              label="Spotlight Event (featured on homepage)"
+              name="isSpotlight"
+              type="checkbox"
+              value={formData.isSpotlight}
+              onChange={handleInputChange}
+            />
 
             {/* Submit Buttons */}
             <div className="flex gap-3 pt-4">

@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from 'react'
-import { X, Plus, Clock, Users, Edit, Trash2, Settings, Mail, Phone, Music, MoreVertical } from 'lucide-react'
+import { X, Plus, Clock, Users, Edit, Trash2, Settings, Mail, Phone, Music } from 'lucide-react'
 import { timeslotService } from '../../services/timeslotService'
 import { signupService } from '../../services/signupService'
 import { toast } from 'react-hot-toast'
 import ConfirmDeleteModal from './ConfirmDeleteModal'
+import { DropdownMenu, DropdownItem } from '../ui'
 
 export default function TimeslotManagementModal({ 
   isOpen, 
@@ -20,8 +21,6 @@ export default function TimeslotManagementModal({
   const [editingTimeslot, setEditingTimeslot] = useState(null)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [signupToDelete, setSignupToDelete] = useState(null)
-  const [showDropdown, setShowDropdown] = useState(false)
-  const dropdownRef = useRef(null)
   const [formData, setFormData] = useState({
     name: '',
     startTime: '',
@@ -40,19 +39,6 @@ export default function TimeslotManagementModal({
     }
   }, [isOpen, event])
 
-  // Handle click outside dropdown
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setShowDropdown(false)
-      }
-    }
-
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [])
 
   const loadTimeslots = async () => {
     try {
@@ -295,53 +281,29 @@ export default function TimeslotManagementModal({
               Timeslots ({timeslots.length})
             </h3>
             
-            <div className="relative" ref={dropdownRef}>
-              <button
-                onClick={() => setShowDropdown(!showDropdown)}
-                className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-full transition-colors"
+            <DropdownMenu>
+              <DropdownItem 
+                onClick={() => setShowCreateForm(true)} 
+                icon={Plus}
               >
-                <MoreVertical className="h-5 w-5" />
-              </button>
-              
-              {showDropdown && (
-                <div className="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-50">
-                  <div className="py-1">
-                    <button
-                      onClick={() => {
-                        setShowCreateForm(true)
-                        setShowDropdown(false)
-                      }}
-                      className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                    >
-                      <Plus className="h-4 w-4 mr-3" />
-                      Create Timeslot
-                    </button>
-                    <button
-                      onClick={() => {
-                        setShowGenerateForm(true)
-                        setShowDropdown(false)
-                      }}
-                      className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                    >
-                      <Settings className="h-4 w-4 mr-3" />
-                      Generate Timeslots
-                    </button>
-                    {timeslots.length > 0 && (
-                      <button
-                        onClick={() => {
-                          setShowRegenerateForm(true)
-                          setShowDropdown(false)
-                        }}
-                        className="flex items-center w-full px-4 py-2 text-sm text-orange-600 hover:bg-orange-50"
-                      >
-                        <Settings className="h-4 w-4 mr-3" />
-                        Regenerate Timeslots
-                      </button>
-                    )}
-                  </div>
-                </div>
+                Create Timeslot
+              </DropdownItem>
+              <DropdownItem 
+                onClick={() => setShowGenerateForm(true)} 
+                icon={Settings}
+              >
+                Generate Timeslots
+              </DropdownItem>
+              {timeslots.length > 0 && (
+                <DropdownItem 
+                  onClick={() => setShowRegenerateForm(true)} 
+                  icon={Settings}
+                  className="flex items-center px-4 py-2 text-sm text-orange-600 hover:bg-orange-50 cursor-pointer"
+                >
+                  Regenerate Timeslots
+                </DropdownItem>
               )}
-            </div>
+            </DropdownMenu>
           </div>
 
           {/* Create/Edit Form */}

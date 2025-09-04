@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Calendar, MapPin, Users, Plus, Star, Eye, Edit, Trash2 } from 'lucide-react'
+import { Plus, MapPin, Users, Star } from 'lucide-react'
 import { useConfig } from '../hooks/useConfig'
 import { useAuth } from '../hooks/useAuth'
 import { eventService } from '../services/eventService'
 import CreateEventModal from '../components/modals/CreateEventModal'
 import CreateVenueModal from '../components/modals/CreateVenueModal'
 import ConfirmDeleteModal from '../components/modals/ConfirmDeleteModal'
+import { EventCard } from '../components/ui'
 
 export default function DashboardPage() {
   const navigate = useNavigate()
@@ -190,44 +191,21 @@ export default function DashboardPage() {
           ) : (
             <div className="space-y-4">
               {events?.filter(event => event.isSponsored).map(event => (
-                <div key={event.id} className="relative p-4 bg-yellow-50 rounded-lg border border-yellow-200">
-                  {/* Sponsored Star - Top Right Corner */}
-                  <div className="absolute top-3 right-3">
-                    <Star className="h-5 w-5 text-yellow-500" />
-                  </div>
-                  
-                  {/* Event Content */}
-                  <div className="pr-8">
-                    <h3 className="font-semibold text-gray-900">{event.title}</h3>
-                    <p className="text-sm text-gray-600">{event.venue?.name}</p>
-                    <p className="text-sm text-gray-500">{formatDate(event.eventDate)} at {formatTime(event.startTime)}</p>
-                  </div>
-                  
-                  {/* Action Buttons */}
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    <button
-                      onClick={() => handleViewDetails(event)}
-                      className="btn-outline btn-sm flex items-center space-x-1 px-3 py-2"
-                    >
-                      <Eye className="h-4 w-4" />
-                      <span>View Details</span>
-                    </button>
-                    <button
-                      onClick={() => handleEditEvent(event)}
-                      className="btn-primary btn-sm flex items-center space-x-1 px-3 py-2"
-                    >
-                      <Edit className="h-4 w-4" />
-                      <span>Edit</span>
-                    </button>
-                    <button
-                      onClick={() => handleDeleteEvent(event)}
-                      className="btn-outline btn-sm flex items-center space-x-1 px-3 py-2 text-red-600 hover:text-red-700 hover:border-red-300"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                      <span>Delete</span>
-                    </button>
-                  </div>
-                </div>
+                <EventCard
+                  key={event.id}
+                  event={{
+                    ...event,
+                    event_date: event.eventDate,
+                    is_spotlight: event.isSponsored,
+                    venue: event.venue
+                  }}
+                  onViewDetails={() => handleViewDetails(event)}
+                  onEdit={() => handleEditEvent(event)}
+                  onDelete={() => handleDeleteEvent(event)}
+                  showActions={true}
+                  isOwner={true}
+                  className="bg-yellow-50 border-yellow-200"
+                />
               ))}
               {events?.filter(event => event.isSponsored).length === 0 && (
                 <p className="text-gray-500 text-center py-4">You don't have any sponsored events yet</p>
@@ -250,49 +228,20 @@ export default function DashboardPage() {
           ) : (
             <div className="space-y-4">
               {events?.map(event => (
-                <div key={event.id} className="relative p-4 bg-gray-50 rounded-lg">
-                  {/* Sponsored Star - Top Right Corner (only if sponsored) */}
-                  {event.isSponsored && (
-                    <div className="absolute top-3 right-3">
-                      <Star className="h-5 w-5 text-yellow-500" />
-                    </div>
-                  )}
-                  
-                  {/* Event Content */}
-                  <div className="flex items-start space-x-4 pr-8">
-                    <Calendar className="h-5 w-5 text-gray-400 mt-1" />
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-gray-900">{event.title}</h3>
-                      <p className="text-sm text-gray-600">{event.venue?.name}</p>
-                      <p className="text-sm text-gray-500">{formatDate(event.eventDate)} at {formatTime(event.startTime)}</p>
-                    </div>
-                  </div>
-                  
-                  {/* Action Buttons */}
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    <button
-                      onClick={() => handleViewDetails(event)}
-                      className="btn-outline btn-sm flex items-center space-x-1 px-3 py-2"
-                    >
-                      <Eye className="h-4 w-4" />
-                      <span>View Details</span>
-                    </button>
-                    <button
-                      onClick={() => handleEditEvent(event)}
-                      className="btn-primary btn-sm flex items-center space-x-1 px-3 py-2"
-                    >
-                      <Edit className="h-4 w-4" />
-                      <span>Edit</span>
-                    </button>
-                    <button
-                      onClick={() => handleDeleteEvent(event)}
-                      className="btn-outline btn-sm flex items-center space-x-1 px-3 py-2 text-red-600 hover:text-red-700 hover:border-red-300"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                      <span>Delete</span>
-                    </button>
-                  </div>
-                </div>
+                <EventCard
+                  key={event.id}
+                  event={{
+                    ...event,
+                    event_date: event.eventDate,
+                    is_spotlight: event.isSponsored,
+                    venue: event.venue
+                  }}
+                  onViewDetails={() => handleViewDetails(event)}
+                  onEdit={() => handleEditEvent(event)}
+                  onDelete={() => handleDeleteEvent(event)}
+                  showActions={true}
+                  isOwner={true}
+                />
               ))}
               {events?.length === 0 && (
                 <p className="text-gray-500 text-center py-4">No events yet. Create your first event!</p>

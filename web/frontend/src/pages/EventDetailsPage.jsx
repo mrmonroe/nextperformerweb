@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { Calendar, MapPin, Clock, Users, Star, ArrowLeft, Edit, Trash2, QrCode, Copy, Check, Settings, UserCheck, MoreVertical, X } from 'lucide-react'
+import { Calendar, MapPin, Clock, Users, Star, ArrowLeft, Edit, Trash2, QrCode, Copy, Check, Settings, UserCheck, X } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
 import { useConfig } from '../hooks/useConfig'
 import { eventService } from '../services/eventService'
 import ConfigLoadingPlaceholder from '../components/ConfigLoadingPlaceholder'
 import TimeslotManagementModal from '../components/modals/TimeslotManagementModal'
 import SignupManagementModal from '../components/modals/SignupManagementModal'
+import { DropdownMenu, DropdownItem, ModalWrapper, FormField } from '../components/ui'
 import toast from 'react-hot-toast'
 
 export default function EventDetailsPage() {
@@ -19,11 +20,9 @@ export default function EventDetailsPage() {
   const [copied, setCopied] = useState(false)
   const [showTimeslotManagement, setShowTimeslotManagement] = useState(false)
   const [showSignupManagement, setShowSignupManagement] = useState(false)
-  const [showDropdown, setShowDropdown] = useState(false)
   const [showEditForm, setShowEditForm] = useState(false)
   const [editFormData, setEditFormData] = useState({})
   const [editLoading, setEditLoading] = useState(false)
-  const dropdownRef = useRef(null)
 
   useEffect(() => {
     if (id) {
@@ -31,19 +30,6 @@ export default function EventDetailsPage() {
     }
   }, [id])
 
-  // Handle click outside dropdown
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setShowDropdown(false)
-      }
-    }
-
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [])
 
   const loadEvent = async () => {
     try {
@@ -242,60 +228,34 @@ export default function EventDetailsPage() {
 
               {/* Owner Actions */}
               {isOwner && (
-                <div className="relative ml-4" ref={dropdownRef}>
-                  <button
-                    onClick={() => setShowDropdown(!showDropdown)}
-                    className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-full transition-colors"
-                  >
-                    <MoreVertical className="h-5 w-5" />
-                  </button>
-                  
-                  {showDropdown && (
-                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-50">
-                      <div className="py-1">
-                        <button
-                          onClick={() => {
-                            setShowTimeslotManagement(true)
-                            setShowDropdown(false)
-                          }}
-                          className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                        >
-                          <Settings className="h-4 w-4 mr-3" />
-                          Manage Timeslots
-                        </button>
-                        <button
-                          onClick={() => {
-                            setShowSignupManagement(true)
-                            setShowDropdown(false)
-                          }}
-                          className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                        >
-                          <UserCheck className="h-4 w-4 mr-3" />
-                          Manage Signups
-                        </button>
-                        <button
-                          onClick={() => {
-                            openEditForm()
-                            setShowDropdown(false)
-                          }}
-                          className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                        >
-                          <Edit className="h-4 w-4 mr-3" />
-                          Edit Event
-                        </button>
-                        <button
-                          onClick={() => {
-                            handleDeleteEvent()
-                            setShowDropdown(false)
-                          }}
-                          className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50"
-                        >
-                          <Trash2 className="h-4 w-4 mr-3" />
-                          Delete Event
-                        </button>
-                      </div>
-                    </div>
-                  )}
+                <div className="ml-4">
+                  <DropdownMenu>
+                    <DropdownItem 
+                      onClick={() => setShowTimeslotManagement(true)} 
+                      icon={Settings}
+                    >
+                      Manage Timeslots
+                    </DropdownItem>
+                    <DropdownItem 
+                      onClick={() => setShowSignupManagement(true)} 
+                      icon={UserCheck}
+                    >
+                      Manage Signups
+                    </DropdownItem>
+                    <DropdownItem 
+                      onClick={openEditForm} 
+                      icon={Edit}
+                    >
+                      Edit Event
+                    </DropdownItem>
+                    <DropdownItem 
+                      onClick={handleDeleteEvent} 
+                      icon={Trash2}
+                      className="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 cursor-pointer"
+                    >
+                      Delete Event
+                    </DropdownItem>
+                  </DropdownMenu>
                 </div>
               )}
             </div>
@@ -463,138 +423,96 @@ export default function EventDetailsPage() {
         />
 
         {/* Edit Event Modal */}
-        {showEditForm && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
-              <div className="flex items-center justify-between p-6 border-b">
-                <h2 className="text-xl font-semibold text-gray-900">Edit Event</h2>
-                <button
-                  onClick={() => setShowEditForm(false)}
-                  className="text-gray-400 hover:text-gray-600 transition-colors"
-                >
-                  <X className="h-6 w-6" />
-                </button>
-              </div>
+        <ModalWrapper
+          isOpen={showEditForm}
+          onClose={() => setShowEditForm(false)}
+          title="Edit Event"
+          size="lg"
+        >
+          <form onSubmit={handleEditSubmit} className="p-6 space-y-4">
+            <FormField
+              label="Event Title"
+              name="title"
+              value={editFormData.title || ''}
+              onChange={handleEditInputChange}
+              required
+            />
 
-              <form onSubmit={handleEditSubmit} className="p-6 space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Event Title <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    name="title"
-                    value={editFormData.title || ''}
-                    onChange={handleEditInputChange}
-                    className="input w-full"
-                    required
-                  />
-                </div>
+            <FormField
+              label="Description"
+              name="description"
+              type="textarea"
+              value={editFormData.description || ''}
+              onChange={handleEditInputChange}
+              rows={3}
+            />
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Description
-                  </label>
-                  <textarea
-                    name="description"
-                    value={editFormData.description || ''}
-                    onChange={handleEditInputChange}
-                    rows={3}
-                    className="input w-full"
-                  />
-                </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                label="Event Date"
+                name="event_date"
+                type="date"
+                value={editFormData.event_date || ''}
+                onChange={handleEditInputChange}
+                required
+              />
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Event Date <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="date"
-                      name="event_date"
-                      value={editFormData.event_date || ''}
-                      onChange={handleEditInputChange}
-                      className="input w-full"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Max Attendees
-                    </label>
-                    <input
-                      type="number"
-                      name="max_attendees"
-                      value={editFormData.max_attendees || ''}
-                      onChange={handleEditInputChange}
-                      className="input w-full"
-                      min="1"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Start Time <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="time"
-                      name="start_time"
-                      value={editFormData.start_time || ''}
-                      onChange={handleEditInputChange}
-                      className="input w-full"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      End Time <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="time"
-                      name="end_time"
-                      value={editFormData.end_time || ''}
-                      onChange={handleEditInputChange}
-                      className="input w-full"
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div className="flex items-center">
-                  <input
-                    type="checkbox"
-                    name="is_spotlight"
-                    checked={editFormData.is_spotlight || false}
-                    onChange={handleEditInputChange}
-                    className="mr-2"
-                  />
-                  <label className="text-sm text-gray-700">Spotlight Event</label>
-                </div>
-
-                <div className="flex gap-3 pt-4">
-                  <button
-                    type="submit"
-                    disabled={editLoading}
-                    className="btn-primary flex-1"
-                  >
-                    {editLoading ? 'Updating...' : 'Update Event'}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setShowEditForm(false)}
-                    className="btn-outline flex-1"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </form>
+              <FormField
+                label="Max Attendees"
+                name="max_attendees"
+                type="number"
+                value={editFormData.max_attendees || ''}
+                onChange={handleEditInputChange}
+                min="1"
+              />
             </div>
-          </div>
-        )}
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                label="Start Time"
+                name="start_time"
+                type="time"
+                value={editFormData.start_time || ''}
+                onChange={handleEditInputChange}
+                required
+              />
+
+              <FormField
+                label="End Time"
+                name="end_time"
+                type="time"
+                value={editFormData.end_time || ''}
+                onChange={handleEditInputChange}
+                required
+              />
+            </div>
+
+            <FormField
+              label="Spotlight Event"
+              name="is_spotlight"
+              type="checkbox"
+              value={editFormData.is_spotlight || false}
+              onChange={handleEditInputChange}
+            />
+
+            <div className="flex gap-3 pt-4">
+              <button
+                type="submit"
+                disabled={editLoading}
+                className="btn-primary flex-1"
+              >
+                {editLoading ? 'Updating...' : 'Update Event'}
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowEditForm(false)}
+                className="btn-outline flex-1"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        </ModalWrapper>
       </div>
     </div>
   )
