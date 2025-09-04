@@ -117,12 +117,12 @@ export default function DashboardPage() {
         </button>
       </div>
 
-      {/* Sponsored Events */}
+      {/* My Sponsored Events */}
       <div className="card">
         <div className="card-header">
           <div className="flex items-center space-x-2">
             <Star className="h-5 w-5 text-yellow-500" />
-            <h2 className="card-title">Sponsored Events</h2>
+            <h2 className="card-title">My Sponsored Events</h2>
           </div>
         </div>
         <div className="card-content">
@@ -143,7 +143,7 @@ export default function DashboardPage() {
                 </div>
               ))}
               {events?.filter(event => event.isSponsored).length === 0 && (
-                <p className="text-gray-500 text-center py-4">No sponsored events at the moment</p>
+                <p className="text-gray-500 text-center py-4">You don't have any sponsored events yet</p>
               )}
             </div>
           )}
