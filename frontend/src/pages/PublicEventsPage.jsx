@@ -177,11 +177,11 @@ export default function PublicEventsPage() {
             </div>
             <button
               onClick={() => setShowSpotlightOnly(!showSpotlightOnly)}
-              className={`btn-outline flex items-center space-x-2 ${
+              className={`btn-outline btn-lg flex items-center justify-center space-x-2 px-6 py-3 min-h-[48px] font-medium ${
                 showSpotlightOnly ? 'bg-yellow-50 border-yellow-300 text-yellow-800' : ''
               }`}
             >
-              <Star className="h-4 w-4" />
+              <Star className="h-5 w-5" />
               <span>{showSpotlightOnly ? 'Show All' : 'Spotlight Only'}</span>
             </button>
           </div>
@@ -256,7 +256,7 @@ export default function PublicEventsPage() {
                       <div className="ml-6 flex-shrink-0">
                         <button 
                           onClick={() => handleViewDetails(event)}
-                          className="btn-outline btn-sm"
+                          className="btn-outline btn-lg px-6 py-3 min-h-[48px] font-medium"
                         >
                           View Details
                         </button>
@@ -322,7 +322,7 @@ export default function PublicEventsPage() {
             {searchTerm && (
               <button
                 onClick={() => setSearchTerm('')}
-                className="btn-outline"
+                className="btn-outline btn-lg px-6 py-3 min-h-[48px] font-medium"
               >
                 Clear Search
               </button>
