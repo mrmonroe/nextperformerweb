@@ -48,7 +48,7 @@ export default function TimeslotManagementModal({
     const { name, value, type, checked } = e.target
     setFormData(prev => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: type === 'checkbox' ? checked : (type === 'number' ? (value === '' ? '' : parseInt(value)) : value)
     }))
   }
 
@@ -56,7 +56,7 @@ export default function TimeslotManagementModal({
     const { name, value } = e.target
     setGenerateData(prev => ({
       ...prev,
-      [name]: parseInt(value)
+      [name]: value === '' ? '' : parseInt(value)
     }))
   }
 
