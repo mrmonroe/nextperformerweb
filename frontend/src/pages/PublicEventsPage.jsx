@@ -16,7 +16,7 @@ export default function PublicEventsPage() {
   const [events, setEvents] = useState([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
-  const [showSpotlightOnly, setShowSpotlightOnly] = useState(false)
+  const [showSponsoredOnly, setShowSponsoredOnly] = useState(false)
   const [selectedEvent, setSelectedEvent] = useState(null)
   const [showModal, setShowModal] = useState(false)
 
@@ -36,7 +36,7 @@ export default function PublicEventsPage() {
         eventDate: event.event_date,
         startTime: event.start_time,
         endTime: event.end_time,
-        isSpotlight: event.is_spotlight,
+        isSponsored: event.is_spotlight,
         maxAttendees: event.max_attendees,
         imageUrl: event.image_url,
         venue: {
@@ -68,9 +68,9 @@ export default function PublicEventsPage() {
                          event.venue?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          event.venue?.city.toLowerCase().includes(searchTerm.toLowerCase())
     
-    const matchesSpotlight = showSpotlightOnly ? event.isSpotlight : true
+    const matchesSponsored = showSponsoredOnly ? event.isSponsored : true
     
-    return matchesSearch && matchesSpotlight
+    return matchesSearch && matchesSponsored
   })
 
   const formatDate = (dateString) => {
@@ -124,16 +124,16 @@ export default function PublicEventsPage() {
   // Sort upcoming events by date (soonest first)
   const sortedUpcomingEvents = upcomingEvents.sort((a, b) => new Date(a.eventDate) - new Date(b.eventDate))
   
-  // Separate spotlight events and regular events
-  const spotlightEvents = sortedUpcomingEvents.filter(event => event.isSpotlight)
-  const regularUpcomingEvents = sortedUpcomingEvents.filter(event => !event.isSpotlight)
+  // Separate sponsored events and regular events
+  const sponsoredEvents = sortedUpcomingEvents.filter(event => event.isSponsored)
+  const regularUpcomingEvents = sortedUpcomingEvents.filter(event => !event.isSponsored)
   
-  // Combine: spotlight events first, then regular events
-  const displayEvents = [...spotlightEvents, ...regularUpcomingEvents]
+  // Combine: sponsored events first, then regular events
+  const displayEvents = [...sponsoredEvents, ...regularUpcomingEvents]
   
   console.log('All events:', events)
   console.log('Filtered events:', filteredEvents)
-  console.log('Spotlight events:', spotlightEvents)
+  console.log('Sponsored events:', sponsoredEvents)
   console.log('Regular upcoming events:', regularUpcomingEvents)
   console.log('Display events:', displayEvents)
   console.log('Past events:', pastEvents)
@@ -176,13 +176,13 @@ export default function PublicEventsPage() {
               />
             </div>
             <button
-              onClick={() => setShowSpotlightOnly(!showSpotlightOnly)}
+              onClick={() => setShowSponsoredOnly(!showSponsoredOnly)}
               className={`btn-outline btn-lg flex items-center justify-center space-x-2 px-6 py-3 min-h-[48px] font-medium ${
-                showSpotlightOnly ? 'bg-yellow-50 border-yellow-300 text-yellow-800' : ''
+                showSponsoredOnly ? 'bg-yellow-50 border-yellow-300 text-yellow-800' : ''
               }`}
             >
               <Star className="h-5 w-5" />
-              <span>{showSpotlightOnly ? 'Show All' : 'Spotlight Only'}</span>
+              <span>{showSponsoredOnly ? 'Show All' : 'Sponsored Only'}</span>
             </button>
           </div>
         </div>
@@ -208,11 +208,11 @@ export default function PublicEventsPage() {
                           <h3 className="text-xl font-semibold text-gray-900">
                             {event.title}
                           </h3>
-                          {event.isSpotlight && (
+                          {event.isSponsored && (
                             <div className="flex items-center space-x-2">
                               <Star className="h-4 w-4 text-yellow-500 fill-current" />
                               <span className="text-sm font-medium text-yellow-700 bg-yellow-50 px-2 py-1 rounded-full">
-                                Spotlight
+                                Sponsored
                               </span>
                             </div>
                           )}

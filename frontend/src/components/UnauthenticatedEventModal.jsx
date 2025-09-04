@@ -124,11 +124,11 @@ export default function UnauthenticatedEventModal({ event, isOpen, onClose }) {
             </div>
           )}
 
-          {/* Spotlight Badge */}
-          {event.isSpotlight && (
+          {/* Sponsored Badge */}
+          {event.isSponsored && (
             <div className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">
               <span className="w-2 h-2 bg-yellow-400 rounded-full mr-2"></span>
-              Spotlight Event
+              Sponsored Event
             </div>
           )}
 
