@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Calendar, Clock, MapPin, Users, Star, Search, Filter } from 'lucide-react'
 import { useConfig } from '../hooks/useConfig'
 import { eventService } from '../services/eventService'
@@ -7,6 +8,7 @@ import PublicNavbar from '../components/PublicNavbar'
 import toast from 'react-hot-toast'
 
 export default function PublicEventsPage() {
+  const navigate = useNavigate()
   const { config, isLoading: configLoading } = useConfig()
   const [events, setEvents] = useState([])
   const [loading, setLoading] = useState(true)
@@ -92,6 +94,10 @@ export default function PublicEventsPage() {
     today.setHours(0, 0, 0, 0)
     const event = new Date(eventDate)
     return event >= today
+  }
+
+  const handleViewDetails = (eventId) => {
+    navigate(`/events/${eventId}`)
   }
 
   // Separate spotlight and regular upcoming events
@@ -231,7 +237,10 @@ export default function PublicEventsPage() {
                       </div>
 
                       <div className="ml-6 flex-shrink-0">
-                        <button className="btn-outline btn-sm">
+                        <button 
+                          onClick={() => handleViewDetails(event.id)}
+                          className="btn-outline btn-sm"
+                        >
                           View Details
                         </button>
                       </div>
