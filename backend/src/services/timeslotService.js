@@ -199,6 +199,47 @@ class TimeslotService {
       throw new Error('Failed to get timeslots with signup counts')
     }
   }
+
+  /**
+   * Clear all timeslots for an event
+   * @param {string} eventId - Event ID
+   * @returns {Promise<number>} Number of deleted timeslots
+   */
+  async clearTimeslotsForEvent(eventId) {
+    try {
+      const deleted = await db('timeslots')
+        .where('event_id', eventId)
+        .del()
+      
+      return deleted
+    } catch (error) {
+      console.error('Error clearing timeslots:', error)
+      throw new Error('Failed to clear timeslots')
+    }
+  }
+
+  /**
+   * Regenerate timeslots for an event (clear existing and generate new ones)
+   * @param {string} eventId - Event ID
+   * @param {string} eventStartTime - Event start time
+   * @param {string} eventEndTime - Event end time
+   * @param {number} durationMinutes - Duration of each timeslot in minutes
+   * @returns {Promise<Array>} Array of created timeslots
+   */
+  async regenerateTimeslots(eventId, eventStartTime, eventEndTime, durationMinutes) {
+    try {
+      // First clear existing timeslots
+      await this.clearTimeslotsForEvent(eventId)
+      
+      // Then generate new timeslots
+      const newTimeslots = await this.generateTimeslots(eventId, eventStartTime, eventEndTime, durationMinutes)
+      
+      return newTimeslots
+    } catch (error) {
+      console.error('Error regenerating timeslots:', error)
+      throw new Error('Failed to regenerate timeslots')
+    }
+  }
 }
 
 module.exports = new TimeslotService()

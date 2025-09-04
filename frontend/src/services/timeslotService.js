@@ -119,6 +119,32 @@ class TimeslotService {
       throw error
     }
   }
+
+  async regenerateTimeslots(eventId, durationMinutes) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/timeslots/regenerate`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({
+          eventId,
+          durationMinutes
+        })
+      })
+      
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.message || 'Failed to regenerate timeslots')
+      }
+      
+      return await response.json()
+    } catch (error) {
+      console.error('Error regenerating timeslots:', error)
+      throw error
+    }
+  }
 }
 
 export const timeslotService = new TimeslotService()

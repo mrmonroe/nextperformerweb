@@ -20,6 +20,11 @@ const generateTimeslotsSchema = Joi.object({
   durationMinutes: Joi.number().integer().min(5).max(480).required() // Min 5 minutes, max 8 hours
 })
 
+const regenerateTimeslotsSchema = Joi.object({
+  eventId: Joi.string().uuid().required(),
+  durationMinutes: Joi.number().integer().min(5).max(480).required() // Min 5 minutes, max 8 hours
+})
+
 // @route   GET /api/timeslots/event/:eventId
 // @desc    Get all timeslots for an event
 // @access  Public
@@ -148,6 +153,46 @@ router.post('/generate', auth, async (req, res) => {
     })
   } catch (error) {
     console.error('Generate timeslots error:', error)
+    res.status(500).json({ message: error.message || 'Server error' })
+  }
+})
+
+// @route   POST /api/timeslots/regenerate
+// @desc    Regenerate timeslots (clear existing and generate new ones)
+// @access  Private (Event owner only)
+router.post('/regenerate', auth, async (req, res) => {
+  try {
+    const { error, value } = regenerateTimeslotsSchema.validate(req.body)
+    if (error) {
+      return res.status(400).json({ message: error.details[0].message })
+    }
+
+    const { eventId, durationMinutes } = value
+
+    // Verify event exists and user owns it
+    const db = require('../config/database')
+    const event = await db('events')
+      .where('id', eventId)
+      .where('created_by', req.user.userId)
+      .first()
+
+    if (!event) {
+      return res.status(404).json({ message: 'Event not found or access denied' })
+    }
+
+    const timeslots = await timeslotService.regenerateTimeslots(
+      eventId,
+      event.start_time,
+      event.end_time,
+      durationMinutes
+    )
+
+    res.status(201).json({
+      message: `Regenerated ${timeslots.length} timeslots`,
+      timeslots
+    })
+  } catch (error) {
+    console.error('Regenerate timeslots error:', error)
     res.status(500).json({ message: error.message || 'Server error' })
   }
 })
