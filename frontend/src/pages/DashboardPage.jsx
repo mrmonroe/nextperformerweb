@@ -1,20 +1,21 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { Calendar, MapPin, Users, Plus, Star, Eye } from 'lucide-react'
 import { useConfig } from '../hooks/useConfig'
 import { useAuth } from '../hooks/useAuth'
 import { eventService } from '../services/eventService'
 import CreateEventModal from '../components/modals/CreateEventModal'
 import CreateVenueModal from '../components/modals/CreateVenueModal'
+import UnauthenticatedEventModal from '../components/UnauthenticatedEventModal'
 
 export default function DashboardPage() {
   const { config } = useConfig()
   const { user } = useAuth()
-  const navigate = useNavigate()
   const [showCreateEvent, setShowCreateEvent] = useState(false)
   const [showCreateVenue, setShowCreateVenue] = useState(false)
   const [events, setEvents] = useState([])
   const [eventsLoading, setEventsLoading] = useState(true)
+  const [selectedEvent, setSelectedEvent] = useState(null)
+  const [showEventModal, setShowEventModal] = useState(false)
 
   useEffect(() => {
     loadUserEvents()
@@ -83,8 +84,14 @@ export default function DashboardPage() {
     })
   }
 
-  const handleViewDetails = (eventId) => {
-    navigate(`/events/${eventId}`)
+  const handleViewDetails = (event) => {
+    setSelectedEvent(event)
+    setShowEventModal(true)
+  }
+
+  const closeEventModal = () => {
+    setShowEventModal(false)
+    setSelectedEvent(null)
   }
 
   return (
@@ -155,7 +162,7 @@ export default function DashboardPage() {
                   {/* View Details Button */}
                   <div className="mt-4">
                     <button
-                      onClick={() => handleViewDetails(event.id)}
+                      onClick={() => handleViewDetails(event)}
                       className="btn-outline btn-sm flex items-center space-x-1 px-3 py-2"
                     >
                       <Eye className="h-4 w-4" />
@@ -206,7 +213,7 @@ export default function DashboardPage() {
                   {/* View Details Button */}
                   <div className="mt-4">
                     <button
-                      onClick={() => handleViewDetails(event.id)}
+                      onClick={() => handleViewDetails(event)}
                       className="btn-outline btn-sm flex items-center space-x-1 px-3 py-2"
                     >
                       <Eye className="h-4 w-4" />
@@ -240,6 +247,13 @@ export default function DashboardPage() {
           console.log('Venue created:', venue)
           // Venue creation doesn't affect events list, but we could refresh if needed
         }}
+      />
+
+      {/* Event Details Modal */}
+      <UnauthenticatedEventModal
+        event={selectedEvent}
+        isOpen={showEventModal}
+        onClose={closeEventModal}
       />
     </div>
   )
