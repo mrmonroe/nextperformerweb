@@ -3,6 +3,7 @@ import { Calendar, Clock, MapPin, Users, Star, Search, Filter } from 'lucide-rea
 import { useConfig } from '../hooks/useConfig'
 import { eventService } from '../services/eventService'
 import ConfigLoadingPlaceholder from '../components/ConfigLoadingPlaceholder'
+import PublicNavbar from '../components/PublicNavbar'
 import toast from 'react-hot-toast'
 
 export default function PublicEventsPage() {
@@ -107,6 +108,9 @@ export default function PublicEventsPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Navigation */}
+      <PublicNavbar />
+      
       {/* Header */}
       <div className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
