@@ -31,6 +31,7 @@ export default function Layout({ children }) {
   const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: Home },
     { name: 'Events', href: '/events', icon: Calendar },
+    { name: 'My Signups', href: '/my-signups', icon: Calendar },
     { name: 'Venues', href: '/venues', icon: MapPin },
     { name: 'Profile', href: '/profile', icon: User },
   ]

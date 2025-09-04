@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { Calendar, MapPin, Clock, Users, Star, ArrowLeft, Edit, Trash2, QrCode, Copy, Check, Settings } from 'lucide-react'
+import { Calendar, MapPin, Clock, Users, Star, ArrowLeft, Edit, Trash2, QrCode, Copy, Check, Settings, UserCheck } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
 import { useConfig } from '../hooks/useConfig'
 import { eventService } from '../services/eventService'
 import ConfigLoadingPlaceholder from '../components/ConfigLoadingPlaceholder'
 import TimeslotManagementModal from '../components/modals/TimeslotManagementModal'
+import SignupManagementModal from '../components/modals/SignupManagementModal'
 import toast from 'react-hot-toast'
 
 export default function EventDetailsPage() {
@@ -17,6 +18,7 @@ export default function EventDetailsPage() {
   const [loading, setLoading] = useState(true)
   const [copied, setCopied] = useState(false)
   const [showTimeslotManagement, setShowTimeslotManagement] = useState(false)
+  const [showSignupManagement, setShowSignupManagement] = useState(false)
 
   useEffect(() => {
     if (id) {
@@ -192,6 +194,13 @@ export default function EventDetailsPage() {
                     Manage Timeslots
                   </button>
                   <button
+                    onClick={() => setShowSignupManagement(true)}
+                    className="btn-outline btn-sm flex items-center gap-2"
+                  >
+                    <UserCheck className="h-4 w-4" />
+                    Manage Signups
+                  </button>
+                  <button
                     onClick={() => navigate(`/events/${event.id}/edit`)}
                     className="btn-outline btn-sm flex items-center gap-2"
                   >
@@ -357,6 +366,17 @@ export default function EventDetailsPage() {
           onTimeslotsUpdated={() => {
             // Optionally reload event data if needed
             console.log('Timeslots updated')
+          }}
+        />
+
+        {/* Signup Management Modal */}
+        <SignupManagementModal
+          isOpen={showSignupManagement}
+          onClose={() => setShowSignupManagement(false)}
+          event={event}
+          onSignupsUpdated={() => {
+            // Optionally reload event data if needed
+            console.log('Signups updated')
           }}
         />
       </div>
