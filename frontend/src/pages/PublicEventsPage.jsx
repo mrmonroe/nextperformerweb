@@ -94,12 +94,25 @@ export default function PublicEventsPage() {
     return event >= today
   }
 
+  // Separate spotlight and regular upcoming events
   const upcomingEvents = filteredEvents.filter(event => isUpcoming(event.eventDate))
   const pastEvents = filteredEvents.filter(event => !isUpcoming(event.eventDate))
   
+  // Sort upcoming events by date (soonest first)
+  const sortedUpcomingEvents = upcomingEvents.sort((a, b) => new Date(a.eventDate) - new Date(b.eventDate))
+  
+  // Separate spotlight events and regular events
+  const spotlightEvents = sortedUpcomingEvents.filter(event => event.isSpotlight)
+  const regularUpcomingEvents = sortedUpcomingEvents.filter(event => !event.isSpotlight)
+  
+  // Combine: spotlight events first, then regular events
+  const displayEvents = [...spotlightEvents, ...regularUpcomingEvents]
+  
   console.log('All events:', events)
   console.log('Filtered events:', filteredEvents)
-  console.log('Upcoming events:', upcomingEvents)
+  console.log('Spotlight events:', spotlightEvents)
+  console.log('Regular upcoming events:', regularUpcomingEvents)
+  console.log('Display events:', displayEvents)
   console.log('Past events:', pastEvents)
 
   if (configLoading) {
@@ -156,74 +169,68 @@ export default function PublicEventsPage() {
           <div className="flex justify-center py-12">
             <div className="loading-spinner" />
           </div>
-        ) : upcomingEvents.length > 0 ? (
-          <div className="space-y-8">
-            {/* Upcoming Events */}
+        ) : displayEvents.length > 0 ? (
+          <div className="space-y-6">
+            {/* Events List */}
             <div>
               <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                Upcoming Events ({upcomingEvents.length})
+                Upcoming Events ({displayEvents.length})
               </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {upcomingEvents.map((event) => (
-                  <div key={event.id} className="card hover:shadow-lg transition-shadow">
-                    <div className="card-content">
-                      {event.isSpotlight && (
-                        <div className="flex items-center space-x-2 mb-4">
-                          <Star className="h-4 w-4 text-yellow-500 fill-current" />
-                          <span className="text-sm font-medium text-yellow-700 bg-yellow-50 px-2 py-1 rounded-full">
-                            Spotlight Event
-                          </span>
+              <div className="space-y-4">
+                {displayEvents.map((event) => (
+                  <div key={event.id} className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-md transition-shadow">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center space-x-3 mb-3">
+                          {event.isSpotlight && (
+                            <div className="flex items-center space-x-2">
+                              <Star className="h-4 w-4 text-yellow-500 fill-current" />
+                              <span className="text-sm font-medium text-yellow-700 bg-yellow-50 px-2 py-1 rounded-full">
+                                Spotlight
+                              </span>
+                            </div>
+                          )}
+                          <h3 className="text-xl font-semibold text-gray-900">
+                            {event.title}
+                          </h3>
                         </div>
-                      )}
-                      
-                      <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                        {event.title}
-                      </h3>
-                      
-                      <p className="text-gray-600 mb-4 line-clamp-3">
-                        {event.description}
-                      </p>
+                        
+                        <p className="text-gray-600 mb-4 line-clamp-2">
+                          {event.description}
+                        </p>
 
-                      <div className="space-y-3 mb-4">
-                        <div className="flex items-center space-x-2 text-sm text-gray-600">
-                          <Calendar className="h-4 w-4" />
-                          <span>{formatDate(event.eventDate)}</span>
-                        </div>
-                        
-                        <div className="flex items-center space-x-2 text-sm text-gray-600">
-                          <Clock className="h-4 w-4" />
-                          <span>{formatTime(event.startTime)} - {formatTime(event.endTime)}</span>
-                        </div>
-                        
-                        {event.venue && (
-                          <div className="flex items-center space-x-2 text-sm text-gray-600">
-                            <MapPin className="h-4 w-4" />
-                            <span>{event.venue.name}, {event.venue.city}</span>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm text-gray-600">
+                          <div className="flex items-center space-x-2">
+                            <Calendar className="h-4 w-4" />
+                            <span>{formatDate(event.eventDate)}</span>
                           </div>
-                        )}
-                        
-                        {event.maxAttendees && (
-                          <div className="flex items-center space-x-2 text-sm text-gray-600">
-                            <Users className="h-4 w-4" />
-                            <span>Max {event.maxAttendees} attendees</span>
+                          
+                          <div className="flex items-center space-x-2">
+                            <Clock className="h-4 w-4" />
+                            <span>{formatTime(event.startTime)} - {formatTime(event.endTime)}</span>
                           </div>
-                        )}
+                          
+                          {event.venue && (
+                            <div className="flex items-center space-x-2">
+                              <MapPin className="h-4 w-4" />
+                              <span>{event.venue.name}, {event.venue.city}</span>
+                            </div>
+                          )}
+                          
+                          {event.maxAttendees && (
+                            <div className="flex items-center space-x-2">
+                              <Users className="h-4 w-4" />
+                              <span>Max {event.maxAttendees} attendees</span>
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="mt-4 text-sm text-gray-500">
+                          Created by {event.creator?.name || 'Anonymous'}
+                        </div>
                       </div>
 
-                      {event.imageUrl && (
-                        <div className="mb-4">
-                          <img
-                            src={event.imageUrl}
-                            alt={event.title}
-                            className="w-full h-32 object-cover rounded-lg"
-                          />
-                        </div>
-                      )}
-
-                      <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                        <span className="text-sm text-gray-500">
-                          Created by {event.creator?.name || 'Anonymous'}
-                        </span>
+                      <div className="ml-6 flex-shrink-0">
                         <button className="btn-outline btn-sm">
                           View Details
                         </button>
@@ -240,30 +247,32 @@ export default function PublicEventsPage() {
                 <h2 className="text-2xl font-bold text-gray-900 mb-6">
                   Past Events ({pastEvents.length})
                 </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="space-y-4">
                   {pastEvents.map((event) => (
-                    <div key={event.id} className="card opacity-75">
-                      <div className="card-content">
-                        <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                          {event.title}
-                        </h3>
-                        
-                        <p className="text-gray-600 mb-4 line-clamp-3">
-                          {event.description}
-                        </p>
-
-                        <div className="space-y-2 text-sm text-gray-500">
-                          <div className="flex items-center space-x-2">
-                            <Calendar className="h-4 w-4" />
-                            <span>{formatDate(event.eventDate)}</span>
-                          </div>
+                    <div key={event.id} className="bg-white rounded-lg border border-gray-200 p-6 opacity-75">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                            {event.title}
+                          </h3>
                           
-                          {event.venue && (
+                          <p className="text-gray-600 mb-4 line-clamp-2">
+                            {event.description}
+                          </p>
+
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-500">
                             <div className="flex items-center space-x-2">
-                              <MapPin className="h-4 w-4" />
-                              <span>{event.venue.name}, {event.venue.city}</span>
+                              <Calendar className="h-4 w-4" />
+                              <span>{formatDate(event.eventDate)}</span>
                             </div>
-                          )}
+                            
+                            {event.venue && (
+                              <div className="flex items-center space-x-2">
+                                <MapPin className="h-4 w-4" />
+                                <span>{event.venue.name}, {event.venue.city}</span>
+                              </div>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </div>
