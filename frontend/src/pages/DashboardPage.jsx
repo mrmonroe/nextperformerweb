@@ -6,6 +6,7 @@ import { eventService } from '../services/eventService'
 import CreateEventModal from '../components/modals/CreateEventModal'
 import CreateVenueModal from '../components/modals/CreateVenueModal'
 import UnauthenticatedEventModal from '../components/UnauthenticatedEventModal'
+import ConfirmDeleteModal from '../components/modals/ConfirmDeleteModal'
 
 export default function DashboardPage() {
   const { config } = useConfig()
@@ -18,6 +19,9 @@ export default function DashboardPage() {
   const [showEventModal, setShowEventModal] = useState(false)
   const [editingEvent, setEditingEvent] = useState(null)
   const [showEditEvent, setShowEditEvent] = useState(false)
+  const [eventToDelete, setEventToDelete] = useState(null)
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
 
   useEffect(() => {
     loadUserEvents()
@@ -112,17 +116,32 @@ export default function DashboardPage() {
     closeEditEvent()
   }
 
-  const handleDeleteEvent = async (event) => {
-    if (window.confirm(`Are you sure you want to delete "${event.title}"? This action cannot be undone.`)) {
-      try {
-        await eventService.deleteEvent(event.id)
-        console.log('Event deleted:', event.id)
-        loadUserEvents() // Refresh the events list
-      } catch (error) {
-        console.error('Error deleting event:', error)
-        alert('Failed to delete event. Please try again.')
-      }
+  const handleDeleteEvent = (event) => {
+    setEventToDelete(event)
+    setShowDeleteConfirm(true)
+  }
+
+  const confirmDelete = async () => {
+    if (!eventToDelete) return
+
+    setIsDeleting(true)
+    try {
+      await eventService.deleteEvent(eventToDelete.id)
+      console.log('Event deleted:', eventToDelete.id)
+      loadUserEvents() // Refresh the events list
+      setShowDeleteConfirm(false)
+      setEventToDelete(null)
+    } catch (error) {
+      console.error('Error deleting event:', error)
+      alert('Failed to delete event. Please try again.')
+    } finally {
+      setIsDeleting(false)
     }
+  }
+
+  const cancelDelete = () => {
+    setShowDeleteConfirm(false)
+    setEventToDelete(null)
   }
 
   return (
@@ -325,6 +344,19 @@ export default function DashboardPage() {
         onEventCreated={handleEventUpdated}
         editingEvent={editingEvent}
         isEditMode={true}
+      />
+
+      {/* Delete Confirmation Modal */}
+      <ConfirmDeleteModal
+        isOpen={showDeleteConfirm}
+        onClose={cancelDelete}
+        onConfirm={confirmDelete}
+        title="Delete Event"
+        message="Are you sure you want to delete this event?"
+        itemName={eventToDelete?.title}
+        confirmText="Delete Event"
+        cancelText="Cancel"
+        isLoading={isDeleting}
       />
     </div>
   )

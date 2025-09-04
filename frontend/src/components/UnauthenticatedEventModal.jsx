@@ -1,10 +1,12 @@
 import { useState } from 'react'
 import { X, UserPlus, Share2, Calendar, MapPin, Clock, Users, Edit, Trash2 } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
+import ConfirmDeleteModal from './modals/ConfirmDeleteModal'
 
 export default function UnauthenticatedEventModal({ event, isOpen, onClose, onEdit, onDelete, showEditButton = false }) {
   const { isAuthenticated, user } = useAuth()
   const [isSharing, setIsSharing] = useState(false)
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
 
   if (!isOpen || !event) return null
 
@@ -70,10 +72,19 @@ export default function UnauthenticatedEventModal({ event, isOpen, onClose, onEd
   }
 
   const handleDelete = () => {
+    setShowDeleteConfirm(true)
+  }
+
+  const confirmDelete = () => {
     if (onDelete) {
       onDelete(event)
+      setShowDeleteConfirm(false)
       onClose()
     }
+  }
+
+  const cancelDelete = () => {
+    setShowDeleteConfirm(false)
   }
 
   // Check if current user is the event creator
@@ -212,6 +223,18 @@ export default function UnauthenticatedEventModal({ event, isOpen, onClose, onEd
           </p>
         </div>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      <ConfirmDeleteModal
+        isOpen={showDeleteConfirm}
+        onClose={cancelDelete}
+        onConfirm={confirmDelete}
+        title="Delete Event"
+        message="Are you sure you want to delete this event?"
+        itemName={event?.title}
+        confirmText="Delete Event"
+        cancelText="Cancel"
+      />
     </div>
   )
 }
