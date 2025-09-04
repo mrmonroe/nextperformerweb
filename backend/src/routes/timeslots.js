@@ -7,19 +7,16 @@ const router = express.Router()
 
 // Validation schemas
 const timeslotSchema = Joi.object({
-  name: Joi.string().min(1).max(100).required(),
-  description: Joi.string().max(500).optional().allow(''),
+  name: Joi.string().max(100).optional().allow(''),
   startTime: Joi.string().pattern(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/).required(),
   endTime: Joi.string().pattern(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/).required(),
   durationMinutes: Joi.number().integer().min(1).max(480).required(), // Max 8 hours
-  maxPerformers: Joi.number().integer().min(1).max(10).default(1),
   isAvailable: Joi.boolean().default(true),
   sortOrder: Joi.number().integer().min(0).default(0)
 })
 
 const generateTimeslotsSchema = Joi.object({
-  durationMinutes: Joi.number().integer().min(5).max(480).required(), // Min 5 minutes, max 8 hours
-  maxPerformers: Joi.number().integer().min(1).max(10).default(1)
+  durationMinutes: Joi.number().integer().min(5).max(480).required() // Min 5 minutes, max 8 hours
 })
 
 // @route   GET /api/timeslots/event/:eventId
@@ -116,7 +113,7 @@ router.post('/generate', auth, async (req, res) => {
       return res.status(400).json({ message: error.details[0].message })
     }
 
-    const { eventId, durationMinutes, maxPerformers } = value
+    const { eventId, durationMinutes } = value
 
     // Verify event exists and user owns it
     const db = require('../config/database')
@@ -141,8 +138,7 @@ router.post('/generate', auth, async (req, res) => {
       eventId,
       event.start_time,
       event.end_time,
-      durationMinutes,
-      maxPerformers
+      durationMinutes
     )
 
     res.status(201).json({

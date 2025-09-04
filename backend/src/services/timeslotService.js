@@ -45,19 +45,18 @@ class TimeslotService {
    */
   async createTimeslot(timeslotData) {
     try {
-      const [timeslot] = await db('timeslots')
-        .insert({
-          event_id: timeslotData.eventId,
-          name: timeslotData.name,
-          description: timeslotData.description || null,
-          start_time: timeslotData.startTime,
-          end_time: timeslotData.endTime,
-          duration_minutes: timeslotData.durationMinutes,
-          max_performers: timeslotData.maxPerformers || 1,
-          is_available: timeslotData.isAvailable !== false,
-          sort_order: timeslotData.sortOrder || 0
-        })
-        .returning('*')
+          const [timeslot] = await db('timeslots')
+      .insert({
+        event_id: timeslotData.eventId,
+        name: timeslotData.name || `Slot ${Date.now()}`, // Auto-generate name if not provided
+        start_time: timeslotData.startTime,
+        end_time: timeslotData.endTime,
+        duration_minutes: timeslotData.durationMinutes,
+        max_performers: 1, // Default to 1 performer per slot
+        is_available: timeslotData.isAvailable !== false,
+        sort_order: timeslotData.sortOrder || 0
+      })
+      .returning('*')
       
       return timeslot
     } catch (error) {
@@ -74,20 +73,19 @@ class TimeslotService {
    */
   async updateTimeslot(timeslotId, updateData) {
     try {
-      const [timeslot] = await db('timeslots')
-        .where('id', timeslotId)
-        .update({
-          name: updateData.name,
-          description: updateData.description,
-          start_time: updateData.startTime,
-          end_time: updateData.endTime,
-          duration_minutes: updateData.durationMinutes,
-          max_performers: updateData.maxPerformers,
-          is_available: updateData.isAvailable,
-          sort_order: updateData.sortOrder,
-          updated_at: new Date()
-        })
-        .returning('*')
+          const [timeslot] = await db('timeslots')
+      .where('id', timeslotId)
+      .update({
+        name: updateData.name || `Slot ${Date.now()}`,
+        start_time: updateData.startTime,
+        end_time: updateData.endTime,
+        duration_minutes: updateData.durationMinutes,
+        max_performers: 1, // Keep default of 1 performer per slot
+        is_available: updateData.isAvailable,
+        sort_order: updateData.sortOrder,
+        updated_at: new Date()
+      })
+      .returning('*')
       
       return timeslot
     } catch (error) {
@@ -120,10 +118,9 @@ class TimeslotService {
    * @param {string} eventStartTime - Event start time
    * @param {string} eventEndTime - Event end time
    * @param {number} durationMinutes - Duration of each timeslot in minutes
-   * @param {number} maxPerformers - Max performers per timeslot
    * @returns {Promise<Array>} Array of created timeslots
    */
-  async generateTimeslots(eventId, eventStartTime, eventEndTime, durationMinutes, maxPerformers = 1) {
+  async generateTimeslots(eventId, eventStartTime, eventEndTime, durationMinutes) {
     try {
       // Parse times
       const startTime = new Date(`2000-01-01T${eventStartTime}`)
@@ -154,11 +151,9 @@ class TimeslotService {
         const timeslotData = {
           eventId,
           name: `Slot ${i + 1}`,
-          description: `Performance slot ${i + 1}`,
           startTime: slotStartTime.toTimeString().slice(0, 8), // HH:MM:SS format
           endTime: slotEndTime.toTimeString().slice(0, 8),
           durationMinutes,
-          maxPerformers,
           isAvailable: true,
           sortOrder: i
         }

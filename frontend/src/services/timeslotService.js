@@ -94,7 +94,7 @@ class TimeslotService {
     }
   }
 
-  async generateTimeslots(eventId, durationMinutes, maxPerformers = 1) {
+  async generateTimeslots(eventId, durationMinutes) {
     try {
       const response = await fetch(`${API_BASE_URL}/timeslots/generate`, {
         method: 'POST',
@@ -104,8 +104,7 @@ class TimeslotService {
         },
         body: JSON.stringify({
           eventId,
-          durationMinutes,
-          maxPerformers
+          durationMinutes
         })
       })
       

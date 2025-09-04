@@ -16,16 +16,13 @@ export default function TimeslotManagementModal({
   const [editingTimeslot, setEditingTimeslot] = useState(null)
   const [formData, setFormData] = useState({
     name: '',
-    description: '',
     startTime: '',
     endTime: '',
     durationMinutes: 30,
-    maxPerformers: 1,
     isAvailable: true
   })
   const [generateData, setGenerateData] = useState({
-    durationMinutes: 30,
-    maxPerformers: 1
+    durationMinutes: 30
   })
 
   useEffect(() => {
@@ -76,11 +73,9 @@ export default function TimeslotManagementModal({
       setShowCreateForm(false)
       setFormData({
         name: '',
-        description: '',
         startTime: '',
         endTime: '',
         durationMinutes: 30,
-        maxPerformers: 1,
         isAvailable: true
       })
       loadTimeslots()
@@ -96,15 +91,13 @@ export default function TimeslotManagementModal({
     try {
       await timeslotService.generateTimeslots(
         event.id,
-        generateData.durationMinutes,
-        generateData.maxPerformers
+        generateData.durationMinutes
       )
       
       toast.success('Timeslots generated successfully')
       setShowGenerateForm(false)
       setGenerateData({
-        durationMinutes: 30,
-        maxPerformers: 1
+        durationMinutes: 30
       })
       loadTimeslots()
       onTimeslotsUpdated?.()
@@ -117,11 +110,9 @@ export default function TimeslotManagementModal({
     setEditingTimeslot(timeslot)
     setFormData({
       name: timeslot.name,
-      description: timeslot.description || '',
       startTime: timeslot.start_time,
       endTime: timeslot.end_time,
       durationMinutes: timeslot.duration_minutes,
-      maxPerformers: timeslot.max_performers,
       isAvailable: timeslot.is_available
     })
     setShowCreateForm(true)
@@ -138,11 +129,9 @@ export default function TimeslotManagementModal({
       setEditingTimeslot(null)
       setFormData({
         name: '',
-        description: '',
         startTime: '',
         endTime: '',
         durationMinutes: 30,
-        maxPerformers: 1,
         isAvailable: true
       })
       loadTimeslots()
@@ -173,6 +162,16 @@ export default function TimeslotManagementModal({
       minute: '2-digit',
       hour12: true
     })
+  }
+
+  const getEventStartTime = () => {
+    if (!event) return ''
+    return event.start_time
+  }
+
+  const getEventEndTime = () => {
+    if (!event) return ''
+    return event.end_time
   }
 
   if (!isOpen || !event) return null
@@ -223,7 +222,7 @@ export default function TimeslotManagementModal({
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Name <span className="text-red-500">*</span>
+                      Name <span className="text-gray-500">(Optional)</span>
                     </label>
                     <input
                       type="text"
@@ -232,22 +231,24 @@ export default function TimeslotManagementModal({
                       onChange={handleInputChange}
                       className="input w-full"
                       placeholder="e.g., Opening Act, Headliner"
-                      required
                     />
+                    <p className="text-xs text-gray-500 mt-1">
+                      Leave blank to auto-generate names
+                    </p>
                   </div>
                   
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Max Performers
+                      Duration (minutes)
                     </label>
                     <input
                       type="number"
-                      name="maxPerformers"
-                      value={formData.maxPerformers}
+                      name="durationMinutes"
+                      value={formData.durationMinutes}
                       onChange={handleInputChange}
                       className="input w-full"
-                      min="1"
-                      max="10"
+                      min="5"
+                      max="480"
                     />
                   </div>
                   
@@ -261,8 +262,13 @@ export default function TimeslotManagementModal({
                       value={formData.startTime}
                       onChange={handleInputChange}
                       className="input w-full"
+                      min={getEventStartTime()}
+                      max={getEventEndTime()}
                       required
                     />
+                    <p className="text-xs text-gray-500 mt-1">
+                      Event runs from {formatTime(getEventStartTime())} to {formatTime(getEventEndTime())}
+                    </p>
                   </div>
                   
                   <div>
@@ -275,22 +281,13 @@ export default function TimeslotManagementModal({
                       value={formData.endTime}
                       onChange={handleInputChange}
                       className="input w-full"
+                      min={getEventStartTime()}
+                      max={getEventEndTime()}
                       required
                     />
-                  </div>
-                  
-                  <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Description
-                    </label>
-                    <textarea
-                      name="description"
-                      value={formData.description}
-                      onChange={handleInputChange}
-                      className="input w-full"
-                      rows={2}
-                      placeholder="Optional description for this timeslot"
-                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      Must be within event time range
+                    </p>
                   </div>
                   
                   <div className="md:col-span-2">
@@ -342,7 +339,7 @@ export default function TimeslotManagementModal({
                 Generate Timeslots Automatically
               </h3>
               <form onSubmit={handleGenerateTimeslots}>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Duration (minutes) <span className="text-red-500">*</span>
@@ -358,23 +355,8 @@ export default function TimeslotManagementModal({
                       required
                     />
                     <p className="text-xs text-gray-500 mt-1">
-                      How long each performance slot should be
+                      How long each performance slot should be (5-480 minutes)
                     </p>
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Max Performers per Slot
-                    </label>
-                    <input
-                      type="number"
-                      name="maxPerformers"
-                      value={generateData.maxPerformers}
-                      onChange={handleGenerateInputChange}
-                      className="input w-full"
-                      min="1"
-                      max="10"
-                    />
                   </div>
                 </div>
                 
