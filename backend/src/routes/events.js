@@ -15,7 +15,7 @@ const eventSchema = Joi.object({
   endTime: Joi.string().required(),
   isSpotlight: Joi.boolean().default(false),
   maxAttendees: Joi.number().integer().min(1).optional(),
-  imageUrl: Joi.string().uri().optional()
+  imageUrl: Joi.string().uri().optional().allow('')
 })
 
 // @route   GET /api/events

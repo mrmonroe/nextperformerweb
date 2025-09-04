@@ -15,6 +15,7 @@ import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import DashboardPage from './pages/DashboardPage'
 import EventsPage from './pages/EventsPage'
+import CreateEventPage from './pages/CreateEventPage'
 import EventDetailsPage from './pages/EventDetailsPage'
 import VenuesPage from './pages/VenuesPage'
 import ProfilePage from './pages/ProfilePage'
@@ -112,10 +113,16 @@ function App() {
           <Route
             path="/events"
             element={
+              <Layout>
+                <EventsPage />
+              </Layout>
+            }
+          />
+          <Route
+            path="/events/create"
+            element={
               user ? (
-                <Layout>
-                  <EventsPage />
-                </Layout>
+                <CreateEventPage />
               ) : (
                 <Navigate to="/login" replace />
               )
@@ -124,13 +131,9 @@ function App() {
           <Route
             path="/events/:id"
             element={
-              user ? (
-                <Layout>
-                  <EventDetailsPage />
-                </Layout>
-              ) : (
-                <Navigate to="/login" replace />
-              )
+              <Layout>
+                <EventDetailsPage />
+              </Layout>
             }
           />
           <Route
