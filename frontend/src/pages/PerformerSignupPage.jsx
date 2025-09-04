@@ -377,6 +377,38 @@ export default function PerformerSignupPage() {
                 )}
               </div>
 
+              {/* Performance Type */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Performance Type <span className="text-red-500">*</span>
+                </label>
+                <select
+                  name="performanceType"
+                  value={formData.performanceType}
+                  onChange={handleInputChange}
+                  className={`input w-full ${errors.performanceType ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
+                  required
+                >
+                  <option value="">Select your performance type...</option>
+                  <option value="Singer">Singer</option>
+                  <option value="Musician">Musician</option>
+                  <option value="Comedian">Comedian</option>
+                  <option value="Poet">Poet</option>
+                  <option value="Dancer">Dancer</option>
+                  <option value="Actor">Actor</option>
+                  <option value="Magician">Magician</option>
+                  <option value="Stand-up Comedian">Stand-up Comedian</option>
+                  <option value="Rapper">Rapper</option>
+                  <option value="Instrumentalist">Instrumentalist</option>
+                  <option value="Spoken Word">Spoken Word</option>
+                  <option value="Storyteller">Storyteller</option>
+                  <option value="Other">Other</option>
+                </select>
+                {errors.performanceType && (
+                  <p className="mt-1 text-sm text-red-600">{errors.performanceType}</p>
+                )}
+              </div>
+
               {/* Email */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -410,24 +442,6 @@ export default function PerformerSignupPage() {
                 />
                 {errors.phone && (
                   <p className="mt-1 text-sm text-red-600">{errors.phone}</p>
-                )}
-              </div>
-
-              {/* Performance Type */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Performance Type <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  name="performanceType"
-                  value={formData.performanceType}
-                  onChange={handleInputChange}
-                  className={`input w-full ${errors.performanceType ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
-                  placeholder="e.g., Singer, Musician, Comedian, Poet"
-                />
-                {errors.performanceType && (
-                  <p className="mt-1 text-sm text-red-600">{errors.performanceType}</p>
                 )}
               </div>
 
