@@ -1,22 +1,21 @@
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Calendar, MapPin, Users, Plus, Star, Eye, Edit, Trash2 } from 'lucide-react'
 import { useConfig } from '../hooks/useConfig'
 import { useAuth } from '../hooks/useAuth'
 import { eventService } from '../services/eventService'
 import CreateEventModal from '../components/modals/CreateEventModal'
 import CreateVenueModal from '../components/modals/CreateVenueModal'
-import UnauthenticatedEventModal from '../components/UnauthenticatedEventModal'
 import ConfirmDeleteModal from '../components/modals/ConfirmDeleteModal'
 
 export default function DashboardPage() {
+  const navigate = useNavigate()
   const { config } = useConfig()
   const { user } = useAuth()
   const [showCreateEvent, setShowCreateEvent] = useState(false)
   const [showCreateVenue, setShowCreateVenue] = useState(false)
   const [events, setEvents] = useState([])
   const [eventsLoading, setEventsLoading] = useState(true)
-  const [selectedEvent, setSelectedEvent] = useState(null)
-  const [showEventModal, setShowEventModal] = useState(false)
   const [editingEvent, setEditingEvent] = useState(null)
   const [showEditEvent, setShowEditEvent] = useState(false)
   const [eventToDelete, setEventToDelete] = useState(null)
@@ -91,14 +90,9 @@ export default function DashboardPage() {
   }
 
   const handleViewDetails = (event) => {
-    setSelectedEvent(event)
-    setShowEventModal(true)
+    navigate(`/events/${event.id}`)
   }
 
-  const closeEventModal = () => {
-    setShowEventModal(false)
-    setSelectedEvent(null)
-  }
 
   const handleEditEvent = (event) => {
     setEditingEvent(event)
@@ -327,15 +321,6 @@ export default function DashboardPage() {
         }}
       />
 
-      {/* Event Details Modal */}
-      <UnauthenticatedEventModal
-        event={selectedEvent}
-        isOpen={showEventModal}
-        onClose={closeEventModal}
-        onEdit={handleEditEvent}
-        onDelete={handleDeleteEvent}
-        showEditButton={true}
-      />
 
       {/* Edit Event Modal */}
       <CreateEventModal

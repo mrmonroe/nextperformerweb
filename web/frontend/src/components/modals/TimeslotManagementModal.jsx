@@ -1,7 +1,9 @@
-import { useState, useEffect } from 'react'
-import { X, Plus, Clock, Users, Edit, Trash2, Settings } from 'lucide-react'
+import { useState, useEffect, useRef } from 'react'
+import { X, Plus, Clock, Users, Edit, Trash2, Settings, Mail, Phone, Music, MoreVertical } from 'lucide-react'
 import { timeslotService } from '../../services/timeslotService'
+import { signupService } from '../../services/signupService'
 import { toast } from 'react-hot-toast'
+import ConfirmDeleteModal from './ConfirmDeleteModal'
 
 export default function TimeslotManagementModal({ 
   isOpen, 
@@ -10,11 +12,16 @@ export default function TimeslotManagementModal({
   onTimeslotsUpdated 
 }) {
   const [timeslots, setTimeslots] = useState([])
+  const [signups, setSignups] = useState([])
   const [loading, setLoading] = useState(false)
   const [showCreateForm, setShowCreateForm] = useState(false)
   const [showGenerateForm, setShowGenerateForm] = useState(false)
   const [showRegenerateForm, setShowRegenerateForm] = useState(false)
   const [editingTimeslot, setEditingTimeslot] = useState(null)
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const [signupToDelete, setSignupToDelete] = useState(null)
+  const [showDropdown, setShowDropdown] = useState(false)
+  const dropdownRef = useRef(null)
   const [formData, setFormData] = useState({
     name: '',
     startTime: '',
@@ -29,8 +36,23 @@ export default function TimeslotManagementModal({
   useEffect(() => {
     if (isOpen && event) {
       loadTimeslots()
+      loadSignups()
     }
   }, [isOpen, event])
+
+  // Handle click outside dropdown
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowDropdown(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [])
 
   const loadTimeslots = async () => {
     try {
@@ -42,6 +64,16 @@ export default function TimeslotManagementModal({
       toast.error('Failed to load timeslots')
     } finally {
       setLoading(false)
+    }
+  }
+
+  const loadSignups = async () => {
+    try {
+      const data = await signupService.getEventSignups(event.id)
+      setSignups(data)
+    } catch (error) {
+      console.error('Error loading signups:', error)
+      toast.error('Failed to load signups')
     }
   }
 
@@ -200,6 +232,43 @@ export default function TimeslotManagementModal({
     return event.end_time
   }
 
+  const getSignupsForTimeslot = (timeslotId) => {
+    return signups.filter(signup => signup.timeslot_id === timeslotId)
+  }
+
+  const handleRemoveSignup = (signup) => {
+    setSignupToDelete(signup)
+    setShowDeleteConfirm(true)
+  }
+
+  const confirmDeleteSignup = async () => {
+    if (signupToDelete) {
+      try {
+        await signupService.removeSignup(signupToDelete.id)
+        toast.success('Signup removed successfully')
+        loadSignups()
+        onTimeslotsUpdated?.()
+      } catch (error) {
+        toast.error(error.message || 'Failed to remove signup')
+      }
+    }
+    setShowDeleteConfirm(false)
+    setSignupToDelete(null)
+  }
+
+  const cancelDeleteSignup = () => {
+    setShowDeleteConfirm(false)
+    setSignupToDelete(null)
+  }
+
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      weekday: 'short',
+      month: 'short',
+      day: 'numeric'
+    })
+  }
+
   if (!isOpen || !event) return null
 
   return (
@@ -221,30 +290,58 @@ export default function TimeslotManagementModal({
         {/* Content */}
         <div className="p-6 overflow-y-auto max-h-[calc(90vh-140px)]">
           {/* Action Buttons */}
-          <div className="flex gap-3 mb-6">
-            <button
-              onClick={() => setShowCreateForm(true)}
-              className="btn-primary flex items-center space-x-2"
-            >
-              <Plus className="h-4 w-4" />
-              <span>Create Timeslot</span>
-            </button>
-            <button
-              onClick={() => setShowGenerateForm(true)}
-              className="btn-outline flex items-center space-x-2"
-            >
-              <Settings className="h-4 w-4" />
-              <span>Generate Timeslots</span>
-            </button>
-            {timeslots.length > 0 && (
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="text-lg font-medium text-gray-900">
+              Timeslots ({timeslots.length})
+            </h3>
+            
+            <div className="relative" ref={dropdownRef}>
               <button
-                onClick={() => setShowRegenerateForm(true)}
-                className="btn-warning flex items-center space-x-2"
+                onClick={() => setShowDropdown(!showDropdown)}
+                className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-full transition-colors"
               >
-                <Settings className="h-4 w-4" />
-                <span>Regenerate Timeslots</span>
+                <MoreVertical className="h-5 w-5" />
               </button>
-            )}
+              
+              {showDropdown && (
+                <div className="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-50">
+                  <div className="py-1">
+                    <button
+                      onClick={() => {
+                        setShowCreateForm(true)
+                        setShowDropdown(false)
+                      }}
+                      className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    >
+                      <Plus className="h-4 w-4 mr-3" />
+                      Create Timeslot
+                    </button>
+                    <button
+                      onClick={() => {
+                        setShowGenerateForm(true)
+                        setShowDropdown(false)
+                      }}
+                      className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    >
+                      <Settings className="h-4 w-4 mr-3" />
+                      Generate Timeslots
+                    </button>
+                    {timeslots.length > 0 && (
+                      <button
+                        onClick={() => {
+                          setShowRegenerateForm(true)
+                          setShowDropdown(false)
+                        }}
+                        className="flex items-center w-full px-4 py-2 text-sm text-orange-600 hover:bg-orange-50"
+                      >
+                        <Settings className="h-4 w-4 mr-3" />
+                        Regenerate Timeslots
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Create/Edit Form */}
@@ -460,9 +557,6 @@ export default function TimeslotManagementModal({
 
           {/* Timeslots List */}
           <div>
-            <h3 className="text-lg font-medium text-gray-900 mb-4">
-              Timeslots ({timeslots.length})
-            </h3>
             
             {loading ? (
               <div className="text-center py-8">
@@ -476,14 +570,18 @@ export default function TimeslotManagementModal({
                 <p className="text-sm text-gray-500">Create timeslots manually or generate them automatically</p>
               </div>
             ) : (
-              <div className="space-y-3">
-                {timeslots.map((timeslot) => (
-                  <div
-                    key={timeslot.id}
-                    className="bg-white border border-gray-200 rounded-lg p-4"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex-1">
+              <div className="space-y-4">
+                {timeslots.map((timeslot) => {
+                  const timeslotSignups = getSignupsForTimeslot(timeslot.id)
+                  const signupCount = timeslotSignups.length
+                  
+                  return (
+                    <div
+                      key={timeslot.id}
+                      className="bg-white border border-gray-200 rounded-lg p-4"
+                    >
+                      {/* Timeslot Header */}
+                      <div className="mb-4">
                         <div className="flex items-center space-x-3 mb-2">
                           <h4 className="font-medium text-gray-900">{timeslot.name}</h4>
                           {!timeslot.is_available && (
@@ -504,7 +602,7 @@ export default function TimeslotManagementModal({
                           <div className="flex items-center space-x-1">
                             <Users className="h-4 w-4" />
                             <span>
-                              {timeslot.current_signups} / {timeslot.max_performers} performers
+                              {signupCount} / {timeslot.max_performers || '∞'} performers
                             </span>
                           </div>
                           
@@ -517,32 +615,111 @@ export default function TimeslotManagementModal({
                           <p className="text-sm text-gray-500 mt-1">{timeslot.description}</p>
                         )}
                       </div>
-                      
-                      <div className="flex items-center space-x-2">
+
+                      {/* Action Buttons - Mobile Responsive */}
+                      <div className="flex items-center justify-center space-x-4 py-2 border-t border-gray-100">
                         <button
                           onClick={() => handleEditTimeslot(timeslot)}
-                          className="btn-outline btn-sm flex items-center space-x-1"
+                          className="text-sm text-blue-600 hover:text-blue-800 hover:underline flex items-center space-x-1"
                         >
-                          <Edit className="h-4 w-4" />
+                          <Edit className="h-3 w-3" />
                           <span>Edit</span>
                         </button>
                         
+                        <span className="text-gray-300">|</span>
+                        
                         <button
                           onClick={() => handleDeleteTimeslot(timeslot.id)}
-                          className="btn-outline btn-sm text-red-600 hover:text-red-700 flex items-center space-x-1"
+                          className="text-sm text-red-600 hover:text-red-800 hover:underline flex items-center space-x-1"
                         >
-                          <Trash2 className="h-4 w-4" />
+                          <Trash2 className="h-3 w-3" />
                           <span>Delete</span>
                         </button>
                       </div>
+
+                      {/* Signups for this timeslot */}
+                      {timeslotSignups.length > 0 ? (
+                        <div className="border-t pt-4">
+                          <h5 className="text-sm font-medium text-gray-700 mb-3 flex items-center space-x-2">
+                            <Music className="h-4 w-4" />
+                            <span>Performers ({signupCount})</span>
+                          </h5>
+                          <div className="space-y-2">
+                            {timeslotSignups.map((signup) => (
+                              <div
+                                key={signup.id}
+                                className="bg-gray-50 rounded-lg p-3 border border-gray-200"
+                              >
+                                <div className="flex items-center justify-between">
+                                  <div className="flex-1">
+                                    <div className="flex items-center space-x-2 mb-1">
+                                      <span className="font-medium text-gray-900">{signup.performer_name}</span>
+                                      <span className="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded">
+                                        {signup.performance_type}
+                                      </span>
+                                    </div>
+                                    
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs text-gray-600">
+                                      <div className="flex items-center space-x-1">
+                                        <Mail className="h-3 w-3" />
+                                        <span>{signup.email}</span>
+                                      </div>
+                                      
+                                      {signup.phone && (
+                                        <div className="flex items-center space-x-1">
+                                          <Phone className="h-3 w-3" />
+                                          <span>{signup.phone}</span>
+                                        </div>
+                                      )}
+                                      
+                                      <div className="flex items-center space-x-1 md:col-span-2">
+                                        <span className="text-gray-500">
+                                          Signed up {formatDate(signup.signup_date)}
+                                        </span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  
+                                  <button
+                                    onClick={() => handleRemoveSignup(signup)}
+                                    className="text-red-600 hover:text-red-800 transition-colors ml-3"
+                                    title="Remove signup"
+                                  >
+                                    <Trash2 className="h-4 w-4" />
+                                  </button>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="border-t pt-4">
+                          <div className="text-center py-4">
+                            <Users className="h-8 w-8 text-gray-300 mx-auto mb-2" />
+                            <p className="text-sm text-gray-500">No performers signed up for this timeslot</p>
+                          </div>
+                        </div>
+                      )}
                     </div>
-                  </div>
-                ))}
+                  )
+                })}
               </div>
             )}
           </div>
         </div>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      <ConfirmDeleteModal
+        isOpen={showDeleteConfirm}
+        onClose={cancelDeleteSignup}
+        onConfirm={confirmDeleteSignup}
+        title="Remove Signup"
+        message="Are you sure you want to remove this performer from the timeslot?"
+        itemName={signupToDelete?.performer_name}
+        confirmText="Remove Signup"
+        cancelText="Cancel"
+      />
     </div>
   )
 }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { Calendar, Clock, MapPin, Users, Image, Star, X } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
 import { useConfig } from '../hooks/useConfig'
@@ -10,11 +10,14 @@ import CreateVenueModal from '../components/modals/CreateVenueModal'
 
 const CreateEventPage = () => {
   const navigate = useNavigate()
+  const { id } = useParams()
   const { user, isAuthenticated } = useAuth()
   const { config } = useConfig()
   const [loading, setLoading] = useState(false)
   const [venues, setVenues] = useState([])
   const [showCreateVenue, setShowCreateVenue] = useState(false)
+  const [isEditMode, setIsEditMode] = useState(false)
+  const [event, setEvent] = useState(null)
 
   const [formData, setFormData] = useState({
     title: '',
@@ -38,6 +41,14 @@ const CreateEventPage = () => {
     loadVenues()
   }, [isAuthenticated, navigate])
 
+  // Load event data for editing
+  useEffect(() => {
+    if (id) {
+      setIsEditMode(true)
+      loadEvent()
+    }
+  }, [id])
+
   const loadVenues = async () => {
     try {
       const venuesData = await venueService.getVenues()
@@ -55,6 +66,33 @@ const CreateEventPage = () => {
       console.error('Error loading venues:', error)
       toast.error('Failed to load venues')
       setVenues([]) // Ensure venues is always an array
+    }
+  }
+
+  const loadEvent = async () => {
+    try {
+      setLoading(true)
+      const eventData = await eventService.getEventById(id)
+      setEvent(eventData)
+      
+      // Populate form with event data
+      setFormData({
+        title: eventData.title || '',
+        description: eventData.description || '',
+        venueId: eventData.venue_id || '',
+        eventDate: eventData.event_date ? eventData.event_date.split('T')[0] : '',
+        startTime: eventData.start_time || '',
+        endTime: eventData.end_time || '',
+        isSpotlight: eventData.is_spotlight || false,
+        maxAttendees: eventData.max_attendees || '',
+        imageUrl: eventData.image_url || ''
+      })
+    } catch (error) {
+      console.error('Error loading event:', error)
+      toast.error('Failed to load event')
+      navigate('/dashboard')
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -158,12 +196,18 @@ const CreateEventPage = () => {
         maxAttendees: formData.maxAttendees ? parseInt(formData.maxAttendees) : null
       }
       
-      const event = await eventService.createEvent(eventData)
-      toast.success('Event created successfully!')
+      let event
+      if (isEditMode) {
+        event = await eventService.updateEvent(id, eventData)
+        toast.success('Event updated successfully!')
+      } else {
+        event = await eventService.createEvent(eventData)
+        toast.success('Event created successfully!')
+      }
       navigate(`/events/${event.id}`)
     } catch (error) {
-      console.error('Error creating event:', error)
-      toast.error(error.response?.data?.message || 'Failed to create event')
+      console.error(`Error ${isEditMode ? 'updating' : 'creating'} event:`, error)
+      toast.error(error.response?.data?.message || `Failed to ${isEditMode ? 'update' : 'create'} event`)
     } finally {
       setLoading(false)
     }
@@ -186,7 +230,10 @@ const CreateEventPage = () => {
           <div className="px-6 py-4 border-b border-gray-200">
             <div className="flex items-center justify-between">
               <h1 className="text-2xl font-bold text-gray-900">
-                {config?.content?.copy?.events?.createTitle || 'Create Event'}
+                {isEditMode 
+                  ? 'Edit Event' 
+                  : (config?.content?.copy?.events?.createTitle || 'Create Event')
+                }
               </h1>
               <button
                 onClick={() => navigate('/events')}
@@ -196,7 +243,10 @@ const CreateEventPage = () => {
               </button>
             </div>
             <p className="text-gray-600 mt-1">
-              {config?.content?.copy?.events?.createSubtitle || 'Create a new open mic event'}
+              {isEditMode 
+                ? 'Update your event details'
+                : (config?.content?.copy?.events?.createSubtitle || 'Create a new open mic event')
+              }
             </p>
           </div>
 

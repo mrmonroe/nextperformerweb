@@ -140,7 +140,19 @@ export default function PerformerSignupPage() {
         } else {
           toast.success('Successfully signed up for the event!')
         }
-        navigate('/events')
+        // Reload event data to update counts
+        await loadEvent()
+        // Reset form
+        setFormData({
+          timeslotId: '',
+          performerName: '',
+          email: '',
+          phone: '',
+          performanceType: '',
+          createAccount: false,
+          password: ''
+        })
+        setErrors({})
       } else {
         toast.error(data.message || 'Failed to sign up for event')
       }

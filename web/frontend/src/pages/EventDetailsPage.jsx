@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { Calendar, MapPin, Clock, Users, Star, ArrowLeft, Edit, Trash2, QrCode, Copy, Check, Settings, UserCheck } from 'lucide-react'
+import { Calendar, MapPin, Clock, Users, Star, ArrowLeft, Edit, Trash2, QrCode, Copy, Check, Settings, UserCheck, MoreVertical, X } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
 import { useConfig } from '../hooks/useConfig'
 import { eventService } from '../services/eventService'
@@ -19,12 +19,31 @@ export default function EventDetailsPage() {
   const [copied, setCopied] = useState(false)
   const [showTimeslotManagement, setShowTimeslotManagement] = useState(false)
   const [showSignupManagement, setShowSignupManagement] = useState(false)
+  const [showDropdown, setShowDropdown] = useState(false)
+  const [showEditForm, setShowEditForm] = useState(false)
+  const [editFormData, setEditFormData] = useState({})
+  const [editLoading, setEditLoading] = useState(false)
+  const dropdownRef = useRef(null)
 
   useEffect(() => {
     if (id) {
       loadEvent()
     }
   }, [id])
+
+  // Handle click outside dropdown
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowDropdown(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [])
 
   const loadEvent = async () => {
     try {
@@ -53,6 +72,44 @@ export default function EventDetailsPage() {
       console.error('Error deleting event:', error)
       toast.error('Failed to delete event')
     }
+  }
+
+  const handleEditSubmit = async (e) => {
+    e.preventDefault()
+    setEditLoading(true)
+
+    try {
+      const updatedEvent = await eventService.updateEvent(id, editFormData)
+      setEvent(updatedEvent)
+      setShowEditForm(false)
+      toast.success('Event updated successfully!')
+    } catch (error) {
+      console.error('Error updating event:', error)
+      toast.error(error.response?.data?.message || 'Failed to update event')
+    } finally {
+      setEditLoading(false)
+    }
+  }
+
+  const handleEditInputChange = (e) => {
+    const { name, value, type, checked } = e.target
+    setEditFormData(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value
+    }))
+  }
+
+  const openEditForm = () => {
+    setEditFormData({
+      title: event.title || '',
+      description: event.description || '',
+      event_date: event.event_date || '',
+      start_time: event.start_time || '',
+      end_time: event.end_time || '',
+      max_attendees: event.max_attendees || '',
+      is_spotlight: event.is_spotlight || false
+    })
+    setShowEditForm(true)
   }
 
   const copyEventCode = async () => {
@@ -185,35 +242,60 @@ export default function EventDetailsPage() {
 
               {/* Owner Actions */}
               {isOwner && (
-                <div className="flex gap-2 ml-4">
+                <div className="relative ml-4" ref={dropdownRef}>
                   <button
-                    onClick={() => setShowTimeslotManagement(true)}
-                    className="btn-outline btn-sm flex items-center gap-2"
+                    onClick={() => setShowDropdown(!showDropdown)}
+                    className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-full transition-colors"
                   >
-                    <Settings className="h-4 w-4" />
-                    Manage Timeslots
+                    <MoreVertical className="h-5 w-5" />
                   </button>
-                  <button
-                    onClick={() => setShowSignupManagement(true)}
-                    className="btn-outline btn-sm flex items-center gap-2"
-                  >
-                    <UserCheck className="h-4 w-4" />
-                    Manage Signups
-                  </button>
-                  <button
-                    onClick={() => navigate(`/events/${event.id}/edit`)}
-                    className="btn-outline btn-sm flex items-center gap-2"
-                  >
-                    <Edit className="h-4 w-4" />
-                    Edit
-                  </button>
-                  <button
-                    onClick={handleDeleteEvent}
-                    className="btn-outline btn-sm text-red-600 hover:text-red-700 flex items-center gap-2"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                    Delete
-                  </button>
+                  
+                  {showDropdown && (
+                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-50">
+                      <div className="py-1">
+                        <button
+                          onClick={() => {
+                            setShowTimeslotManagement(true)
+                            setShowDropdown(false)
+                          }}
+                          className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        >
+                          <Settings className="h-4 w-4 mr-3" />
+                          Manage Timeslots
+                        </button>
+                        <button
+                          onClick={() => {
+                            setShowSignupManagement(true)
+                            setShowDropdown(false)
+                          }}
+                          className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        >
+                          <UserCheck className="h-4 w-4 mr-3" />
+                          Manage Signups
+                        </button>
+                        <button
+                          onClick={() => {
+                            openEditForm()
+                            setShowDropdown(false)
+                          }}
+                          className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        >
+                          <Edit className="h-4 w-4 mr-3" />
+                          Edit Event
+                        </button>
+                        <button
+                          onClick={() => {
+                            handleDeleteEvent()
+                            setShowDropdown(false)
+                          }}
+                          className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+                        >
+                          <Trash2 className="h-4 w-4 mr-3" />
+                          Delete Event
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -379,6 +461,140 @@ export default function EventDetailsPage() {
             console.log('Signups updated')
           }}
         />
+
+        {/* Edit Event Modal */}
+        {showEditForm && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
+              <div className="flex items-center justify-between p-6 border-b">
+                <h2 className="text-xl font-semibold text-gray-900">Edit Event</h2>
+                <button
+                  onClick={() => setShowEditForm(false)}
+                  className="text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  <X className="h-6 w-6" />
+                </button>
+              </div>
+
+              <form onSubmit={handleEditSubmit} className="p-6 space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Event Title <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="title"
+                    value={editFormData.title || ''}
+                    onChange={handleEditInputChange}
+                    className="input w-full"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Description
+                  </label>
+                  <textarea
+                    name="description"
+                    value={editFormData.description || ''}
+                    onChange={handleEditInputChange}
+                    rows={3}
+                    className="input w-full"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Event Date <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="date"
+                      name="event_date"
+                      value={editFormData.event_date || ''}
+                      onChange={handleEditInputChange}
+                      className="input w-full"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Max Attendees
+                    </label>
+                    <input
+                      type="number"
+                      name="max_attendees"
+                      value={editFormData.max_attendees || ''}
+                      onChange={handleEditInputChange}
+                      className="input w-full"
+                      min="1"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Start Time <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="time"
+                      name="start_time"
+                      value={editFormData.start_time || ''}
+                      onChange={handleEditInputChange}
+                      className="input w-full"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      End Time <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="time"
+                      name="end_time"
+                      value={editFormData.end_time || ''}
+                      onChange={handleEditInputChange}
+                      className="input w-full"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center">
+                  <input
+                    type="checkbox"
+                    name="is_spotlight"
+                    checked={editFormData.is_spotlight || false}
+                    onChange={handleEditInputChange}
+                    className="mr-2"
+                  />
+                  <label className="text-sm text-gray-700">Spotlight Event</label>
+                </div>
+
+                <div className="flex gap-3 pt-4">
+                  <button
+                    type="submit"
+                    disabled={editLoading}
+                    className="btn-primary flex-1"
+                  >
+                    {editLoading ? 'Updating...' : 'Update Event'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowEditForm(false)}
+                    className="btn-outline flex-1"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )
