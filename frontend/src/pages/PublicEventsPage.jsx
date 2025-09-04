@@ -1,26 +1,58 @@
-import { useState } from 'react'
-import { useQuery } from 'react-query'
+import { useState, useEffect } from 'react'
 import { Calendar, Clock, MapPin, Users, Star, Search, Filter } from 'lucide-react'
 import { useConfig } from '../hooks/useConfig'
 import { eventService } from '../services/eventService'
 import ConfigLoadingPlaceholder from '../components/ConfigLoadingPlaceholder'
+import toast from 'react-hot-toast'
 
 export default function PublicEventsPage() {
   const { config, isLoading: configLoading } = useConfig()
+  const [events, setEvents] = useState([])
+  const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
   const [showSpotlightOnly, setShowSpotlightOnly] = useState(false)
 
-  const { data: eventsData, isLoading: eventsLoading, error } = useQuery(
-    'public-events',
-    () => eventService.getEvents(),
-    {
-      onError: (error) => {
-        console.error('Error loading events:', error)
-      }
-    }
-  )
+  useEffect(() => {
+    loadEvents()
+  }, [])
 
-  const events = Array.isArray(eventsData) ? eventsData : eventsData?.events || []
+  const loadEvents = async () => {
+    try {
+      setLoading(true)
+      const data = await eventService.getEvents()
+      const rawEvents = Array.isArray(data) ? data : data?.events || []
+      
+      // Transform events to match expected structure
+      const transformedEvents = rawEvents.map(event => ({
+        ...event,
+        eventDate: event.event_date,
+        startTime: event.start_time,
+        endTime: event.end_time,
+        isSpotlight: event.is_spotlight,
+        maxAttendees: event.max_attendees,
+        imageUrl: event.image_url,
+        venue: {
+          id: event.venue_id,
+          name: event.venue_name,
+          address: event.venue_address,
+          city: event.venue_city,
+          state: event.venue_state,
+          zip_code: event.venue_zip_code
+        },
+        creator: {
+          name: event.created_by_name
+        }
+      }))
+      
+      console.log('Loaded events:', transformedEvents)
+      setEvents(transformedEvents)
+    } catch (error) {
+      console.error('Error loading events:', error)
+      toast.error('Failed to load events')
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const filteredEvents = events.filter(event => {
     const matchesSearch = event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -63,6 +95,11 @@ export default function PublicEventsPage() {
 
   const upcomingEvents = filteredEvents.filter(event => isUpcoming(event.eventDate))
   const pastEvents = filteredEvents.filter(event => !isUpcoming(event.eventDate))
+  
+  console.log('All events:', events)
+  console.log('Filtered events:', filteredEvents)
+  console.log('Upcoming events:', upcomingEvents)
+  console.log('Past events:', pastEvents)
 
   if (configLoading) {
     return <ConfigLoadingPlaceholder type="page" />
@@ -111,19 +148,9 @@ export default function PublicEventsPage() {
         </div>
 
         {/* Events List */}
-        {eventsLoading ? (
+        {loading ? (
           <div className="flex justify-center py-12">
             <div className="loading-spinner" />
-          </div>
-        ) : error ? (
-          <div className="text-center py-12">
-            <Calendar className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
-              Unable to Load Events
-            </h3>
-            <p className="text-gray-600">
-              There was an error loading events. Please try again later.
-            </p>
           </div>
         ) : upcomingEvents.length > 0 ? (
           <div className="space-y-8">
