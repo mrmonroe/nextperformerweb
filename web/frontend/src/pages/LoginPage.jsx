@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -18,6 +18,8 @@ export default function LoginPage() {
   const { login, isLoading } = useAuth()
   const { config, isLoading: configLoading } = useConfig()
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const returnTo = searchParams.get('returnTo') || '/dashboard'
   const [showPassword, setShowPassword] = useState(false)
 
   // Show loading placeholder while config is loading
@@ -36,7 +38,7 @@ export default function LoginPage() {
   const onSubmit = async (data) => {
     try {
       await login(data.email, data.password)
-      navigate('/dashboard')
+      navigate(returnTo)
     } catch (error) {
       // Error is handled by the auth service
     }

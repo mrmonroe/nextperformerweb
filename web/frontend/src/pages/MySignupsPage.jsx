@@ -30,8 +30,8 @@ export default function MySignupsPage() {
     } catch (error) {
       console.error('Error loading my signups:', error)
       if (error.message === 'Authentication required' || error.message.includes('401')) {
-        // If authentication fails, redirect to login
-        window.location.href = '/login'
+        // If authentication fails, redirect to login with return URL
+        window.location.href = '/login?returnTo=/my-signups'
       } else {
         toast.error('Failed to load signups')
       }
@@ -106,7 +106,7 @@ export default function MySignupsPage() {
           <h1 className="text-2xl font-bold text-gray-900 mb-4">Sign In Required</h1>
           <p className="text-gray-600 mb-6">Please sign in to view your signups.</p>
           <button
-            onClick={() => window.location.href = '/login'}
+            onClick={() => window.location.href = '/login?returnTo=/my-signups'}
             className="btn-primary"
           >
             Sign In
