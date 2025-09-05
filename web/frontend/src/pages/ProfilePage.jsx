@@ -31,6 +31,13 @@ export default function ProfilePage() {
                 {user?.displayName || 'User'}
               </h2>
               <p className="text-gray-600">{user?.email}</p>
+              {user?.primaryRole && (
+                <div className="mt-2">
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                    {user.primaryRole.displayName || user.primaryRole.name}
+                  </span>
+                </div>
+              )}
               {user?.bio && (
                 <p className="text-gray-500 mt-2">{user.bio}</p>
               )}
@@ -76,6 +83,21 @@ export default function ProfilePage() {
               {user?.lastLoginAt ? new Date(user.lastLoginAt).toLocaleDateString() : 'N/A'}
             </span>
           </div>
+          {user?.roles && user.roles.length > 0 && (
+            <div>
+              <span className="text-gray-600 block mb-2">Roles</span>
+              <div className="flex flex-wrap gap-2">
+                {user.roles.map((role) => (
+                  <span
+                    key={role.id}
+                    className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"
+                  >
+                    {role.display_name || role.name}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

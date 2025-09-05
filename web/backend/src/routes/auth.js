@@ -145,13 +145,34 @@ router.post('/login', async (req, res) => {
 router.get('/me', auth, async (req, res) => {
   try {
     const user = await db('users')
-      .select('id', 'email', 'first_name', 'last_name', 'display_name', 'bio', 'avatar_url', 'last_login_at', 'created_at')
-      .where('id', req.user.userId)
+      .select(
+        'users.id', 
+        'users.email', 
+        'users.first_name', 
+        'users.last_name', 
+        'users.display_name', 
+        'users.bio', 
+        'users.avatar_url', 
+        'users.last_login_at', 
+        'users.created_at',
+        'users.primary_role_id',
+        'roles.name as primary_role_name',
+        'roles.display_name as primary_role_display_name'
+      )
+      .leftJoin('roles', 'users.primary_role_id', 'roles.id')
+      .where('users.id', req.user.userId)
       .first()
 
     if (!user) {
       return res.status(404).json({ message: 'User not found' })
     }
+
+    // Get all user roles
+    const userRoles = await db('user_roles')
+      .join('roles', 'user_roles.role_id', 'roles.id')
+      .select('roles.id', 'roles.name', 'roles.display_name', 'roles.description')
+      .where('user_roles.user_id', user.id)
+      .where('roles.is_active', true)
 
     res.json({
       id: user.id,
@@ -161,7 +182,13 @@ router.get('/me', auth, async (req, res) => {
       bio: user.bio,
       avatarUrl: user.avatar_url,
       lastLoginAt: user.last_login_at,
-      createdAt: user.created_at
+      createdAt: user.created_at,
+      primaryRole: user.primary_role_id ? {
+        id: user.primary_role_id,
+        name: user.primary_role_name,
+        displayName: user.primary_role_display_name
+      } : null,
+      roles: userRoles
     })
   } catch (error) {
     console.error('Get user error:', error)
