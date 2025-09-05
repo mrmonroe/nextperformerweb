@@ -6,17 +6,21 @@ import { toast } from 'react-hot-toast'
 import ConfirmDeleteModal from '../components/modals/ConfirmDeleteModal'
 
 export default function MySignupsPage() {
-  const { user, isAuthenticated } = useAuth()
+  const { user, isAuthenticated, isLoading: authLoading } = useAuth()
   const [signups, setSignups] = useState([])
   const [loading, setLoading] = useState(true)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [signupToDelete, setSignupToDelete] = useState(null)
 
   useEffect(() => {
-    if (isAuthenticated) {
-      loadMySignups()
+    if (!authLoading) {
+      if (isAuthenticated) {
+        loadMySignups()
+      } else {
+        setLoading(false)
+      }
     }
-  }, [isAuthenticated])
+  }, [isAuthenticated, authLoading])
 
   const loadMySignups = async () => {
     try {
@@ -25,7 +29,12 @@ export default function MySignupsPage() {
       setSignups(data)
     } catch (error) {
       console.error('Error loading my signups:', error)
-      toast.error('Failed to load signups')
+      if (error.message === 'Authentication required' || error.message.includes('401')) {
+        // If authentication fails, redirect to login
+        window.location.href = '/login'
+      } else {
+        toast.error('Failed to load signups')
+      }
     } finally {
       setLoading(false)
     }
@@ -77,6 +86,17 @@ export default function MySignupsPage() {
     today.setHours(0, 0, 0, 0)
     const event = new Date(eventDate)
     return event >= today
+  }
+
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="loading-spinner mx-auto mb-4" />
+          <p className="text-gray-600">Checking authentication...</p>
+        </div>
+      </div>
+    )
   }
 
   if (!isAuthenticated) {
