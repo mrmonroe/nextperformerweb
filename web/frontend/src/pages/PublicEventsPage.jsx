@@ -52,7 +52,6 @@ export default function PublicEventsPage() {
         }
       }))
       
-      console.log('Loaded events:', transformedEvents)
       setEvents(transformedEvents)
     } catch (error) {
       console.error('Error loading events:', error)
@@ -131,12 +130,6 @@ export default function PublicEventsPage() {
   // Combine: sponsored events first, then regular events
   const displayEvents = [...sponsoredEvents, ...regularUpcomingEvents]
   
-  console.log('All events:', events)
-  console.log('Filtered events:', filteredEvents)
-  console.log('Sponsored events:', sponsoredEvents)
-  console.log('Regular upcoming events:', regularUpcomingEvents)
-  console.log('Display events:', displayEvents)
-  console.log('Past events:', pastEvents)
 
   if (configLoading) {
     return <ConfigLoadingPlaceholder type="page" />

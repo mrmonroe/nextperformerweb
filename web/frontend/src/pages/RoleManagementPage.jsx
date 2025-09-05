@@ -55,7 +55,6 @@ const RoleManagementPage = () => {
       }
       
       const data = await response.json()
-      console.log('Roles loaded successfully:', data.length)
       setRoles(data)
     } catch (error) {
       console.error('Error loading roles:', error)

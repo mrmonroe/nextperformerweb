@@ -22,7 +22,6 @@ class ConfigService {
       return this.config
     } catch (error) {
       console.error('Failed to load configuration from database:', error)
-      console.log('Falling back to legacy configuration...')
       
       // Try to get legacy config as fallback
       try {

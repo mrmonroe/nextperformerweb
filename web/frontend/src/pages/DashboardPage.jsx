@@ -106,7 +106,6 @@ export default function DashboardPage() {
   }
 
   const handleEventUpdated = (updatedEvent) => {
-    console.log('Event updated:', updatedEvent)
     loadUserEvents() // Refresh the events list
     closeEditEvent()
   }
@@ -122,7 +121,6 @@ export default function DashboardPage() {
     setIsDeleting(true)
     try {
       await eventService.deleteEvent(eventToDelete.id)
-      console.log('Event deleted:', eventToDelete.id)
       loadUserEvents() // Refresh the events list
       setShowDeleteConfirm(false)
       setEventToDelete(null)
@@ -256,7 +254,6 @@ export default function DashboardPage() {
         isOpen={showCreateEvent}
         onClose={() => setShowCreateEvent(false)}
         onEventCreated={(event) => {
-          console.log('Event created:', event)
           loadUserEvents() // Refresh the events list
         }}
       />
@@ -265,7 +262,6 @@ export default function DashboardPage() {
         isOpen={showCreateVenue}
         onClose={() => setShowCreateVenue(false)}
         onVenueCreated={(venue) => {
-          console.log('Venue created:', venue)
           // Venue creation doesn't affect events list, but we could refresh if needed
         }}
       />

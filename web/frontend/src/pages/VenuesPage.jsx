@@ -32,7 +32,6 @@ export default function VenuesPage() {
   )
 
   const handleVenueCreated = (venue) => {
-    console.log('Venue created:', venue)
     refetchVenues()
     toast.success('Venue added successfully!')
   }

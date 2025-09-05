@@ -45,7 +45,6 @@ const UserManagementPage = () => {
         return
       }
 
-      console.log('Loading users with token:', adminToken.substring(0, 20) + '...')
       const response = await fetch(`${API_BASE_URL}/api/admin/users`, {
         headers: {
           'Authorization': `Bearer ${adminToken}`,
@@ -62,7 +61,6 @@ const UserManagementPage = () => {
       }
       
       const data = await response.json()
-      console.log('Users loaded successfully:', data.length)
       setUsers(data)
     } catch (error) {
       console.error('Error loading users:', error)
@@ -94,7 +92,6 @@ const UserManagementPage = () => {
       }
       
       const data = await response.json()
-      console.log('Roles loaded successfully:', data.length)
       setRoles(data)
     } catch (error) {
       console.error('Error loading roles:', error)

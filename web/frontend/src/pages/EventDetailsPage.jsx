@@ -407,7 +407,6 @@ export default function EventDetailsPage() {
           event={event}
           onTimeslotsUpdated={() => {
             // Optionally reload event data if needed
-            console.log('Timeslots updated')
           }}
         />
 
@@ -418,7 +417,6 @@ export default function EventDetailsPage() {
           event={event}
           onSignupsUpdated={() => {
             // Optionally reload event data if needed
-            console.log('Signups updated')
           }}
         />
 

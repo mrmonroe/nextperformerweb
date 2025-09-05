@@ -53,7 +53,6 @@ const CreateEventPage = () => {
   const loadVenues = async () => {
     try {
       const venuesData = await venueService.getVenues()
-      console.log('Venues data received:', venuesData)
       // Ensure venuesData is an array
       if (Array.isArray(venuesData)) {
         setVenues(venuesData)

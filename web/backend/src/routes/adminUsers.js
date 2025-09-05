@@ -128,7 +128,6 @@ router.post('/users/:id/roles', async (req, res) => {
     // For now, use the first regular user as assigned_by since admin users are in a separate table
     // TODO: Fix the foreign key constraint to allow admin user IDs
     const assignedBy = '1c056447-64a9-4a52-b7e0-5e4b09620541' // First regular user
-    console.log('Assigning role:', { userId: req.params.id, roleId: role_id, assignedBy })
     const userRole = await userService.assignRoleToUser(req.params.id, role_id, assignedBy)
     res.status(201).json(userRole)
   } catch (error) {
