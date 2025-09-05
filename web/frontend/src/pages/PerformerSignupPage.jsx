@@ -404,6 +404,5 @@ export default function PerformerSignupPage() {
           </div>
         </div>
       </div>
-    </div>
   )
 }
